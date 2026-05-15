@@ -10,8 +10,7 @@ class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
 
   // Image Assets Variables
-  static const String logoPath = 'assets/images/logo.png';
-  static const String drawerBgPath = 'assets/images/drawer_bg.png';
+  static const String logoPath = 'assets/images/logo_remove_bg.png';
 
   @override
   Widget build(BuildContext context) {
@@ -152,18 +151,53 @@ class HomeView extends GetView<HomeController> {
         children: [
           // Drawer Header with Background Image
           Container(
-            height: 200.h,
+            height: 220.h,
             width: double.infinity,
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(drawerBgPath),
+                image: AssetImage(
+                  'assets/images/premium_race_header.png',
+                ), // Premium generated background
                 fit: BoxFit.cover,
+                opacity: 0.7, // Slightly more visible for the premium image
               ),
             ),
             child: Container(
-              color: Colors.black.withOpacity(0.4), // Subtle overlay
-              child: const Center(
-                child: SizedBox(), // Content is already in the background image
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.2),
+                    Colors.black.withOpacity(0.8),
+                  ],
+                ),
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width:
+                          280.w, // Increased width so the logo can grow larger
+                      height: 160.h, // Increased height to allow scaling
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF4DB6AC).withOpacity(0.1),
+                            blurRadius: 30,
+                            spreadRadius: 10,
+                          ),
+                        ],
+                      ),
+                      child: Image.asset(
+                        logoPath,
+                        fit: BoxFit
+                            .contain, // Ensures the image scales up to fit the container
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -218,7 +252,7 @@ class HomeView extends GetView<HomeController> {
                   style: TextStyle(color: Colors.white38, fontSize: 12.sp),
                 ),
                 Text(
-                  'FFDHDJHUUJYDGGHIUUHD#@',
+                  'er-1def2-ddoewrf-4324-sd',
                   style: TextStyle(color: Colors.white24, fontSize: 10.sp),
                 ),
               ],
