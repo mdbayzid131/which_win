@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:which_win/app/routes/app_pages.dart';
 import '../controllers/race_analysis_controller.dart';
 
 class RaceAnalysisView extends GetView<RaceAnalysisController> {
@@ -21,7 +22,9 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
                   width: double.infinity,
                   decoration: const BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/images/race_analysis_header.png'),
+                      image: AssetImage(
+                        'assets/images/race_analysis_header.png',
+                      ),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -46,7 +49,10 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
                         Row(
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.arrow_back, color: Colors.white),
+                              icon: const Icon(
+                                Icons.arrow_back,
+                                color: Colors.white,
+                              ),
                               onPressed: () => Get.back(),
                             ),
                             const Spacer(),
@@ -82,15 +88,24 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
                         SizedBox(height: 10.h),
                         Text(
                           'Royal Ascot - Gold Cup',
-                          style: TextStyle(color: Colors.white70, fontSize: 16.sp),
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 16.sp,
+                          ),
                         ),
                         Text(
                           'May 6, 2026 • 15:30',
-                          style: TextStyle(color: Colors.white38, fontSize: 12.sp),
+                          style: TextStyle(
+                            color: Colors.white38,
+                            fontSize: 12.sp,
+                          ),
                         ),
                         SizedBox(height: 12.h),
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 4.h,
+                          ),
                           decoration: BoxDecoration(
                             color: const Color(0xFF1B5E20).withOpacity(0.8),
                             borderRadius: BorderRadius.circular(20.r),
@@ -111,7 +126,11 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
                             color: Color(0xFFE53935),
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(Icons.emoji_events_outlined, color: Colors.white, size: 40.sp),
+                          child: Icon(
+                            Icons.emoji_events_outlined,
+                            color: Colors.white,
+                            size: 40.sp,
+                          ),
                         ),
                         SizedBox(height: 12.h),
                         Text(
@@ -124,7 +143,10 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
                         ),
                         Text(
                           'Jockey: J. Smith',
-                          style: TextStyle(color: Colors.white38, fontSize: 14.sp),
+                          style: TextStyle(
+                            color: Colors.white38,
+                            fontSize: 14.sp,
+                          ),
                         ),
                         SizedBox(height: 8.h),
                         Text(
@@ -141,7 +163,7 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
                 ),
               ],
             ),
-            
+
             // Middle Prediction Section
             Padding(
               padding: EdgeInsets.all(16.w),
@@ -168,13 +190,18 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
                           decoration: BoxDecoration(
                             color: const Color(0xFF310000),
                             borderRadius: BorderRadius.circular(12.r),
-                            border: Border.all(color: Colors.red.withOpacity(0.3)),
+                            border: Border.all(
+                              color: Colors.red.withOpacity(0.3),
+                            ),
                           ),
                           child: Column(
                             children: [
                               Text(
                                 'Riskli Maç',
-                                style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 12.sp,
+                                ),
                               ),
                               Text(
                                 '%50',
@@ -186,7 +213,10 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
                               ),
                               Text(
                                 'Güven Seviyesi',
-                                style: TextStyle(color: Colors.white24, fontSize: 10.sp),
+                                style: TextStyle(
+                                  color: Colors.white24,
+                                  fontSize: 10.sp,
+                                ),
                               ),
                             ],
                           ),
@@ -206,13 +236,17 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
                     children: [
                       _buildActionButton('Maç sonu', true),
                       SizedBox(width: 12.w),
-                      _buildActionButton('Racing Details', false),
+                      _buildActionButton(
+                        'Racing Details',
+                        false,
+                        onTap: () => Get.toNamed(AppRoutes.RACE_DETAILS),
+                      ),
                     ],
                   ),
                 ],
               ),
             ),
-            
+
             // Bottom Analysis Table
             Container(
               margin: EdgeInsets.all(16.w),
@@ -251,10 +285,10 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
   }
 
   TextStyle _tableHeaderStyle() => TextStyle(
-        color: Colors.white,
-        fontSize: 16.sp,
-        fontWeight: FontWeight.bold,
-      );
+    color: Colors.white,
+    fontSize: 16.sp,
+    fontWeight: FontWeight.bold,
+  );
 
   Widget _buildPredictionCard(String title, String percent, bool isSelected) {
     return Container(
@@ -285,13 +319,18 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
               3,
               (index) => Icon(
                 Icons.star,
-                color: index < (isSelected ? 3 : 2) ? Colors.orange : Colors.white12,
+                color: index < (isSelected ? 3 : 2)
+                    ? Colors.orange
+                    : Colors.white12,
                 size: 14.sp,
               ),
             ),
           ),
           SizedBox(height: 4.h),
-          Text('Pearl', style: TextStyle(color: Colors.white24, fontSize: 10.sp)),
+          Text(
+            'Pearl',
+            style: TextStyle(color: Colors.white24, fontSize: 10.sp),
+          ),
           Text(
             percent,
             style: TextStyle(
@@ -305,13 +344,21 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
     );
   }
 
-  Widget _buildInfoColumn(String title, String value, {bool isSmallText = false}) {
+  Widget _buildInfoColumn(
+    String title,
+    String value, {
+    bool isSmallText = false,
+  }) {
     return Column(
       children: [
         Text(
           title,
           textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.white, fontSize: 12.sp, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 12.sp,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         SizedBox(height: 8.h),
         Text(
@@ -327,21 +374,32 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
     );
   }
 
-  Widget _buildActionButton(String text, bool isSelected) {
+  Widget _buildActionButton(
+    String text,
+    bool isSelected, {
+    VoidCallback? onTap,
+  }) {
     return Expanded(
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 12.h),
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF003D33) : const Color(0xFF003D33),
-          borderRadius: BorderRadius.circular(8.r),
-        ),
-        child: Center(
-          child: Text(
-            text,
-            style: TextStyle(
-              color: isSelected ? const Color(0xFF4DB6AC) : const Color(0xFF4DB6AC),
-              fontSize: 14.sp,
-              fontWeight: FontWeight.bold,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 12.h),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? const Color(0xFF003D33)
+                : const Color(0xFF003D33),
+            borderRadius: BorderRadius.circular(8.r),
+          ),
+          child: Center(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: isSelected
+                    ? const Color(0xFF4DB6AC)
+                    : const Color(0xFF4DB6AC),
+                fontSize: 14.sp,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),
