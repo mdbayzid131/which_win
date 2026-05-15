@@ -2,6 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:which_win/app.dart';
 
 void main() {
-  runApp(const WhichWin());
+  runApp(const WhichWinApp());
 }
 // git test 

@@ -1,23 +1,17 @@
+import 'dart:async';
 import 'package:get/get.dart';
+import 'package:which_win/app/routes/app_pages.dart';
 
 class SplashScreenController extends GetxController {
-  //TODO: Implement SplashScreenController
-
-  final count = 0.obs;
   @override
   void onInit() {
     super.onInit();
+    _navigateToHome();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
+  void _navigateToHome() {
+    Timer(const Duration(seconds: 3), () {
+      Get.offAllNamed(AppRoutes.HOME);
+    });
   }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
-
-  void increment() => count.value++;
 }
