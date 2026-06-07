@@ -4,4 +4,5 @@ import 'package:which_win/app.dart';
 void main() {
   runApp(const WhichWinApp());
 }
-// git test 
+// git test commit -m "Add splash screen"
+// git push
