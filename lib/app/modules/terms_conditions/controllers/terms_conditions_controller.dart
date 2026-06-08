@@ -17,7 +17,7 @@ class TermsConditionsController extends GetxController {
   Future<void> fetchTerms() async {
     isLoading.value = true;
     try {
-      final response = await _commonRepo.getLegalContent('terms');
+      final response = await _commonRepo.getLegalContent('TERMS_AND_CONDITIONS');
       ApiChecker.checkGetApi(response);
 
       if (response.statusCode == 200) {

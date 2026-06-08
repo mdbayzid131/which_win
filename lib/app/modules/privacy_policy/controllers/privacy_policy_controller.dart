@@ -17,7 +17,7 @@ class PrivacyPolicyController extends GetxController {
   Future<void> fetchPrivacyPolicy() async {
     isLoading.value = true;
     try {
-      final response = await _commonRepo.getLegalContent('privacy');
+      final response = await _commonRepo.getLegalContent('PRIVACY_POLICY');
       ApiChecker.checkGetApi(response);
 
       if (response.statusCode == 200) {

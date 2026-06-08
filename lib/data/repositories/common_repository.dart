@@ -10,11 +10,13 @@ class CommonRepo {
   Future<dio.Response> contactUs({
     required String name,
     required String email,
+    required String subject,
     required String message,
   }) async {
     return await apiClient.postData(ApiConstants.contact, {
       "name": name,
       "email": email,
+      "subject": subject,
       "message": message,
     });
   }

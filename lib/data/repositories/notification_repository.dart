@@ -25,10 +25,10 @@ class NotificationRepo {
   }
 
   /// ===================== REGISTER FCM TOKEN =====================
-  Future<dio.Response> registerFcmToken(String deviceId, String token) async {
-    return await apiClient.postData(ApiConstants.registerFcmToken, {
-      "deviceId": deviceId,
-      "token": token,
+  Future<dio.Response> registerFcmToken(String fcmToken, String platform) async {
+    return await apiClient.patchData(ApiConstants.registerFcmToken, {
+      "fcmToken": fcmToken,
+      "platform": platform,
     });
   }
 }

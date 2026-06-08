@@ -38,53 +38,114 @@ class TermsConditionsView extends GetView<TermsConditionsController> {
           child: Container(color: Colors.white12, height: 1.h),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(24.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSection(
-              '1. Acceptance of Terms',
-              'By accessing and using Which Win, you accept and agree to be bound by the terms and provision of this agreement.',
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4DB6AC)),
             ),
-            SizedBox(height: 32.h),
-            _buildSection(
-              '2. Use License',
-              'Permission is granted to temporarily download one copy of the materials for personal, non-commercial transitory viewing only.',
-            ),
-            SizedBox(height: 32.h),
-            _buildSection(
-              '3. Disclaimer',
-              'The materials on Which Win are provided on an \'as is\' basis. We make no warranties, expressed or implied.',
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+          );
+        }
 
-  Widget _buildSection(String title, String content) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18.sp,
-            fontWeight: FontWeight.bold,
+        if (controller.content.value.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error_outline, color: Colors.white24, size: 60.sp),
+                SizedBox(height: 16.h),
+                Text(
+                  'Failed to load terms and conditions',
+                  style: TextStyle(color: Colors.white70, fontSize: 16.sp),
+                ),
+                SizedBox(height: 24.h),
+                ElevatedButton(
+                  onPressed: () => controller.fetchTerms(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4DB6AC),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                  ),
+                  child: Text('Retry', style: TextStyle(color: Colors.black, fontSize: 14.sp)),
+                ),
+              ],
+            ),
+          );
+        }
+
+        final paragraphs = controller.content.value.split('\n\n');
+
+        return SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: paragraphs.map((para) {
+              final trimmed = para.trim();
+              if (trimmed.isEmpty) return const SizedBox();
+
+              final lines = trimmed.split('\n');
+              final title = lines.first;
+              final hasBody = lines.length > 1;
+
+              final isHeader = title.length < 60 &&
+                  !title.endsWith('.') &&
+                  (title.contains(RegExp(r'^[0-9]+[.)]')) ||
+                      title.toLowerCase().contains('collect') ||
+                      title.toLowerCase().contains('use') ||
+                      title.toLowerCase().contains('security') ||
+                      title.toLowerCase().contains('information') ||
+                      title.toLowerCase().contains('acceptance') ||
+                      title.toLowerCase().contains('license') ||
+                      title.toLowerCase().contains('disclaimer') ||
+                      title.toUpperCase() == title);
+
+              if (isHeader) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 24.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
+                          height: 1.4,
+                        ),
+                      ),
+                      if (hasBody) ...[
+                        SizedBox(height: 12.h),
+                        Text(
+                          lines.sublist(1).join('\n'),
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 15.sp,
+                            height: 1.6,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                );
+              }
+
+              return Padding(
+                padding: EdgeInsets.only(bottom: 24.h),
+                child: Text(
+                  trimmed,
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 15.sp,
+                    height: 1.6,
+                  ),
+                ),
+              );
+            }).toList(),
           ),
-        ),
-        SizedBox(height: 16.h),
-        Text(
-          content,
-          style: TextStyle(
-            color: Colors.white70,
-            fontSize: 15.sp,
-            height: 1.6,
-          ),
-        ),
-      ],
+        );
+      }),
     );
   }
 }
