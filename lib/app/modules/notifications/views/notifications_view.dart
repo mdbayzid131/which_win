@@ -39,9 +39,15 @@ class NotificationsView extends GetView<NotificationsController> {
       ),
       body: Obx(() => ListView.builder(
         padding: EdgeInsets.all(16.w),
-        itemCount: controller.notifications.length,
+        itemCount: controller.notificationList.length,
         itemBuilder: (context, index) {
-          final notification = controller.notifications[index];
+          final notificationModel = controller.notificationList[index];
+          final notification = {
+            'title': notificationModel.title ?? '',
+            'description': notificationModel.message ?? '',
+            'time': notificationModel.createdAt ?? '',
+            'type': notificationModel.type ?? 'alert',
+          };
           return _buildNotificationCard(notification);
         },
       )),
@@ -132,9 +138,9 @@ class NotificationsView extends GetView<NotificationsController> {
     IconData iconData;
     Color iconColor;
 
-    switch (type) {
-      case 'match':
-        iconData = Icons.sports_soccer;
+    switch (type.toLowerCase()) {
+      case 'race':
+        iconData = Icons.sports_score;
         iconColor = Colors.greenAccent;
         break;
       case 'prediction':

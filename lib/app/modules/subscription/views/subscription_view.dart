@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:which_win/data/models/subscription_model.dart';
 import '../controllers/subscription_controller.dart';
 
 class SubscriptionView extends GetView<SubscriptionController> {
@@ -28,9 +29,9 @@ class SubscriptionView extends GetView<SubscriptionController> {
         leadingWidth: 80.w,
       ),
       body: Obx(() {
-        return controller.isActive.value
-            ? _buildActiveStatus() // This can be a "Manage Subscription" view if needed
-            : _buildSubscriptionWorkflow();
+        return controller.plans.isNotEmpty
+            ? _buildSubscriptionWorkflow()
+            : _buildNoPlanFound();
       }),
     );
   }
@@ -40,11 +41,11 @@ class SubscriptionView extends GetView<SubscriptionController> {
     return Obx(
       () => showPlans.value
           ? _buildPlanSelection()
-          : _buildNoPlanFound(() => showPlans.value = true),
+          : _buildNoPlanFound(onSubscribe: () => showPlans.value = true),
     );
   }
 
-  Widget _buildNoPlanFound(VoidCallback onSubscribe) {
+  Widget _buildNoPlanFound({VoidCallback? onSubscribe}) {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -70,7 +71,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
             ),
           ),
           SizedBox(height: 16.h),
-          _buildPrimaryButton('Subscribe Now', onSubscribe),
+          if (onSubscribe != null) _buildPrimaryButton('Subscribe Now', onSubscribe),
           SizedBox(height: 12.h),
           _buildSecondaryButton(
             'Restore Purchases',
@@ -116,28 +117,15 @@ class SubscriptionView extends GetView<SubscriptionController> {
                     ),
                   ),
                   SizedBox(height: 20.h),
-                  _buildPlanCard('1 Week', 'BDT 349.00', '', true),
-                  SizedBox(height: 16.h),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildPlanCard(
-                          '1 Month',
-                          'BDT 1,199.00',
-                          'BDT 275.95 / w',
-                          false,
-                        ),
-                      ),
-                      SizedBox(width: 16.w),
-                      Expanded(
-                        child: _buildPlanCard(
-                          '1 Year',
-                          'BDT 7,999.00',
-                          'BDT 153.83 / w',
-                          false,
-                        ),
-                      ),
-                    ],
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: controller.plans.length,
+                    separatorBuilder: (context, index) => SizedBox(height: 16.h),
+                    itemBuilder: (context, index) {
+                      final plan = controller.plans[index];
+                      return _buildPlanCard(plan, index);
+                    },
                   ),
                 ],
               ),
@@ -151,16 +139,12 @@ class SubscriptionView extends GetView<SubscriptionController> {
     );
   }
 
-  Widget _buildPlanCard(
-    String title,
-    String price,
-    String subtext,
-    bool isBest,
-  ) {
+  Widget _buildPlanCard(SubscriptionPlanModel plan, int index) {
     return Obx(() {
-      final isSelected = controller.selectedPlan.value == title;
+      final isSelected = controller.selectedPlanIndex.value == index;
+      final bool isBest = index == 0; // Simple logic to match original UI's "Best Value"
       return GestureDetector(
-        onTap: () => controller.selectPlan(title),
+        onTap: () => controller.selectPlan(index),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
@@ -190,7 +174,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    title,
+                    plan.name ?? '',
                     style: TextStyle(
                       color: isSelected ? Colors.white : Colors.white70,
                       fontSize: 18.sp,
@@ -229,17 +213,17 @@ class SubscriptionView extends GetView<SubscriptionController> {
               ),
               SizedBox(height: 20.h),
               Text(
-                price,
+                '${plan.currency ?? 'BDT'} ${plan.price ?? 0}',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 22.sp,
                   fontWeight: FontWeight.w900,
                 ),
               ),
-              if (subtext.isNotEmpty) ...[
+              if (plan.description != null && plan.description!.isNotEmpty) ...[
                 SizedBox(height: 6.h),
                 Text(
-                  subtext,
+                  plan.description!,
                   style: TextStyle(
                     color: Colors.white38,
                     fontSize: 12.sp,
@@ -248,32 +232,6 @@ class SubscriptionView extends GetView<SubscriptionController> {
                 ),
               ],
               SizedBox(height: 20.h),
-              Align(
-                alignment: Alignment.centerRight,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  width: 28.w,
-                  height: 28.w,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: isSelected ? Colors.transparent : Colors.white24,
-                    ),
-                    gradient: isSelected
-                        ? const LinearGradient(
-                            colors: [Color(0xFF4DB6AC), Color(0xFF00695C)],
-                          )
-                        : null,
-                  ),
-                  child: isSelected
-                      ? Icon(
-                          Icons.check_rounded,
-                          color: Colors.white,
-                          size: 18.sp,
-                        )
-                      : null,
-                ),
-              ),
             ],
           ),
         ),
@@ -295,118 +253,69 @@ class SubscriptionView extends GetView<SubscriptionController> {
   }
 
   Widget _buildProLogo() {
-    return Center(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'WHICH ',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 24.sp,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF4DB6AC), Color(0xFF00796B)],
             ),
+            borderRadius: BorderRadius.circular(12.r),
           ),
-          Text(
-            'WIN',
-            style: TextStyle(
-              color: const Color(0xFF4DB6AC),
-              fontSize: 24.sp,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1,
-            ),
-          ),
-          SizedBox(width: 8.w),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFBC02D),
-              borderRadius: BorderRadius.circular(4.r),
-            ),
-            child: Text(
-              'PRO',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.bold,
+          child: Row(
+            children: [
+              Icon(Icons.star, color: Colors.white, size: 20.sp),
+              SizedBox(width: 8.w),
+              Text(
+                'PRO',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2,
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget _buildFeaturePreview() {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.03),
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: Colors.white10),
+        color: const Color(0xFF1E293B).withOpacity(0.5),
+        borderRadius: BorderRadius.circular(24.r),
+        border: Border.all(color: Colors.white12),
       ),
-      child: Column(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildPreviewRow('AI Prediction Confidence', '90%', true),
-          SizedBox(height: 12.h),
-          _buildPreviewRow('Which Win Guess', 'Man City or Draw', false),
+          _buildFeatureIcon(Icons.psychology, 'AI Tips'),
+          _buildFeatureIcon(Icons.analytics, 'Analysis'),
+          _buildFeatureIcon(Icons.notifications_active, 'Alerts'),
         ],
       ),
     );
   }
 
-  Widget _buildPreviewRow(String label, String value, bool isProgress) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget _buildFeatureIcon(IconData icon, String label) {
+    return Column(
       children: [
+        Icon(icon, color: const Color(0xFF4DB6AC), size: 28.sp),
+        SizedBox(height: 8.h),
         Text(
           label,
-          style: TextStyle(color: Colors.white38, fontSize: 13.sp),
-        ),
-        if (isProgress)
-          Row(
-            children: [
-              Container(
-                width: 80.w,
-                height: 6.h,
-                decoration: BoxDecoration(
-                  color: Colors.white10,
-                  borderRadius: BorderRadius.circular(3.r),
-                ),
-                child: FractionallySizedBox(
-                  alignment: Alignment.centerLeft,
-                  widthFactor: 0.9,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF4DB6AC), Color(0xFF004D40)],
-                      ),
-                      borderRadius: BorderRadius.circular(3.r),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 8.w),
-              Text(
-                value,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          )
-        else
-          Text(
-            value,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 13.sp,
-              fontWeight: FontWeight.bold,
-            ),
+          style: TextStyle(
+            color: Colors.white70,
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w500,
           ),
+        ),
       ],
     );
   }
@@ -414,10 +323,10 @@ class SubscriptionView extends GetView<SubscriptionController> {
   Widget _buildBenefitList() {
     return Column(
       children: [
-        _buildBenefitItem('90% Prediction Accuracy with AI'),
-        _buildBenefitItem('Early Access to Upcoming Matches'),
-        _buildBenefitItem('No Advertisements & Faster Updates'),
-        _buildBenefitItem('Exclusive High-Confidence Tips'),
+        _buildBenefitItem('Unlimited AI predictions for all races'),
+        _buildBenefitItem('Detailed performance analytics & statistics'),
+        _buildBenefitItem('Instant push notifications for live results'),
+        _buildBenefitItem('Ad-free experience across the app'),
       ],
     );
   }
@@ -427,25 +336,16 @@ class SubscriptionView extends GetView<SubscriptionController> {
       padding: EdgeInsets.only(bottom: 12.h),
       child: Row(
         children: [
-          Container(
-            padding: EdgeInsets.all(4.w),
-            decoration: BoxDecoration(
-              color: const Color(0xFF4DB6AC).withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.check_rounded,
-              color: const Color(0xFF4DB6AC),
-              size: 14.sp,
-            ),
-          ),
+          Icon(Icons.check_circle, color: const Color(0xFF4DB6AC), size: 18.sp),
           SizedBox(width: 12.w),
-          Text(
-            text,
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 14.sp,
-              letterSpacing: 0.2,
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],
@@ -453,42 +353,32 @@ class SubscriptionView extends GetView<SubscriptionController> {
     );
   }
 
-  Widget _buildPrimaryButton(String text, VoidCallback onPressed) {
-    return SizedBox(
-      width: double.infinity,
-      height: 58.h,
+  Widget _buildPrimaryButton(String text, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
       child: Container(
+        width: double.infinity,
+        height: 56.h,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.r),
           gradient: const LinearGradient(
-            colors: [Color(0xFF00695C), Color(0xFF004D40)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            colors: [Color(0xFF4DB6AC), Color(0xFF00796B)],
           ),
+          borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF004D40).withOpacity(0.4),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
+              color: const Color(0xFF4DB6AC).withOpacity(0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: ElevatedButton(
-          onPressed: onPressed,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16.r),
-            ),
-          ),
+        child: Center(
           child: Text(
-            text.toUpperCase(),
+            text,
             style: TextStyle(
               color: Colors.white,
               fontSize: 16.sp,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.5,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
@@ -496,77 +386,26 @@ class SubscriptionView extends GetView<SubscriptionController> {
     );
   }
 
-  Widget _buildSecondaryButton(String text, VoidCallback onPressed) {
-    return SizedBox(
-      width: double.infinity,
-      height: 56.h,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF1E293B),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.r),
-          ),
+  Widget _buildSecondaryButton(String text, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        height: 56.h,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: Colors.white10),
         ),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16.sp,
-            fontWeight: FontWeight.bold,
+        child: Center(
+          child: Text(
+            text,
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildActiveStatus() {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(24.w),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: EdgeInsets.all(20.w),
-              decoration: BoxDecoration(
-                color: const Color(0xFF4DB6AC).withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.check_circle_rounded,
-                color: const Color(0xFF4DB6AC),
-                size: 80.sp,
-              ),
-            ),
-            SizedBox(height: 32.h),
-            Text(
-              'Active Subscription',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 12.h),
-            Text(
-              'You are currently on the ${controller.selectedPlan.value} plan.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white70, fontSize: 16.sp),
-            ),
-            SizedBox(height: 48.h),
-            _buildSecondaryButton('Manage Subscription', () {
-              // Future logic for managing subscription
-            }),
-            SizedBox(height: 16.h),
-            TextButton(
-              onPressed: () => controller.isActive.value = false,
-              child: Text(
-                'Cancel Subscription (Debug)',
-                style: TextStyle(color: Colors.red.shade400, fontSize: 14.sp),
-              ),
-            ),
-          ],
         ),
       ),
     );

@@ -1,33 +1,46 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:which_win/core/utils/custom_snackbar.dart';
+import 'package:which_win/data/repositories/common_repository.dart';
 
 class RateUsController extends GetxController {
+  final CommonRepo _commonRepo = Get.find<CommonRepo>();
+
   final rating = 0.obs;
+  final commentController = TextEditingController();
+  final isLoading = false.obs;
 
   void setRating(int value) {
     rating.value = value;
   }
 
-  void submitRating() {
-    if (rating.value > 0) {
-      Get.snackbar(
-        'Thank you!',
-        'Your rating of ${rating.value} stars helps us improve.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: const Color(0xFF00695C),
-        colorText: Colors.white,
-      );
-      Get.back();
-    } else {
-      Get.snackbar(
-        'Oops',
-        'Please select a rating before submitting.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: const Color(0xFFC62828),
-        colorText: Colors.white,
-      );
+  Future<void> submitRating() async {
+    if (rating.value == 0) {
+      CustomSnackBar.error('Please select a rating');
+      return;
     }
+
+    isLoading.value = true;
+    try {
+      final response = await _commonRepo.rateUs(
+        rating: rating.value,
+        comment: commentController.text,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        CustomSnackBar.success('Thank you for your feedback!');
+        Get.back();
+      }
+    } catch (e) {
+      CustomSnackBar.error('Failed to submit rating');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  @override
+  void onClose() {
+    commentController.dispose();
+    super.onClose();
   }
 }

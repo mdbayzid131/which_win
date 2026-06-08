@@ -1,67 +1,76 @@
 import 'package:get/get.dart';
+import 'package:which_win/core/services/api_checker.dart';
+import 'package:which_win/data/models/race_model.dart';
+import 'package:which_win/data/repositories/race_repository.dart';
 
 class HomeController extends GetxController {
-  final selectedCategory = 'All'.obs;
+  final RaceRepo _raceRepo = Get.find<RaceRepo>();
 
+  final selectedCategory = 'All'.obs;
   final categories = <String>['All', 'Tumu', 'Guvnell', 'Guvnell 2', 'Guvnell 3', 'Guvnell 4'].obs;
 
-  final races = [
-    {
-      'country': 'United Kingdom',
-      'flag': 'gb',
-      'race': 'Royal Ascot - Gold Cup',
-      'isLive': true,
-      'racesCount': '1',
-    },
-    {
-      'country': 'Turkey',
-      'flag': 'tr',
-      'race': 'Istanbul Veliefendi',
-      'isLive': false,
-      'racesCount': '2/3',
-    },
-    {
-      'country': 'United States',
-      'flag': 'us',
-      'race': 'Kentucky Derby',
-      'isLive': true,
-      'racesCount': '4/5',
-    },
-    {
-      'country': 'France',
-      'flag': 'fr',
-      'race': 'Prix de l\'Arc de Triomphe',
-      'isLive': false,
-      'racesCount': '1/2',
-    },
-    {
-      'country': 'Japan',
-      'flag': 'jp',
-      'race': 'Japan Cup',
-      'isLive': true,
-      'racesCount': '3/4',
-    },
-    {
-      'country': 'Australia',
-      'flag': 'au',
-      'race': 'Melbourne Cup',
-      'isLive': false,
-      'racesCount': '2/5',
-    },
-  ].obs;
+  final raceList = <RaceModel>[].obs;
+  final isLoading = false.obs;
+  final meta = Rxn<RaceMeta>();
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchRaces();
+  }
+
+  Future<void> fetchRaces({bool isRefresh = true}) async {
+    if (isRefresh) {
+      isLoading.value = true;
+    }
+
+    try {
+      final response = await _raceRepo.getRaces(
+        page: isRefresh ? 1 : (meta.value?.page ?? 0) + 1,
+        limit: 20,
+        status: selectedStatus.value == 'All' ? null : selectedStatus.value.toUpperCase(),
+        location: selectedCategory.value == 'All' ? null : selectedCategory.value,
+      );
+
+      ApiChecker.checkGetApi(response);
+
+      if (response.statusCode == 200) {
+        final raceResponse = RacesResponse.fromJson(response.data);
+        if (isRefresh) {
+          raceList.assignAll(raceResponse.data ?? []);
+        } else {
+          raceList.addAll(raceResponse.data ?? []);
+        }
+        meta.value = raceResponse.meta;
+      }
+    } catch (e) {
+      // Error handled by ApiChecker or repository
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
   final selectedStatus = 'All'.obs;
   final selectedRegion = 'All'.obs;
 
-  void setStatus(String status) => selectedStatus.value = status;
-  void setRegion(String region) => selectedRegion.value = region;
+  void setStatus(String status) {
+    selectedStatus.value = status;
+    fetchRaces();
+  }
+
+  void setRegion(String region) {
+    selectedRegion.value = region;
+    fetchRaces();
+  }
 
   void resetFilters() {
     selectedStatus.value = 'All';
     selectedRegion.value = 'All';
+    fetchRaces();
   }
 
   void selectCategory(String category) {
     selectedCategory.value = category;
+    fetchRaces();
   }
 }

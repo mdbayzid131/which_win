@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:which_win/app/routes/app_pages.dart';
+import 'package:which_win/core/bindings/initial_binding.dart';
 
 class WhichWinApp extends StatelessWidget {
   const WhichWinApp({super.key});
@@ -22,7 +23,9 @@ class WhichWinApp extends StatelessWidget {
             ),
             scaffoldBackgroundColor: const Color(0xffffffff),
           ),
+          themeMode: ThemeMode.light,
           initialRoute: AppRoutes.initial,
+          initialBinding: InitialBinding(),
           getPages: AppPages.routes,
         );
       },

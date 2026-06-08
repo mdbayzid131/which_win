@@ -128,11 +128,20 @@ class HomeView extends GetView<HomeController> {
             child: Obx(
               () => ListView.builder(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                itemCount: controller.races.length,
+                itemCount: controller.raceList.length,
                 itemBuilder: (context, index) {
-                  final race = controller.races[index];
+                  final raceModel = controller.raceList[index];
+                  // Convert model back to map for the original UI design
+                  final race = {
+                    'country': raceModel.country ?? 'Unknown',
+                    'flag': (raceModel.country ?? '').toLowerCase().contains('uk') ? 'gb' : 
+                            (raceModel.country ?? '').toLowerCase().contains('turkey') ? 'tr' : 'tr',
+                    'race': raceModel.name ?? 'Unnamed Race',
+                    'isLive': raceModel.status == 'LIVE',
+                    'racesCount': '${raceModel.entriesCount ?? 0}',
+                  };
                   return GestureDetector(
-                    onTap: () => Get.toNamed(AppRoutes.RACE_BULLETIN),
+                    onTap: () => Get.toNamed(AppRoutes.RACE_BULLETIN, arguments: raceModel),
                     child: _buildRaceCard(race),
                   );
                 },
@@ -432,13 +441,13 @@ class HomeView extends GetView<HomeController> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            racesCount,
-                            style: TextStyle(
-                              color: Colors.white60,
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
+                          racesCount,
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.bold,
                           ),
+                        ),
                           SizedBox(width: 4.w),
                           Icon(
                             Icons.arrow_forward_ios,
