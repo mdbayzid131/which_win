@@ -15,7 +15,8 @@ class ApiConstants {
 
   // Notification Endpoints
   static const String notifications = 'notification';
-  static const String markNotificationRead = 'notification/'; // append {id}/read
+  static const String markNotificationRead =
+      'notification/'; // append {id}/read
   static const String markAllNotificationsRead = 'notification/mark-all-read';
   static const String registerFcmToken = 'notification/register-token';
 
@@ -30,5 +31,3 @@ class ApiConstants {
   // Standard GetX Service refresh token
   static const String refreshToken = 'auth/refresh-token';
 }
-
-
