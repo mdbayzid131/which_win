@@ -22,37 +22,77 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Race Bulletin',
+              controller.race.value?.location ?? 'Race Bulletin',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Text(
-              '5 races · 2025-05-05',
+            Obx(() => Text(
+              '${controller.raceList.length} races · ${controller.race.value?.date?.split('T').first ?? ''}',
               style: TextStyle(
                 color: Colors.white38,
                 fontSize: 12.sp,
               ),
-            ),
+            )),
           ],
         ),
       ),
-      body: ListView.builder(
-        padding: EdgeInsets.all(16.w),
-        itemCount: 5,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () => Get.toNamed(AppRoutes.RACE_ANALYSIS),
-            child: _buildRaceItem(index + 1),
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4DB6AC)),
+            ),
           );
-        },
-      ),
+        }
+
+        if (controller.raceList.isEmpty) {
+          return Center(
+            child: Text(
+              'No races found for this meeting',
+              style: TextStyle(color: Colors.white38, fontSize: 16.sp),
+            ),
+          );
+        }
+
+        return ListView.builder(
+          padding: EdgeInsets.all(16.w),
+          itemCount: controller.raceList.length,
+          itemBuilder: (context, index) {
+            final raceModel = controller.raceList[index];
+            return GestureDetector(
+              onTap: () {
+                if (raceModel.status == 'FINISHED') {
+                  Get.toNamed(AppRoutes.RACE_ANALYSIS, arguments: raceModel);
+                } else {
+                  Get.toNamed(AppRoutes.RACE_DETAILS, arguments: raceModel);
+                }
+              },
+              child: _buildRaceItem(raceModel, index + 1),
+            );
+          },
+        );
+      }),
     );
   }
 
-  Widget _buildRaceItem(int raceNumber) {
+  Widget _buildRaceItem(RaceModel raceModel, int raceNumber) {
+    final trackType = raceModel.trackType ?? 'Turf';
+    final prize = raceModel.prize ?? '';
+    final entriesCount = raceModel.entriesCount ?? 0;
+    
+    String restMessage = '';
+    if (raceModel.predictionMessage != null && raceModel.predictionMessage!.isNotEmpty) {
+      final msg = raceModel.predictionMessage!;
+      if (msg.toLowerCase().startsWith('who beat whom:')) {
+        restMessage = msg.substring(14).trim();
+      } else {
+        restMessage = msg;
+      }
+    }
+
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
@@ -95,7 +135,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                       Row(
                         children: [
                           Text(
-                            'Race $raceNumber',
+                            raceModel.name ?? 'Race $raceNumber',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16.sp,
@@ -104,7 +144,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                           ),
                           SizedBox(width: 8.w),
                           Text(
-                            '13:45',
+                            raceModel.time ?? '',
                             style: TextStyle(
                               color: Colors.white38,
                               fontSize: 14.sp,
@@ -115,13 +155,13 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                       SizedBox(height: 8.h),
                       Row(
                         children: [
-                          _buildTag('Handicap', const Color(0xFF1E293B)),
+                          _buildTag(raceModel.status ?? 'UPCOMING', const Color(0xFF1E293B)),
                           SizedBox(width: 4.w),
-                          _buildTag('Turf', const Color(0xFF003D33),
+                          _buildTag(trackType, const Color(0xFF003D33),
                               textColor: const Color(0xFF4DB6AC)),
                           SizedBox(width: 8.w),
                           Text(
-                            '1200m',
+                            raceModel.distance ?? '',
                             style: TextStyle(
                               color: Colors.white38,
                               fontSize: 12.sp,
@@ -137,7 +177,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '₺850,000',
+                      prize,
                       style: TextStyle(
                         color: const Color(0xFF4DB6AC),
                         fontSize: 16.sp,
@@ -145,7 +185,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                       ),
                     ),
                     Text(
-                      '8 horses',
+                      '$entriesCount horses',
                       style: TextStyle(
                         color: Colors.white38,
                         fontSize: 12.sp,
@@ -156,27 +196,25 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
               ],
             ),
           ),
-          const Divider(color: Colors.white12, height: 1),
-          // Footer Text
-          Padding(
-            padding: EdgeInsets.all(12.w),
-            child: RichText(
-              text: TextSpan(
-                style: TextStyle(color: Colors.white38, fontSize: 13.sp),
-                children: [
-                  const TextSpan(text: 'Who beat whom: '),
-                  TextSpan(
-                    text: 'AKSI SEDA 3-2 VENOMAKSI SEDA 3-1 ',
-                    style: TextStyle(color: Colors.orange.withOpacity(0.8)),
-                  ),
-                  const TextSpan(
-                    text: 'GOLDEN ARROW',
-                    style: TextStyle(color: Colors.orange),
-                  ),
-                ],
+          if (restMessage.isNotEmpty) ...[
+            const Divider(color: Colors.white12, height: 1),
+            // Footer Text
+            Padding(
+              padding: EdgeInsets.all(12.w),
+              child: RichText(
+                text: TextSpan(
+                  style: TextStyle(color: Colors.white38, fontSize: 13.sp),
+                  children: [
+                    const TextSpan(text: 'Who beat whom: '),
+                    TextSpan(
+                      text: restMessage,
+                      style: const TextStyle(color: Colors.orange),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
+          ],
         ],
       ),
     );

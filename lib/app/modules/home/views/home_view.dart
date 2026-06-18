@@ -67,6 +67,7 @@ class HomeView extends GetView<HomeController> {
               ),
               child: TextField(
                 style: const TextStyle(color: Colors.white),
+                onChanged: controller.searchRaces,
                 decoration: InputDecoration(
                   hintText: 'Search country...',
                   hintStyle: TextStyle(color: Colors.white38, fontSize: 16.sp),
@@ -128,20 +129,19 @@ class HomeView extends GetView<HomeController> {
             child: Obx(
               () => ListView.builder(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                itemCount: controller.raceList.length,
+                itemCount: controller.meetingGroups.length,
                 itemBuilder: (context, index) {
-                  final raceModel = controller.raceList[index];
-                  // Convert model back to map for the original UI design
+                  final group = controller.meetingGroups[index];
+                  final representativeRace = group.races.first;
                   final race = {
-                    'country': raceModel.country ?? 'Unknown',
-                    'flag': (raceModel.country ?? '').toLowerCase().contains('uk') ? 'gb' : 
-                            (raceModel.country ?? '').toLowerCase().contains('turkey') ? 'tr' : 'tr',
-                    'race': raceModel.name ?? 'Unnamed Race',
-                    'isLive': raceModel.status == 'LIVE',
-                    'racesCount': '${raceModel.entriesCount ?? 0}',
+                    'country': group.country,
+                    'flag': _getFlagCode(group.country),
+                    'race': group.location,
+                    'isLive': group.isLive,
+                    'racesCount': '${group.racesCount} races',
                   };
                   return GestureDetector(
-                    onTap: () => Get.toNamed(AppRoutes.RACE_BULLETIN, arguments: raceModel),
+                    onTap: () => Get.toNamed(AppRoutes.RACE_BULLETIN, arguments: representativeRace),
                     child: _buildRaceCard(race),
                   );
                 },
@@ -810,5 +810,28 @@ class HomeView extends GetView<HomeController> {
         ),
       ],
     );
+  }
+
+  String _getFlagCode(String country) {
+    final c = country.toLowerCase();
+    if (c.contains('united kingdom') || c.contains('uk') || c.contains('great britain') || c.contains('gb')) {
+      return 'gb';
+    }
+    if (c.contains('france') || c.contains('fr')) {
+      return 'fr';
+    }
+    if (c.contains('turkey') || c.contains('tr') || c.contains('türkiye')) {
+      return 'tr';
+    }
+    if (c.contains('united states') || c.contains('usa') || c.contains('us')) {
+      return 'us';
+    }
+    if (c.contains('ireland') || c.contains('ie')) {
+      return 'ie';
+    }
+    if (c.contains('australia') || c.contains('au')) {
+      return 'au';
+    }
+    return 'tr';
   }
 }

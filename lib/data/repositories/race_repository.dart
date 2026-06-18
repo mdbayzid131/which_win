@@ -11,6 +11,7 @@ class RaceRepo {
     String? date,
     String? status,
     String? location,
+    String? search,
     int? page,
     int? limit,
   }) async {
@@ -18,6 +19,7 @@ class RaceRepo {
     if (date != null) query['date'] = date;
     if (status != null) query['status'] = status;
     if (location != null) query['location'] = location;
+    if (search != null) query['search'] = search;
     if (page != null) query['page'] = page;
     if (limit != null) query['limit'] = limit;
 

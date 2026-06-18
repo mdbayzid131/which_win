@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:which_win/data/models/race_details_model.dart';
+import 'package:which_win/data/models/race_model.dart';
+import 'package:which_win/app/routes/app_pages.dart';
 import '../controllers/race_details_controller.dart';
 
 class RaceDetailsView extends GetView<RaceDetailsController> {
@@ -38,31 +41,39 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             ),
           ),
         ),
-        title: Row(
-          children: [
-            Text(
-              'Race 2',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
+        title: Obx(() {
+          final details = controller.raceDetails.value;
+          final raceName = details?.name ?? controller.race.value?.name ?? 'Race Details';
+          final trackType = details?.trackType ?? controller.race.value?.trackType ?? 'Turf';
+          final distance = details?.distance ?? controller.race.value?.distance ?? '';
+          final time = details?.time ?? controller.race.value?.time ?? '';
+
+          return Row(
+            children: [
+              Text(
+                raceName,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            SizedBox(width: 8.w),
-            _buildHeaderTag('Condition', const Color(0xFF1E293B)),
-            SizedBox(width: 4.w),
-            _buildHeaderTag(
-              'Sand',
-              const Color(0xFF003D33),
-              textColor: const Color(0xFF4DB6AC),
-            ),
-            SizedBox(width: 8.w),
-            Text(
-              '1600m · 14:20',
-              style: TextStyle(color: Colors.white38, fontSize: 12.sp),
-            ),
-          ],
-        ),
+              SizedBox(width: 8.w),
+              _buildHeaderTag(details?.status ?? controller.race.value?.status ?? 'UPCOMING', const Color(0xFF1E293B)),
+              SizedBox(width: 4.w),
+              _buildHeaderTag(
+                trackType,
+                const Color(0xFF003D33),
+                textColor: const Color(0xFF4DB6AC),
+              ),
+              SizedBox(width: 8.w),
+              Text(
+                '$distance · $time',
+                style: TextStyle(color: Colors.white38, fontSize: 12.sp),
+              ),
+            ],
+          );
+        }),
       ),
       body: Column(
         children: [
@@ -101,32 +112,50 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           // Tab Content
           Expanded(
             child: Obx(() {
+              if (controller.isLoading.value) {
+                return const Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4DB6AC)),
+                  ),
+                );
+              }
+
+              final details = controller.raceDetails.value;
+              if (details == null) {
+                return const Center(
+                  child: Text(
+                    'Failed to load race details',
+                    style: TextStyle(color: Colors.white38),
+                  ),
+                );
+              }
+
               if (controller.selectedTab.value == 0) {
+                final entries = details.entries ?? [];
+                if (entries.isEmpty) {
+                  return const Center(
+                    child: Text('No horses registered', style: TextStyle(color: Colors.white38)),
+                  );
+                }
                 return ListView.builder(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  itemCount: 5,
+                  itemCount: entries.length,
                   itemBuilder: (context, index) {
-                    final horseNames = [
-                      'AKSI SEDA',
-                      'VENOM',
-                      'GOLDEN ARROW',
-                      'NIGHT STORM',
-                      'SWIFT SULTAN',
-                    ];
-                    final scores = [95, 88, 76, 71, 65];
-                    final colors = [
-                      const Color(0xFF2E7D32),
-                      const Color(0xFF2E7D32),
-                      Colors.orange,
-                      Colors.orange,
-                      Colors.orange,
-                    ];
+                    final entry = entries[index];
+                    final score = entry.normalizedScore?.toInt() ?? 0;
+                    
+                    Color scoreColor = Colors.orange;
+                    if (score >= 70) {
+                      scoreColor = const Color(0xFF2E7D32);
+                    } else if (score < 50) {
+                      scoreColor = Colors.red;
+                    }
 
                     return _buildHorseCard(
+                      context,
                       index,
-                      horseNames[index],
-                      scores[index],
-                      colors[index],
+                      entry,
+                      scoreColor,
                     );
                   },
                 );
@@ -150,6 +179,12 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
   }
 
   Widget _buildAnalysisTab() {
+    final details = controller.raceDetails.value;
+    final entries = details?.entries ?? [];
+    final trackType = details?.trackType ?? 'Turf';
+    final distance = details?.distance ?? '';
+    final runnersCount = entries.length;
+
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
@@ -175,19 +210,19 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                 Row(
                   children: [
                     _buildAnalysisTag(
-                      'Track Bias: Turf',
+                      'Track Bias: $trackType',
                       const Color(0xFF1B5E20),
                       const Color(0xFF81C784),
                     ),
                     SizedBox(width: 8.w),
                     _buildAnalysisTag(
-                      'Dist: 1200m',
+                      'Dist: $distance',
                       const Color(0xFF0D47A1),
                       const Color(0xFF64B5F6),
                     ),
                     SizedBox(width: 8.w),
                     _buildAnalysisTag(
-                      'Field: 6 runners',
+                      'Field: $runnersCount runners',
                       const Color(0xFF4A148C),
                       const Color(0xFFBA68C8),
                     ),
@@ -199,48 +234,38 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           SizedBox(height: 20.h),
 
           // Analysis List
-          _buildAnalysisItem(
-            '1',
-            'AKSI SEDA',
-            0.82,
-            const Color(0xFFE53935),
-            const Color(0xFF4DB6AC),
-          ),
-          _buildAnalysisItem(
-            '2',
-            'VENOM',
-            0.71,
-            const Color(0xFF1E88E5),
-            const Color(0xFF4DB6AC),
-          ),
-          _buildAnalysisItem(
-            '3',
-            'GOLDEN ARROW',
-            0.58,
-            const Color(0xFF43A047),
-            const Color(0xFFFFB74D),
-          ),
-          _buildAnalysisItem(
-            '4',
-            'NIGHT STORM',
-            0.44,
-            const Color(0xFF8E24AA),
-            const Color(0xFFE57373),
-          ),
-          _buildAnalysisItem(
-            '5',
-            'SWIFT SULTAN',
-            0.35,
-            const Color(0xFFFB8C00),
-            const Color(0xFFE57373),
-          ),
-          _buildAnalysisItem(
-            '6',
-            'CRIMSON TIDE',
-            0.24,
-            const Color(0xFF00897B),
-            const Color(0xFFE57373),
-          ),
+          ...List.generate(entries.length, (index) {
+            final entry = entries[index];
+            final rank = entry.rank ?? (index + 1);
+            final name = entry.horse?.name ?? 'Unknown';
+            final probability = entry.winProb ?? 0.0;
+            final score = entry.normalizedScore?.toInt() ?? 0;
+
+            final rankColors = [
+              const Color(0xFFE53935),
+              const Color(0xFF1E88E5),
+              const Color(0xFF43A047),
+              const Color(0xFF8E24AA),
+              const Color(0xFFFB8C00),
+              const Color(0xFF00897B),
+            ];
+            final rankColor = rankColors[(rank - 1) % rankColors.length];
+
+            Color barColor = Colors.orange;
+            if (score >= 70) {
+              barColor = const Color(0xFF4DB6AC);
+            } else if (score < 50) {
+              barColor = const Color(0xFFE57373);
+            }
+
+            return _buildAnalysisItem(
+              '$rank',
+              name,
+              probability,
+              rankColor,
+              barColor,
+            );
+          }),
 
           SizedBox(height: 16.h),
           Text(
@@ -348,6 +373,21 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
   }
 
   Widget _buildStatisticsTab() {
+    final stats = controller.raceStats.value;
+    if (controller.isStatsLoading.value && stats == null) {
+      return const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4DB6AC)),
+        ),
+      );
+    }
+
+    if (stats == null) {
+      return const Center(
+        child: Text('No statistics available', style: TextStyle(color: Colors.white38)),
+      );
+    }
+
     return GridView.count(
       crossAxisCount: 2,
       padding: EdgeInsets.all(16.w),
@@ -355,41 +395,30 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       crossAxisSpacing: 12.w,
       childAspectRatio: 1.1,
       children: [
-        _buildStatCard('EARNINGS', [
-          _StatItem('₺500K', 0.9),
-          _StatItem('₺420K', 0.7),
-          _StatItem('₺285K', 0.5),
-        ]),
-        _buildStatCard('ORIGIN', [
-          _StatItem('Turkey 60%', 0.6),
-          _StatItem('UK 20%', 0.2),
-          _StatItem('IE 20%', 0.2),
-        ]),
-        _buildStatCard('DISTANCE', [
-          _StatItem('1200m: W3', 0.8),
-          _StatItem('1600m: W2', 0.5),
-          _StatItem('2000m: W1', 0.3),
-        ]),
-        _buildStatCard('TRACK', [
-          _StatItem('Turf: W4 L2', 0.7),
-          _StatItem('Sand: W1 L3', 0.4),
-        ]),
-        _buildStatCard('CITY', [
-          _StatItem('Istanbul 58%', 0.58),
-          _StatItem('Ankara 30%', 0.3),
-        ]),
-        _buildStatCard('JOCKEY', [
-          _StatItem('A.Can: 68%', 0.68),
-          _StatItem('M.Kaya: 45%', 0.45),
-        ]),
-        _buildStatCard('CO-RACES', [
-          _StatItem('VENOM 3-2', 0.6),
-          _StatItem('GOLDEN ARROW 3-1', 0.4),
-        ]),
-        _buildStatCard('BEST TIME', [
-          _StatItem('AKSI SEDA 1:12.45', 0.7),
-          _StatItem('VENOM 1:13.10', 0.5),
-        ]),
+        _buildStatCard('EARNINGS', (stats.earnings ?? []).map((e) {
+          return _StatItem('${e.horseName}: ${e.amount}', (e.percentage ?? 0) / 100.0);
+        }).toList()),
+        _buildStatCard('ORIGIN', (stats.origin ?? []).map((e) {
+          return _StatItem('${e.country} ${e.percentage}%', (e.percentage ?? 0) / 100.0);
+        }).toList()),
+        _buildStatCard('DISTANCE', (stats.distance ?? []).map((e) {
+          return _StatItem('${e.label}: ${e.detail}', (e.percentage ?? 0) / 100.0);
+        }).toList()),
+        _buildStatCard('TRACK', (stats.track ?? []).map((e) {
+          return _StatItem('${e.surface}: ${e.detail}', (e.percentage ?? 0) / 100.0);
+        }).toList()),
+        _buildStatCard('CITY', (stats.city ?? []).map((e) {
+          return _StatItem('${e.name} ${e.percentage}%', (e.percentage ?? 0) / 100.0);
+        }).toList()),
+        _buildStatCard('JOCKEY', (stats.jockey ?? []).map((e) {
+          return _StatItem('${e.name}: ${e.percentage}%', (e.percentage ?? 0) / 100.0);
+        }).toList()),
+        _buildStatCard('CO-RACES', (stats.coRaces ?? []).map((e) {
+          return _StatItem('${e.horseName} ${e.score}', (e.percentage ?? 0) / 100.0);
+        }).toList()),
+        _buildStatCard('BEST TIME', (stats.bestTime ?? []).map((e) {
+          return _StatItem('${e.horseName} ${e.time}', (e.percentage ?? 0) / 100.0);
+        }).toList()),
       ],
     );
   }
@@ -497,7 +526,23 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     });
   }
 
-  Widget _buildHorseCard(int index, String name, int score, Color scoreColor) {
+  Widget _buildHorseCard(BuildContext context, int index, RaceEntry entry, Color scoreColor) {
+    final horse = entry.horse;
+    final horseName = horse?.name ?? 'Unknown';
+    final score = entry.normalizedScore?.toInt() ?? 0;
+    final jockeyName = entry.jockeyName ?? 'Unknown Jockey';
+    final age = horse?.age != null ? '${horse!.age}yo' : '';
+    final color = horse?.color ?? '';
+    final weightText = entry.weight != null ? '${entry.weight}kg' : '';
+    final totalEarnings = horse?.totalEarnings ?? 0.0;
+    final formattedEarnings = _formatCurrency(totalEarnings);
+
+    // Form history
+    String formHistory = '';
+    if (horse?.results != null) {
+      formHistory = horse!.results!.take(6).map((r) => '${r.position ?? ''}').join('');
+    }
+
     return Obx(() {
       final isExpanded = controller.expandedIndex.value == index;
       return Container(
@@ -542,13 +587,13 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                         Container(
                           width: 20.w,
                           height: 20.w,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Colors.red,
                             shape: BoxShape.circle,
                           ),
                           alignment: Alignment.center,
                           child: Text(
-                            '${index + 1}',
+                            '${entry.rank ?? (index + 1)}',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 10.sp,
@@ -564,7 +609,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            name,
+                            horseName,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16.sp,
@@ -573,7 +618,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                           ),
                           SizedBox(height: 4.h),
                           Text(
-                            '5yo • Chestnut | Jockey: AHMET CAN | 50kg',
+                            '$age • $color | Jockey: $jockeyName | $weightText',
                             style: TextStyle(
                               color: Colors.white38,
                               fontSize: 11.sp,
@@ -587,7 +632,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          '₺500,000',
+                          formattedEarnings,
                           style: TextStyle(
                             color: const Color(0xFF4DB6AC),
                             fontSize: 16.sp,
@@ -597,7 +642,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                         Row(
                           children: [
                             Text(
-                              '323211',
+                              formHistory,
                               style: TextStyle(
                                 color: Colors.white24,
                                 fontSize: 10.sp,
@@ -629,14 +674,14 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                       children: [
                         Expanded(
                           child: _buildDetailSection('PEDIGREE', [
-                            'Sire: AMERICAN PHAROAH',
-                            'Dam: THUNDER ROSE',
+                            'Sire: ${horse?.sireName ?? 'N/A'}',
+                            'Dam: ${horse?.damName ?? 'N/A'}',
                           ]),
                         ),
                         Expanded(
                           child: _buildDetailSection('TEAM', [
-                            'Owner: Star Stables',
-                            'Trainer: Mike Johnson',
+                            'Owner: ${horse?.owner ?? 'N/A'}',
+                            'Trainer: ${horse?.trainer ?? 'N/A'}',
                           ]),
                         ),
                       ],
@@ -652,17 +697,22 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                                 fontSize: 12.sp,
                               ),
                               children: [
-                                TextSpan(
+                                const TextSpan(
                                   text: 'PERFORMANCE: ',
                                   style: TextStyle(color: Colors.white38),
                                 ),
-                                TextSpan(text: 'Best: 1:13.55 Kentucky'),
+                                TextSpan(text: 'Best: ${horse?.bestTime ?? 'N/A'} ${horse?.bestTimeLocation ?? ''}'),
                               ],
                             ),
                           ),
                         ),
                         GestureDetector(
-                          onTap: () => _showHorseDetails(name),
+                          onTap: () {
+                            if (horse?.id != null) {
+                              controller.fetchHorseProfile(horse!.id!);
+                              _showHorseDetails(context, horseName, entry.horsePower ?? 94);
+                            }
+                          },
                           child: Container(
                             padding: EdgeInsets.symmetric(
                               horizontal: 16.w,
@@ -694,179 +744,246 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     });
   }
 
-  void _showHorseDetails(String name) {
+  void _showHorseDetails(BuildContext context, String horseName, int currentHorsePower) {
     Get.bottomSheet(
-      Container(
-        height: Get.height * 0.85,
-        decoration: BoxDecoration(
-          color: Colors.black,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-          border: Border.all(color: Colors.white12),
-        ),
-        padding: EdgeInsets.all(20.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      '5yo Chestnut · TR',
-                      style: TextStyle(color: Colors.white38, fontSize: 14.sp),
-                    ),
-                  ],
-                ),
-                IconButton(
-                  icon: Icon(Icons.close, color: Colors.white38, size: 24.sp),
-                  onPressed: () => Get.back(),
-                ),
-              ],
+      Obx(() {
+        if (controller.isHorseLoading.value) {
+          return Container(
+            height: Get.height * 0.85,
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+              border: Border.all(color: Colors.white12),
             ),
-            SizedBox(height: 20.h),
-
-            // Stats Bar
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(vertical: 12.h),
-              decoration: BoxDecoration(
-                color: const Color(0xFF00241F),
-                borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(color: const Color(0xFF004D40)),
-              ),
-              child: Center(
-                child: Text(
-                  'Stats: 15% Win | 38% Top 3 | 6.2 Avg',
-                  style: TextStyle(
-                    color: const Color(0xFF4DB6AC),
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+            child: const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4DB6AC)),
               ),
             ),
-            SizedBox(height: 20.h),
+          );
+        }
 
-            // Info Grid
-            Row(
-              children: [
-                Expanded(child: _buildInfoBox('HP Score', '94')),
-                SizedBox(width: 12.w),
-                Expanded(child: _buildInfoBox('Earnings', '₺500,000')),
-              ],
+        final horse = controller.horseDetails.value;
+        if (horse == null) {
+          return Container(
+            height: Get.height * 0.85,
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+              border: Border.all(color: Colors.white12),
             ),
-            SizedBox(height: 12.h),
-            Row(
-              children: [
-                Expanded(child: _buildInfoBox('Best Time', '1.12.45 Istanbul')),
-                SizedBox(width: 12.w),
-                Expanded(child: _buildInfoBox('Last 6', '323211')),
-              ],
-            ),
-            SizedBox(height: 20.h),
-
-            // Details
-            _buildPopupSection('PEDIGREE', 'Sire: STORM CAT · Dam: REGAL LADY'),
-            SizedBox(height: 16.h),
-            _buildPopupSection(
-              'TEAM',
-              'Owner: Ali Yılmaz · Trainer: Mehmet Demir',
-            ),
-            SizedBox(height: 20.h),
-
-            // Race History
-            Text(
-              'RACE HISTORY (LAST 6)',
-              style: TextStyle(
-                color: Colors.white38,
-                fontSize: 12.sp,
-                fontWeight: FontWeight.bold,
+            child: const Center(
+              child: Text(
+                'Failed to load horse career profile',
+                style: TextStyle(color: Colors.white38),
               ),
             ),
-            SizedBox(height: 12.h),
-            Expanded(
-              child: ListView(
+          );
+        }
+
+        // Stats calculations
+        final wins = horse.wins ?? 0;
+        final seconds = horse.seconds ?? 0;
+        final thirds = horse.thirds ?? 0;
+        final totalRaces = horse.totalRaces ?? 0;
+
+        final winRate = totalRaces > 0 ? ((wins / totalRaces) * 100).toStringAsFixed(0) : '0';
+        final top3Rate = totalRaces > 0 ? (((wins + seconds + thirds) / totalRaces) * 100).toStringAsFixed(0) : '0';
+
+        // Avg Position calculation
+        final results = horse.results ?? [];
+        double avgPosition = 0.0;
+        if (results.isNotEmpty) {
+          final sum = results.fold<int>(0, (previous, result) => previous + (result.position ?? 0));
+          avgPosition = sum / results.length;
+        }
+        final avgPosText = results.isNotEmpty ? avgPosition.toStringAsFixed(1) : '0.0';
+
+        // HP Score from current race parameter or fallback
+        final hpScore = currentHorsePower;
+
+        // Earnings format
+        final totalEarnings = horse.totalEarnings ?? 0.0;
+        final String earningsText = _formatCurrency(totalEarnings);
+
+        // Best Time
+        final bestTimeText = '${horse.bestTime ?? ''} ${horse.bestTimeLocation ?? ''}';
+
+        // Last 6 form
+        final last6Form = results.take(6).map((r) => '${r.position ?? ''}').join('');
+
+        return Container(
+          height: Get.height * 0.85,
+          decoration: BoxDecoration(
+            color: Colors.black,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+            border: Border.all(color: Colors.white12),
+          ),
+          padding: EdgeInsets.all(20.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildHistoryItem(
-                    '3',
-                    'Race 6',
-                    '1200m · Turf',
-                    Colors.orange,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        horse.name ?? horseName,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        '${horse.age ?? 0}yo ${horse.color ?? ''} · ${horse.country ?? ''}',
+                        style: TextStyle(color: Colors.white38, fontSize: 14.sp),
+                      ),
+                    ],
                   ),
-                  _buildHistoryItem(
-                    '2',
-                    'Race 5',
-                    '1200m · Turf',
-                    const Color(0xFF2E7D32),
-                  ),
-                  _buildHistoryItem(
-                    '3',
-                    'Race 4',
-                    '1200m · Turf',
-                    Colors.orange,
-                  ),
-                  _buildHistoryItem(
-                    '2',
-                    'Race 3',
-                    '1200m · Turf',
-                    const Color(0xFF2E7D32),
-                  ),
-                  _buildHistoryItem(
-                    '1',
-                    'Race 2',
-                    '1200m · Turf',
-                    const Color(0xFF1B5E20),
-                  ),
-                  _buildHistoryItem(
-                    '1',
-                    'Race 1',
-                    '1200m · Turf',
-                    const Color(0xFF1B5E20),
+                  IconButton(
+                    icon: Icon(Icons.close, color: Colors.white38, size: 24.sp),
+                    onPressed: () => Get.back(),
                   ),
                 ],
               ),
-            ),
+              SizedBox(height: 20.h),
 
-            // Bottom Close Button
-            SizedBox(height: 16.h),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => Get.back(),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1E293B),
-                  padding: EdgeInsets.symmetric(vertical: 16.h),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
+              // Stats Bar
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 12.h),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF00241F),
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(color: const Color(0xFF004D40)),
                 ),
-                child: Text(
-                  'Close',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
+                child: Center(
+                  child: Text(
+                    'Stats: $winRate% Win | $top3Rate% Top 3 | $avgPosText Avg',
+                    style: TextStyle(
+                      color: const Color(0xFF4DB6AC),
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
+              SizedBox(height: 20.h),
+
+              // Info Grid
+              Row(
+                children: [
+                  Expanded(child: _buildInfoBox('HP Score', '$hpScore')),
+                  SizedBox(width: 12.w),
+                  Expanded(child: _buildInfoBox('Earnings', earningsText)),
+                ],
+              ),
+              SizedBox(height: 12.h),
+              Row(
+                children: [
+                  Expanded(child: _buildInfoBox('Best Time', bestTimeText.trim().isEmpty ? 'N/A' : bestTimeText)),
+                  SizedBox(width: 12.w),
+                  Expanded(child: _buildInfoBox('Last 6', last6Form.isEmpty ? 'N/A' : last6Form)),
+                ],
+              ),
+              SizedBox(height: 20.h),
+
+              // Details
+              _buildPopupSection('PEDIGREE', 'Sire: ${horse.sireName ?? 'N/A'} · Dam: ${horse.damName ?? 'N/A'}'),
+              SizedBox(height: 16.h),
+              _buildPopupSection(
+                'TEAM',
+                'Owner: ${horse.owner ?? 'N/A'} · Trainer: ${horse.trainer ?? 'N/A'}',
+              ),
+              SizedBox(height: 20.h),
+
+              // Race History
+              Text(
+                'RACE HISTORY (LAST 6)',
+                style: TextStyle(
+                  color: Colors.white38,
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 12.h),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: results.length,
+                  itemBuilder: (context, idx) {
+                    final run = results[idx];
+                    final pos = run.position ?? 0;
+                    
+                    Color badgeColor = Colors.grey;
+                    if (pos == 1) {
+                      badgeColor = const Color(0xFF1B5E20);
+                    } else if (pos == 2) {
+                      badgeColor = const Color(0xFF2E7D32);
+                    } else if (pos == 3) {
+                      badgeColor = Colors.orange;
+                    }
+
+                    return _buildHistoryItem(
+                      '$pos',
+                      run.race?.name ?? 'Race ${idx + 1}',
+                      '${run.race?.distance ?? ''} · ${run.race?.trackType ?? ''}',
+                      badgeColor,
+                    );
+                  },
+                ),
+              ),
+
+              // Bottom Close Button
+              SizedBox(height: 16.h),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Get.back(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1E293B),
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                  ),
+                  child: Text(
+                    'Close',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }),
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
     );
+  }
+
+  String _formatCurrency(double amount) {
+    final s = amount.toInt().toString();
+    if (s.length > 3) {
+      final buffer = StringBuffer();
+      int count = 0;
+      for (int i = s.length - 1; i >= 0; i--) {
+        buffer.write(s[i]);
+        count++;
+        if (count % 3 == 0 && i != 0) {
+          buffer.write(',');
+        }
+      }
+      return '₺${buffer.toString().split('').reversed.join('')}';
+    }
+    return '₺$s';
   }
 
   Widget _buildInfoBox(String title, String value) {

@@ -8,7 +8,7 @@ class RaceBulletinController extends GetxController {
   final RaceRepo _raceRepo = Get.find<RaceRepo>();
 
   final race = Rxn<RaceModel>();
-  final raceDetails = Rxn<RaceDetailsData>();
+  final raceList = <RaceModel>[].obs;
   final isLoading = false.obs;
 
   @override
@@ -16,21 +16,25 @@ class RaceBulletinController extends GetxController {
     super.onInit();
     if (Get.arguments is RaceModel) {
       race.value = Get.arguments;
-      fetchRaceDetails();
+      fetchRaces();
     }
   }
 
-  Future<void> fetchRaceDetails() async {
-    if (race.value?.id == null) return;
+  Future<void> fetchRaces() async {
+    if (race.value == null) return;
 
     isLoading.value = true;
     try {
-      final response = await _raceRepo.getRaceDetails(race.value!.id!);
+      final dateStr = race.value?.date?.split('T').first;
+      final response = await _raceRepo.getRaces(
+        date: dateStr,
+        location: race.value?.location,
+      );
       ApiChecker.checkGetApi(response);
 
       if (response.statusCode == 200) {
-        final raceDetailsResponse = RaceDetailsResponse.fromJson(response.data);
-        raceDetails.value = raceDetailsResponse.data;
+        final raceResponse = RacesResponse.fromJson(response.data);
+        raceList.assignAll(raceResponse.data ?? []);
       }
     } catch (e) {
       // Error handled by ApiChecker

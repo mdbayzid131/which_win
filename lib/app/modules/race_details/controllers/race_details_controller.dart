@@ -79,4 +79,25 @@ class RaceDetailsController extends GetxController {
       expandedIndex.value = index;
     }
   }
+
+  final horseDetails = Rxn<HorseModel>();
+  final isHorseLoading = false.obs;
+
+  Future<void> fetchHorseProfile(String id) async {
+    isHorseLoading.value = true;
+    horseDetails.value = null;
+    try {
+      final response = await _raceRepo.getHorseProfile(id);
+      ApiChecker.checkGetApi(response);
+
+      if (response.statusCode == 200) {
+        final horseDetailsResponse = HorseDetailsResponse.fromJson(response.data);
+        horseDetails.value = horseDetailsResponse.data;
+      }
+    } catch (e) {
+      // Handled
+    } finally {
+      isHorseLoading.value = false;
+    }
+  }
 }
