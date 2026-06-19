@@ -29,9 +29,23 @@ class SubscriptionView extends GetView<SubscriptionController> {
         leadingWidth: 80.w,
       ),
       body: Obx(() {
-        return controller.plans.isNotEmpty
-            ? _buildSubscriptionWorkflow()
-            : _buildNoPlanFound();
+        if (controller.plans.isEmpty) {
+          return _buildNoPlanFound();
+        }
+        return Stack(
+          children: [
+            _buildSubscriptionWorkflow(),
+            if (controller.isLoading.value)
+              Container(
+                color: Colors.black54,
+                child: const Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4DB6AC)),
+                  ),
+                ),
+              ),
+          ],
+        );
       }),
     );
   }
@@ -213,7 +227,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
               ),
               SizedBox(height: 20.h),
               Text(
-                '${plan.currency ?? 'BDT'} ${plan.price ?? 0}',
+                controller.getPlanPriceString(plan, index),
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 22.sp,
