@@ -20,17 +20,67 @@ class MeetingGroup {
   int get racesCount => races.length;
 }
 
+class MeetingModel {
+  final String country;
+  final String location;
+  final int racesCount;
+  final bool isLive;
+
+  MeetingModel({
+    required this.country,
+    required this.location,
+    required this.racesCount,
+    required this.isLive,
+  });
+
+  factory MeetingModel.fromJson(Map<String, dynamic> json) {
+    return MeetingModel(
+      country: json['country'] ?? 'Unknown',
+      location: json['location'] ?? 'Unknown',
+      racesCount: json['racesCount'] ?? 0,
+      isLive: json['isLive'] ?? false,
+    );
+  }
+}
+
 class HomeController extends GetxController {
   final RaceRepo _raceRepo = Get.find<RaceRepo>();
   late final CalendarController _calendarController;
 
   final selectedCategory = 'All'.obs;
-  final categories = <String>['All', 'Tumu', 'Guvnell', 'Guvnell 2', 'Guvnell 3', 'Guvnell 4'].obs;
+  final categories = <String>['All'].obs;
 
   final raceList = <RaceModel>[].obs;
+  final meetingsList = <MeetingModel>[].obs;
   final isLoading = false.obs;
   final meta = Rxn<RaceMeta>();
   final searchQuery = ''.obs;
+
+  List<MeetingModel> get filteredMeetings {
+    if (selectedCategory.value == 'All') {
+      return meetingsList;
+    }
+    return meetingsList.where((m) => m.location == selectedCategory.value).toList();
+  }
+
+  DateTime get selectedDate => _calendarController.selectedDate.value;
+
+  String? _getCountryCodeFromRegion(String region) {
+    switch (region) {
+      case 'UK':
+        return 'GB';
+      case 'USA':
+        return 'USA';
+      case 'Europe':
+        return 'FR';
+      case 'Asia':
+        return 'HK';
+      case 'Australia':
+        return 'AUS';
+      default:
+        return null;
+    }
+  }
 
   List<MeetingGroup> get meetingGroups {
     final list = <MeetingGroup>[];
@@ -59,9 +109,39 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     _calendarController = Get.find<CalendarController>();
-    // Listen to calendar date changes and fetch races
-    ever(_calendarController.selectedDate, (_) => fetchRaces(isRefresh: true));
+    // Listen to calendar date changes and fetch locations & races
+    ever(_calendarController.selectedDate, (_) {
+      selectedCategory.value = 'All';
+      fetchLocations();
+      fetchRaces(isRefresh: true);
+    });
+    fetchLocations();
     fetchRaces();
+  }
+
+  Future<void> fetchLocations() async {
+    try {
+      final dateStr = DateFormat('yyyy-MM-dd').format(_calendarController.selectedDate.value);
+      final countryCode = _getCountryCodeFromRegion(selectedRegion.value);
+      final response = await _raceRepo.getRaceLocations(
+        date: dateStr,
+        status: selectedStatus.value == 'All' ? null : selectedStatus.value.toUpperCase(),
+        search: searchQuery.value.trim().isEmpty ? null : searchQuery.value.trim(),
+        country: countryCode,
+      );
+      ApiChecker.checkGetApi(response);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> fetchedData = response.data['data'] ?? [];
+        final parsedMeetings = fetchedData.map((e) => MeetingModel.fromJson(e)).toList();
+        meetingsList.assignAll(parsedMeetings);
+        
+        final uniqueLocations = parsedMeetings.map((m) => m.location).toList();
+        categories.assignAll(['All', ...uniqueLocations]);
+      }
+    } catch (e) {
+      // Error handled by ApiChecker
+    }
   }
 
   Future<void> fetchRaces({bool isRefresh = true}) async {
@@ -71,6 +151,7 @@ class HomeController extends GetxController {
 
     try {
       final dateStr = DateFormat('yyyy-MM-dd').format(_calendarController.selectedDate.value);
+      final countryCode = _getCountryCodeFromRegion(selectedRegion.value);
       final response = await _raceRepo.getRaces(
         page: isRefresh ? 1 : (meta.value?.page ?? 0) + 1,
         limit: 20,
@@ -78,6 +159,7 @@ class HomeController extends GetxController {
         location: selectedCategory.value == 'All' ? null : selectedCategory.value,
         date: dateStr,
         search: searchQuery.value.trim().isEmpty ? null : searchQuery.value.trim(),
+        country: countryCode,
       );
 
       ApiChecker.checkGetApi(response);
@@ -103,17 +185,20 @@ class HomeController extends GetxController {
 
   void setStatus(String status) {
     selectedStatus.value = status;
+    fetchLocations();
     fetchRaces();
   }
 
   void setRegion(String region) {
     selectedRegion.value = region;
+    fetchLocations();
     fetchRaces();
   }
 
   void resetFilters() {
     selectedStatus.value = 'All';
     selectedRegion.value = 'All';
+    fetchLocations();
     fetchRaces();
   }
 
@@ -124,6 +209,7 @@ class HomeController extends GetxController {
 
   void searchRaces(String query) {
     searchQuery.value = query;
+    fetchLocations();
     fetchRaces();
   }
 }

@@ -129,19 +129,26 @@ class HomeView extends GetView<HomeController> {
             child: Obx(
               () => ListView.builder(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                itemCount: controller.meetingGroups.length,
+                itemCount: controller.filteredMeetings.length,
                 itemBuilder: (context, index) {
-                  final group = controller.meetingGroups[index];
-                  final representativeRace = group.races.first;
+                  final meeting = controller.filteredMeetings[index];
                   final race = {
-                    'country': group.country,
-                    'flag': _getFlagCode(group.country),
-                    'race': group.location,
-                    'isLive': group.isLive,
-                    'racesCount': '${group.racesCount} races',
+                    'country': meeting.country,
+                    'flag': _getFlagCode(meeting.country),
+                    'race': meeting.location,
+                    'isLive': meeting.isLive,
+                    'racesCount': '${meeting.racesCount} races',
                   };
+                  final representativeRace = RaceModel(
+                    location: meeting.location,
+                    country: meeting.country,
+                    date: DateFormat('yyyy-MM-dd').format(controller.selectedDate),
+                  );
                   return GestureDetector(
-                    onTap: () => Get.toNamed(AppRoutes.RACE_BULLETIN, arguments: representativeRace),
+                    onTap: () => Get.toNamed(
+                      AppRoutes.RACE_BULLETIN,
+                      arguments: representativeRace,
+                    ),
                     child: _buildRaceCard(race),
                   );
                 },

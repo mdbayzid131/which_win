@@ -12,6 +12,7 @@ class RaceRepo {
     String? status,
     String? location,
     String? search,
+    String? country,
     int? page,
     int? limit,
   }) async {
@@ -20,6 +21,7 @@ class RaceRepo {
     if (status != null) query['status'] = status;
     if (location != null) query['location'] = location;
     if (search != null) query['search'] = search;
+    if (country != null) query['country'] = country;
     if (page != null) query['page'] = page;
     if (limit != null) query['limit'] = limit;
 
@@ -36,6 +38,21 @@ class RaceRepo {
     final query = <String, dynamic>{};
     if (month != null) query['month'] = month;
     return await apiClient.getData(ApiConstants.getRaceDates, query: query);
+  }
+
+  /// ===================== GET RACE LOCATIONS =====================
+  Future<dio.Response> getRaceLocations({
+    String? date,
+    String? status,
+    String? search,
+    String? country,
+  }) async {
+    final query = <String, dynamic>{};
+    if (date != null) query['date'] = date;
+    if (status != null) query['status'] = status;
+    if (search != null) query['search'] = search;
+    if (country != null) query['country'] = country;
+    return await apiClient.getData(ApiConstants.getRaceLocations, query: query);
   }
 
   /// ===================== GET RACE STATISTICS =====================

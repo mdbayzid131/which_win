@@ -744,7 +744,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     });
   }
 
-  void _showHorseDetails(BuildContext context, String horseName, int currentHorsePower) {
+  void _showHorseDetails(BuildContext context, String horseName, num? currentHorsePower) {
     Get.bottomSheet(
       Obx(() {
         if (controller.isHorseLoading.value) {
@@ -800,7 +800,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         final avgPosText = results.isNotEmpty ? avgPosition.toStringAsFixed(1) : '0.0';
 
         // HP Score from current race parameter or fallback
-        final hpScore = currentHorsePower;
+        final String hpScoreText = currentHorsePower != null 
+            ? (currentHorsePower is double ? currentHorsePower.toStringAsFixed(1) : '$currentHorsePower')
+            : 'N/A';
 
         // Earnings format
         final totalEarnings = horse.totalEarnings ?? 0.0;
@@ -877,7 +879,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               // Info Grid
               Row(
                 children: [
-                  Expanded(child: _buildInfoBox('HP Score', '$hpScore')),
+                  Expanded(child: _buildInfoBox('HP Score', hpScoreText)),
                   SizedBox(width: 12.w),
                   Expanded(child: _buildInfoBox('Earnings', earningsText)),
                 ],

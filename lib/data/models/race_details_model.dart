@@ -85,8 +85,8 @@ class RaceEntry {
   final String? jockeyName;
   final double? weight;
   final int? draw;
-  final int? horsePower;
-  final int? jockeyPower;
+  final double? horsePower;
+  final double? jockeyPower;
   final double? normalizedScore;
   final int? rank;
   final String? category;
@@ -139,8 +139,8 @@ class RaceEntry {
       jockeyName: json['jockeyName'],
       weight: (json['weight'] as num?)?.toDouble(),
       draw: json['draw'],
-      horsePower: json['horsePower'],
-      jockeyPower: json['jockeyPower'],
+      horsePower: (json['horsePower'] as num?)?.toDouble(),
+      jockeyPower: (json['jockeyPower'] as num?)?.toDouble(),
       normalizedScore: (json['normalizedScore'] as num?)?.toDouble(),
       rank: json['rank'],
       category: json['category'],
