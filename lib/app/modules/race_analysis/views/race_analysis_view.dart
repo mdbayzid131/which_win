@@ -43,13 +43,13 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
         final hasTopHorse = entries.isNotEmpty;
         final hasSecondHorse = entries.length > 1;
 
-        final topHorseWinProb = hasTopHorse ? (entries[0].winProb ?? 0.0) : 0.0;
+        final topHorseScore = hasTopHorse ? (entries[0].normalizedScore ?? 0.0) : 0.0;
         final topHorsePlaceProb = hasTopHorse ? (entries[0].placeProb ?? 0.0) : 0.0;
-        final secondHorseWinProb = hasSecondHorse ? (entries[1].winProb ?? 0.0) : 0.0;
+        final secondHorseScore = hasSecondHorse ? (entries[1].normalizedScore ?? 0.0) : 0.0;
 
-        final card1Percent = '${(topHorseWinProb * 100).toInt()}%';
-        final cardXPercent = '${(topHorsePlaceProb * 100).toInt()}%';
-        final card2Percent = '${(secondHorseWinProb * 100).toInt()}%';
+        final card1Percent = '${topHorseScore.toInt()}%';
+        final cardXPercent = '${(topHorsePlaceProb * 100 * 2.5).clamp(50, 95).toInt()}%';
+        final card2Percent = '${secondHorseScore.toInt()}%';
 
         final topHorseName = hasTopHorse ? (entries[0].horse?.name ?? 'Home') : 'Home';
         final secondHorseName = hasSecondHorse ? (entries[1].horse?.name ?? 'Away') : 'Away';

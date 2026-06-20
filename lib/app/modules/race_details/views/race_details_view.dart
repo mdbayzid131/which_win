@@ -261,7 +261,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             return _buildAnalysisItem(
               '$rank',
               name,
-              probability,
+              score / 100.0,
               rankColor,
               barColor,
             );
