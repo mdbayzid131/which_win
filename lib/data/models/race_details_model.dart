@@ -1,3 +1,5 @@
+import 'package:which_win/data/models/race_model.dart';
+
 class RaceDetailsResponse {
   final bool? success;
   final String? message;
@@ -167,6 +169,7 @@ class RaceResult {
   final double? earnings;
   final HorseModel? horse;
   final JockeyModel? jockey;
+  final RaceModel? race;
 
   RaceResult({
     this.id,
@@ -175,6 +178,7 @@ class RaceResult {
     this.earnings,
     this.horse,
     this.jockey,
+    this.race,
   });
 
   factory RaceResult.fromJson(Map<String, dynamic> json) {
@@ -185,6 +189,7 @@ class RaceResult {
       earnings: (json['earnings'] as num?)?.toDouble(),
       horse: json['horse'] != null ? HorseModel.fromJson(json['horse']) : null,
       jockey: json['jockey'] != null ? JockeyModel.fromJson(json['jockey']) : null,
+      race: json['race'] != null ? RaceModel.fromJson(json['race']) : null,
     );
   }
 }

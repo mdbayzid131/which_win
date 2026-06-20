@@ -23,6 +23,8 @@ class ApiConstants {
 
   // Subscription Endpoints
   static const String getSubscriptionPlans = 'subscription/plans';
+  static const String verifyGoogleSubscription = 'subscription/google/verify';
+  static const String verifyAppleSubscription = 'subscription/apple/verify';
 
   // Other Endpoints
   static const String contact = 'contact';

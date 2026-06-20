@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:which_win/app/routes/app_pages.dart';
+import 'package:which_win/data/models/race_model.dart';
 import '../controllers/race_bulletin_controller.dart';
 
 class RaceBulletinView extends GetView<RaceBulletinController> {
