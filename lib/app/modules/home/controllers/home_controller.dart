@@ -1,72 +1,92 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:which_win/app/modules/calendar/controllers/calendar_controller.dart';
 import 'package:which_win/core/services/api_checker.dart';
 import 'package:which_win/data/models/race_model.dart';
+import 'package:which_win/data/models/meeting_model.dart';
 import 'package:which_win/data/repositories/race_repository.dart';
-
-class MeetingGroup {
-  final String country;
-  final String location;
-  final List<RaceModel> races;
-
-  MeetingGroup({
-    required this.country,
-    required this.location,
-    required this.races,
-  });
-
-  bool get isLive => races.any((r) => r.status == 'LIVE');
-  int get racesCount => races.length;
-}
 
 class HomeController extends GetxController {
   final RaceRepo _raceRepo = Get.find<RaceRepo>();
   late final CalendarController _calendarController;
 
+  final scrollController = ScrollController();
+
   final selectedCategory = 'All'.obs;
-  final categories = <String>['All', 'Tumu', 'Guvnell', 'Guvnell 2', 'Guvnell 3', 'Guvnell 4'].obs;
+  final categories = <String>['All'].obs;
 
   final raceList = <RaceModel>[].obs;
   final isLoading = false.obs;
+  final isLoadMore = false.obs;
   final meta = Rxn<RaceMeta>();
   final searchQuery = ''.obs;
 
-  List<MeetingGroup> get meetingGroups {
-    final list = <MeetingGroup>[];
+  final meetingGroups = <MeetingModel>[].obs;
+
+  void _updateMeetingGroups() {
+    final Map<String, List<RaceModel>> groupedRaces = {};
+    final Map<String, String> locationToCountry = {};
+
     for (final race in raceList) {
-      final country = race.country ?? 'Unknown';
       final location = race.location ?? 'Unknown';
-      
-      MeetingGroup? existing;
-      for (final g in list) {
-        if (g.country == country && g.location == location) {
-          existing = g;
-          break;
-        }
-      }
-      
-      if (existing != null) {
-        existing.races.add(race);
-      } else {
-        list.add(MeetingGroup(country: country, location: location, races: [race]));
-      }
+      final country = race.country ?? 'Unknown';
+
+      groupedRaces.putIfAbsent(location, () => []).add(race);
+      locationToCountry[location] = country;
     }
-    return list;
+
+    final newList = groupedRaces.entries.map((entry) {
+      return MeetingModel(
+        location: entry.key,
+        country: locationToCountry[entry.key] ?? 'Unknown',
+        races: entry.value,
+      );
+    }).toList();
+
+    meetingGroups.assignAll(newList);
   }
 
   @override
   void onInit() {
     super.onInit();
     _calendarController = Get.find<CalendarController>();
-    // Listen to calendar date changes and fetch races
-    ever(_calendarController.selectedDate, (_) => fetchRaces(isRefresh: true));
+
+    // Add scroll listener for pagination
+    scrollController.addListener(() {
+      // Trigger load-more ONLY when user reaches the very bottom of the scroll view
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent - 10) {
+        final currentMeta = meta.value;
+        if (!isLoading.value &&
+            !isLoadMore.value &&
+            currentMeta != null &&
+            (currentMeta.page ?? 1) < (currentMeta.totalPage ?? 1)) {
+          isLoadMore.value = true; // Synchronously guard to prevent double-triggering
+          fetchRaces(isRefresh: false);
+        }
+      }
+    });
+
+    // Listen to calendar date changes, reset category filter, and fetch races
+    ever(_calendarController.selectedDate, (_) {
+      selectedCategory.value = 'All';
+      fetchRaces(isRefresh: true);
+    });
     fetchRaces();
+  }
+
+  @override
+  void onClose() {
+    scrollController.dispose();
+    super.onClose();
   }
 
   Future<void> fetchRaces({bool isRefresh = true}) async {
     if (isRefresh) {
       isLoading.value = true;
+    } else {
+      isLoadMore.value = true;
     }
 
     try {
@@ -90,11 +110,25 @@ class HomeController extends GetxController {
           raceList.addAll(raceResponse.data ?? []);
         }
         meta.value = raceResponse.meta;
+        _updateMeetingGroups();
+
+        // Dynamically update categories only when no category filter is active
+        if (selectedCategory.value == 'All') {
+          final uniqueLocations = raceList
+              .map((r) => r.location)
+              .whereType<String>()
+              .toSet()
+              .toList();
+          categories.assignAll(['All', ...uniqueLocations]);
+        }
+
+        // No auto-fetching pages; only triggered via scrollController at scroll limit
       }
     } catch (e) {
       // Error handled by ApiChecker or repository
     } finally {
       isLoading.value = false;
+      isLoadMore.value = false;
     }
   }
 
@@ -124,6 +158,7 @@ class HomeController extends GetxController {
 
   void searchRaces(String query) {
     searchQuery.value = query;
+    selectedCategory.value = 'All';
     fetchRaces();
   }
 }

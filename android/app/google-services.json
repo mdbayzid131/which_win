@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1019871056609",
+    "project_id": "whichwin-horse-race",
+    "storage_bucket": "whichwin-horse-race.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1019871056609:android:9caad7dec967cce7f7dda0",
+        "android_client_info": {
+          "package_name": "com.whichwin.horseracing"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEra9-7tpD0h-TwI5Zdbc4GU2XL3cUzxU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

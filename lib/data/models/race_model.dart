@@ -35,21 +35,25 @@ class RaceModel {
 
   factory RaceModel.fromJson(Map<String, dynamic> json) {
     return RaceModel(
-      id: json['id'],
-      externalId: json['externalId'],
-      name: json['name'],
-      date: json['date'],
-      time: json['time'],
-      location: json['location'],
-      country: json['country'],
-      trackType: json['trackType'],
-      distance: json['distance'],
-      prize: json['prize'],
-      status: json['status'],
-      tahmin1X: json['tahmin1X'],
-      predictionMessage: json['predictionMessage'],
-      riskRate: json['riskRate'],
-      entriesCount: json['_count']?['entries'],
+      id: json['id']?.toString(),
+      externalId: json['externalId']?.toString(),
+      name: json['name']?.toString(),
+      date: json['date']?.toString(),
+      time: json['time']?.toString(),
+      location: json['location']?.toString(),
+      country: json['country']?.toString(),
+      trackType: json['trackType']?.toString(),
+      distance: json['distance']?.toString(),
+      prize: json['prize']?.toString(),
+      status: json['status']?.toString(),
+      tahmin1X: json['tahmin1X']?.toString(),
+      predictionMessage: json['predictionMessage']?.toString(),
+      riskRate: json['riskRate'] != null
+          ? int.tryParse(json['riskRate'].toString())
+          : null,
+      entriesCount: json['_count'] != null && json['_count']['entries'] != null
+          ? int.tryParse(json['_count']['entries'].toString())
+          : null,
     );
   }
 

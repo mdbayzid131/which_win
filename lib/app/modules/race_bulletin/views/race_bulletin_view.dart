@@ -135,12 +135,16 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                     children: [
                       Row(
                         children: [
-                          Text(
-                            raceModel.name ?? 'Race $raceNumber',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.bold,
+                          Expanded(
+                            child: Text(
+                              raceModel.name ?? 'Race $raceNumber',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           SizedBox(width: 8.w),

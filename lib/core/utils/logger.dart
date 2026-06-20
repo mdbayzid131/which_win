@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
@@ -19,10 +20,10 @@ class AppLogger {
     debugPrint('│ ${options.method} ${options.uri}');
     debugPrint('│ Headers: ${_sanitizeHeaders(options.headers)}');
     if (options.queryParameters.isNotEmpty) {
-      debugPrint('│ Query: ${options.queryParameters}');
+      _printData('Query', options.queryParameters);
     }
     if (options.data != null) {
-      debugPrint('│ Body: ${options.data}');
+      _printData('Body', options.data);
     }
     debugPrint('└ ➡️➡️➡️➡️ REQUEST $_divider ➡️➡️➡️➡️');
     debugPrint('');
@@ -37,9 +38,7 @@ class AppLogger {
     debugPrint(
       '│ [ ${response.requestOptions.method} ${response.statusCode}] ${response.requestOptions.uri}',
     );
-    debugPrint(
-      '│ Data: ${_truncate(response.data?.toString(), showAll: true)}',
-    );
+    _printData('Data', response.data);
     debugPrint('└ ✅✅✅✅ RESPONSE $_divider ✅✅✅✅');
     debugPrint('');
   }
@@ -54,15 +53,43 @@ class AppLogger {
     debugPrint('│  ${e.requestOptions.method} : ${e.requestOptions.uri}');
     if (e.response != null) {
       debugPrint('│ Status: ${e.response?.statusCode}');
-      debugPrint(
-        '│ Data: ${_truncate(e.response?.data?.toString(), showAll: true)}',
-      );
+      _printData('Data', e.response?.data);
     }
     debugPrint('└ ❌❌❌❌ ERROR $_divider ❌❌❌❌ ');
     debugPrint('');
   }
 
   // ──────────────────── PRIVATE HELPERS ────────────────────
+
+  /// Pretty print JSON data (Maps, Lists, or JSON Strings)
+  static String _prettyJson(dynamic data) {
+    if (data == null) return 'null';
+    try {
+      if (data is String) {
+        final decoded = json.decode(data);
+        return const JsonEncoder.withIndent('  ').convert(decoded);
+      } else if (data is Map || data is List) {
+        return const JsonEncoder.withIndent('  ').convert(data);
+      }
+      return data.toString();
+    } catch (_) {
+      return data.toString();
+    }
+  }
+
+  /// Print data with multi-line prefix alignment
+  static void _printData(String label, dynamic data) {
+    final pretty = _prettyJson(data);
+    final lines = pretty.split('\n');
+    if (lines.length == 1) {
+      debugPrint('│ $label: ${lines.first}');
+    } else {
+      debugPrint('│ $label:');
+      for (final line in lines) {
+        debugPrint('│   $line');
+      }
+    }
+  }
 
   /// Remove Authorization header value for safe logging
   static Map<String, dynamic> _sanitizeHeaders(Map<String, dynamic> headers) {
@@ -71,19 +98,5 @@ class AppLogger {
       sanitized['Authorization'] = '***';
     }
     return sanitized;
-  }
-
-  /// Truncate long strings to keep logs readable
-  static String _truncate(
-    String? text, {
-    int maxLength = 500,
-    bool showAll = false,
-  }) {
-    if (text == null) return 'null';
-    if (showAll) {
-      return text;
-    }
-    if (text.length <= maxLength) return text;
-    return '${text.substring(0, maxLength)}... [truncated]';
   }
 }

@@ -124,28 +124,74 @@ class HomeView extends GetView<HomeController> {
             ),
           ),
           SizedBox(height: 16.h),
-          // List of Items
           Expanded(
             child: Obx(
-              () => ListView.builder(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                itemCount: controller.meetingGroups.length,
-                itemBuilder: (context, index) {
-                  final group = controller.meetingGroups[index];
-                  final representativeRace = group.races.first;
-                  final race = {
-                    'country': group.country,
-                    'flag': _getFlagCode(group.country),
-                    'race': group.location,
-                    'isLive': group.isLive,
-                    'racesCount': '${group.racesCount} races',
-                  };
-                  return GestureDetector(
-                    onTap: () => Get.toNamed(AppRoutes.RACE_BULLETIN, arguments: representativeRace),
-                    child: _buildRaceCard(race),
+              () {
+                if (controller.isLoading.value) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4DB6AC)),
+                    ),
                   );
-                },
-              ),
+                }
+
+                if (controller.meetingGroups.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          color: Colors.white24,
+                          size: 64.sp,
+                        ),
+                        SizedBox(height: 16.h),
+                        Text(
+                          'No race found',
+                          style: TextStyle(
+                            color: Colors.white38,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  controller: controller.scrollController,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  itemCount: controller.meetingGroups.length +
+                      (controller.isLoadMore.value ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index == controller.meetingGroups.length) {
+                      return const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4DB6AC)),
+                          ),
+                        ),
+                      );
+                    }
+                    final group = controller.meetingGroups[index];
+                    final representativeRace = group.races.first;
+                    final race = {
+                      'country': group.country,
+                      'flag': _getFlagCode(group.country),
+                      'race': group.location,
+                      'isLive': group.isLive,
+                      'racesCount': '${group.racesCount} races',
+                    };
+                    return GestureDetector(
+                      onTap: () => Get.toNamed(AppRoutes.RACE_BULLETIN, arguments: representativeRace),
+                      child: _buildRaceCard(race),
+                    );
+                  },
+                );
+              },
             ),
           ),
         ],

@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:which_win/firebase_options.dart';
 import 'package:which_win/core/utils/helpers.dart';
 import 'package:which_win/app/modules/notifications/controllers/notifications_controller.dart';
 
@@ -13,7 +15,7 @@ import 'package:which_win/app/modules/notifications/controllers/notifications_co
 /// 🔥 Background handler — must be a top-level function
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   Helpers.debug('📬 Background Message: ${message.messageId}');
 }
 
@@ -21,6 +23,8 @@ class FirebaseNotificationService {
   FirebaseNotificationService._();
 
   static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  static final FlutterLocalNotificationsPlugin _localNotifications =
+      FlutterLocalNotificationsPlugin();
 
   /// Callback for foreground messages
   static void Function(RemoteMessage)? onForegroundMessage;
@@ -33,6 +37,57 @@ class FirebaseNotificationService {
 
   /// Setup FCM listeners and background handlers (Does NOT request permission)
   static Future<void> setupInterceptors() async {
+    // 1. Initialize Flutter Local Notifications for Foreground Banners
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const DarwinInitializationSettings initializationSettingsDarwin =
+        DarwinInitializationSettings(
+          requestAlertPermission: false,
+          requestBadgePermission: false,
+          requestSoundPermission: false,
+        );
+
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsDarwin,
+        );
+
+    await _localNotifications.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: (NotificationResponse details) {
+        Helpers.info('Local notification tapped: ${details.payload}');
+      },
+    );
+
+    // Create high importance notification channel for Android
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'high_importance_channel',
+      'High Importance Notifications',
+      description: 'This channel is used for important notifications.',
+      importance: Importance.max,
+      playSound: true,
+      enableVibration: true,
+    );
+
+    if (Platform.isAndroid) {
+      await _localNotifications
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >()
+          ?.createNotificationChannel(channel);
+    }
+
+    // Enable foreground notification presentation options for iOS native banners
+    if (Platform.isIOS) {
+      await _messaging.setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+    }
+
     // Listen for token refresh
     _messaging.onTokenRefresh.listen((newToken) {
       Helpers.info('🔄 FCM Token refreshed: $newToken');
@@ -43,10 +98,40 @@ class FirebaseNotificationService {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       Helpers.info('📨 Foreground Message: ${message.notification?.title}');
 
+      // Show local notification banner only on Android (iOS uses native foreground presentation options)
+      final notification = message.notification;
+      final android = message.notification?.android;
+      if (notification != null && Platform.isAndroid) {
+        _localNotifications.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              channelDescription: channel.description,
+              icon: android?.smallIcon ?? '@mipmap/ic_launcher',
+              importance: Importance.max,
+              priority: Priority.high,
+              playSound: true,
+              enableVibration: true,
+            ),
+            iOS: const DarwinNotificationDetails(
+              presentAlert: true,
+              presentBadge: true,
+              presentSound: true,
+            ),
+          ),
+          payload: message.data.isNotEmpty ? message.data.toString() : null,
+        );
+      }
+
       // Sync and update the UI unread notification count
       if (Get.isRegistered<NotificationsController>()) {
-        // Get.find<NotificationsController>().fetchNotifications(isRefresh: true);
-        Helpers.info('🔄 NotificationsController found, but fetchNotifications is not implemented in the new project yet.');
+        Get.find<NotificationsController>().fetchNotifications(
+          isRefresh: false,
+        );
       }
 
       onForegroundMessage?.call(message);
