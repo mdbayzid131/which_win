@@ -31,6 +31,7 @@ class RaceDetailsData {
   final String? tahmin1X;
   final String? predictionMessage;
   final int? riskRate;
+  final bool? hasPredictions;
   final List<RaceEntry>? entries;
   final List<RaceResult>? results;
 
@@ -49,6 +50,7 @@ class RaceDetailsData {
     this.tahmin1X,
     this.predictionMessage,
     this.riskRate,
+    this.hasPredictions,
     this.entries,
     this.results,
   });
@@ -69,6 +71,7 @@ class RaceDetailsData {
       tahmin1X: json['tahmin1X'],
       predictionMessage: json['predictionMessage'],
       riskRate: json['riskRate'],
+      hasPredictions: json['hasPredictions'] as bool?,
       entries: json['entries'] != null
           ? List<RaceEntry>.from(json['entries'].map((x) => RaceEntry.fromJson(x)))
           : null,
