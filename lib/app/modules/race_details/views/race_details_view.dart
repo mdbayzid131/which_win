@@ -51,31 +51,44 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               details?.distance ?? controller.race.value?.distance ?? '';
           final time = details?.time ?? controller.race.value?.time ?? '';
 
-          return Row(
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 raceName,
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 18.sp,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.bold,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              SizedBox(width: 8.w),
-              _buildHeaderTag(
-                details?.status ?? controller.race.value?.status ?? 'UPCOMING',
-                const Color(0xFF1E293B),
-              ),
-              SizedBox(width: 4.w),
-              _buildHeaderTag(
-                trackType,
-                const Color(0xFF003D33),
-                textColor: const Color(0xFF4DB6AC),
-              ),
-              SizedBox(width: 8.w),
-              Text(
-                '$distance · $time',
-                style: TextStyle(color: Colors.white38, fontSize: 12.sp),
+              SizedBox(height: 4.h),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _buildHeaderTag(
+                      details?.status ??
+                          controller.race.value?.status ??
+                          'UPCOMING',
+                      const Color(0xFF1E293B),
+                    ),
+                    SizedBox(width: 4.w),
+                    _buildHeaderTag(
+                      trackType,
+                      const Color(0xFF003D33),
+                      textColor: const Color(0xFF4DB6AC),
+                    ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      '$distance · $time',
+                      style: TextStyle(color: Colors.white38, fontSize: 11.sp),
+                    ),
+                  ],
+                ),
               ),
             ],
           );
@@ -119,8 +132,14 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: isPremium
-                                ? [const Color(0xFF004D40), const Color(0xFF00695C)]
-                                : [const Color(0xFF1E1E1E), const Color(0xFF2A2A2A)],
+                                ? [
+                                    const Color(0xFF004D40),
+                                    const Color(0xFF00695C),
+                                  ]
+                                : [
+                                    const Color(0xFF1E1E1E),
+                                    const Color(0xFF2A2A2A),
+                                  ],
                           ),
                           borderRadius: BorderRadius.circular(8.r),
                           border: isPremium
@@ -132,14 +151,18 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                           children: [
                             Icon(
                               isPremium ? Icons.bar_chart : Icons.lock_outline,
-                              color: isPremium ? const Color(0xFF4DB6AC) : Colors.white38,
+                              color: isPremium
+                                  ? const Color(0xFF4DB6AC)
+                                  : Colors.white38,
                               size: 16.sp,
                             ),
                             SizedBox(width: 6.w),
                             Text(
                               'Rankings',
                               style: TextStyle(
-                                color: isPremium ? const Color(0xFF4DB6AC) : Colors.white38,
+                                color: isPremium
+                                    ? const Color(0xFF4DB6AC)
+                                    : Colors.white38,
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -198,7 +221,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                     final isPremium = controller.isPremium.value;
                     final score = isPremium
                         ? (entry.normalizedScore?.toInt() ?? 0)
-                        : (index == 0 ? (entry.normalizedScore?.toInt() ?? 0) : 0);
+                        : (index == 0
+                              ? (entry.normalizedScore?.toInt() ?? 0)
+                              : 0);
 
                     Color scoreColor = Colors.orange;
                     if (score >= 70) {
@@ -208,7 +233,12 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                     }
 
                     // Wrap cards after index 0 in a lock overlay for free users
-                    final card = _buildHorseCard(context, index, entry, scoreColor);
+                    final card = _buildHorseCard(
+                      context,
+                      index,
+                      entry,
+                      scoreColor,
+                    );
                     if (!isPremium && index > 0) {
                       return _buildLockedCard(context, card);
                     }
@@ -283,20 +313,20 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                   style: TextStyle(color: Colors.white38, fontSize: 13.sp),
                 ),
                 SizedBox(height: 12.h),
-                Row(
+                Wrap(
+                  spacing: 8.w,
+                  runSpacing: 8.h,
                   children: [
                     _buildAnalysisTag(
                       'Track Bias: $trackType',
                       const Color(0xFF1B5E20),
                       const Color(0xFF81C784),
                     ),
-                    SizedBox(width: 8.w),
                     _buildAnalysisTag(
                       'Dist: $distance',
                       const Color(0xFF0D47A1),
                       const Color(0xFF64B5F6),
                     ),
-                    SizedBox(width: 8.w),
                     _buildAnalysisTag(
                       'Field: $runnersCount runners',
                       const Color(0xFF4A148C),
@@ -413,15 +443,19 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                   ),
                 ),
               ),
-              SizedBox(width: 12.w),
-              Text(
-                name,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.bold,
+              Expanded(
+                child: Text(
+                  name,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              SizedBox(width: 12.w),
               const Spacer(),
               Text(
                 '${(probability * 100).toInt()}%',
@@ -807,6 +841,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                             ),
                           ),
                         Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
                               formHistory,
@@ -961,27 +996,33 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                     size: 22.sp,
                   ),
                   SizedBox(width: 10.w),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'AI Race Rankings',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'AI Race Rankings',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      Text(
-                        '${entries.length} runners · ${details.location ?? ''}',
-                        style: TextStyle(
-                          color: Colors.white38,
-                          fontSize: 12.sp,
+                        Text(
+                          '${entries.length} runners · ${details.location ?? ''}',
+                          style: TextStyle(
+                            color: Colors.white38,
+                            fontSize: 12.sp,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                  const Spacer(),
+                  SizedBox(width: 10.w),
                   GestureDetector(
                     onTap: () => Get.back(),
                     child: Icon(
@@ -1316,26 +1357,33 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        horse.name ?? horseName,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24.sp,
-                          fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          horse.name ?? horseName,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      Text(
-                        '${horse.age ?? 0}yo ${horse.color ?? ''} · ${horse.country ?? ''}',
-                        style: TextStyle(
-                          color: Colors.white38,
-                          fontSize: 14.sp,
+                        Text(
+                          '${horse.age ?? 0}yo ${horse.color ?? ''} · ${horse.country ?? ''}',
+                          style: TextStyle(
+                            color: Colors.white38,
+                            fontSize: 14.sp,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
+                  SizedBox(width: 10.w),
                   IconButton(
                     icon: Icon(Icons.close, color: Colors.white38, size: 24.sp),
                     onPressed: () => Get.back(),
@@ -1570,11 +1618,15 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                 ),
               ),
               SizedBox(width: 12.w),
-              Text(
-                title,
-                style: TextStyle(color: Colors.white, fontSize: 14.sp),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(color: Colors.white, fontSize: 14.sp),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              const Spacer(),
+              SizedBox(width: 8.w),
               Text(
                 subtitle,
                 style: TextStyle(color: Colors.white38, fontSize: 12.sp),
@@ -1644,10 +1696,14 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                     color: const Color(0xFFFFD700).withOpacity(0.25),
                     blurRadius: 20,
                     spreadRadius: 4,
-                  )
+                  ),
                 ],
               ),
-              child: Icon(Icons.lock_outline, color: Colors.black87, size: 34.sp),
+              child: Icon(
+                Icons.lock_outline,
+                color: Colors.black87,
+                size: 34.sp,
+              ),
             ),
             SizedBox(height: 20.h),
             Text(
@@ -1662,7 +1718,11 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             SizedBox(height: 10.h),
             Text(
               description,
-              style: TextStyle(color: Colors.white38, fontSize: 13.sp, height: 1.5),
+              style: TextStyle(
+                color: Colors.white38,
+                fontSize: 13.sp,
+                height: 1.5,
+              ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 28.h),
@@ -1680,7 +1740,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                       color: const Color(0xFFFFD700).withOpacity(0.3),
                       blurRadius: 16,
                       spreadRadius: 2,
-                    )
+                    ),
                   ],
                 ),
                 child: Text(
@@ -1707,9 +1767,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     return Stack(
       children: [
         // Blurred underlying card
-        IgnorePointer(
-          child: Opacity(opacity: 0.25, child: card),
-        ),
+        IgnorePointer(child: Opacity(opacity: 0.25, child: card)),
         // Lock overlay
         Positioned.fill(
           child: GestureDetector(
@@ -1719,14 +1777,19 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               decoration: BoxDecoration(
                 color: Colors.black.withOpacity(0.55),
                 borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: const Color(0xFFFFD700).withOpacity(0.3)),
+                border: Border.all(
+                  color: const Color(0xFFFFD700).withOpacity(0.3),
+                ),
               ),
               child: Center(
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.lock_outline,
-                        color: const Color(0xFFFFD700), size: 18.sp),
+                    Icon(
+                      Icons.lock_outline,
+                      color: const Color(0xFFFFD700),
+                      size: 18.sp,
+                    ),
                     SizedBox(width: 8.w),
                     Text(
                       'Premium Only',
@@ -1766,7 +1829,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               color: Colors.red.withOpacity(0.5),
               blurRadius: 8,
               spreadRadius: 1,
-            )
+            ),
           ],
         ),
         child: Row(
@@ -1775,7 +1838,10 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             Container(
               width: 6.w,
               height: 6.w,
-              decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
             ),
             SizedBox(width: 4.w),
             Text(
@@ -1809,15 +1875,19 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 40.w, height: 4.h,
+              width: 40.w,
+              height: 4.h,
               decoration: BoxDecoration(
                 color: Colors.white24,
                 borderRadius: BorderRadius.circular(2.r),
               ),
             ),
             SizedBox(height: 24.h),
-            Icon(Icons.workspace_premium_rounded,
-                color: const Color(0xFFFFD700), size: 48.sp),
+            Icon(
+              Icons.workspace_premium_rounded,
+              color: const Color(0xFFFFD700),
+              size: 48.sp,
+            ),
             SizedBox(height: 16.h),
             Text(
               'Unlock Premium',
@@ -1831,7 +1901,11 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             Text(
               'Get full access to AI rankings, win probabilities,\nrace statistics, and live score updates.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white54, fontSize: 13.sp, height: 1.6),
+              style: TextStyle(
+                color: Colors.white54,
+                fontSize: 13.sp,
+                height: 1.6,
+              ),
             ),
             SizedBox(height: 28.h),
             GestureDetector(

@@ -47,10 +47,14 @@ class HomeView extends GetView<HomeController> {
                 margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                 decoration: BoxDecoration(
-                  color: isLive ? Colors.red.withOpacity(0.15) : Colors.transparent,
+                  color: isLive
+                      ? Colors.red.withOpacity(0.15)
+                      : Colors.transparent,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
-                    color: isLive ? Colors.red.withOpacity(0.6) : Colors.transparent,
+                    color: isLive
+                        ? Colors.red.withOpacity(0.6)
+                        : Colors.transparent,
                   ),
                   boxShadow: isLive
                       ? [
@@ -58,7 +62,7 @@ class HomeView extends GetView<HomeController> {
                             color: Colors.red.withOpacity(0.35),
                             blurRadius: 10,
                             spreadRadius: 1,
-                          )
+                          ),
                         ]
                       : [],
                 ),
@@ -70,7 +74,18 @@ class HomeView extends GetView<HomeController> {
                       color: isLive ? Colors.red : Colors.white54,
                       size: 20.sp,
                     ),
-                    if (isLive) ...[SizedBox(width: 4.w), Text('LIVE', style: TextStyle(color: Colors.red, fontSize: 11.sp, fontWeight: FontWeight.bold, letterSpacing: 1))],
+                    if (isLive) ...[
+                      SizedBox(width: 4.w),
+                      Text(
+                        'LIVE',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -93,7 +108,8 @@ class HomeView extends GetView<HomeController> {
         children: [
           // ── LIVE Filter Banner ────────────────────────────────────────────
           Obx(() {
-            if (!controller.isLiveFilterActive.value) return const SizedBox.shrink();
+            if (!controller.isLiveFilterActive.value)
+              return const SizedBox.shrink();
             return Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
@@ -123,7 +139,11 @@ class HomeView extends GetView<HomeController> {
                         color: Colors.red,
                         shape: BoxShape.circle,
                         boxShadow: [
-                          BoxShadow(color: Colors.red.withOpacity(0.7), blurRadius: 6, spreadRadius: 1),
+                          BoxShadow(
+                            color: Colors.red.withOpacity(0.7),
+                            blurRadius: 6,
+                            spreadRadius: 1,
+                          ),
                         ],
                       ),
                     ),
@@ -141,9 +161,10 @@ class HomeView extends GetView<HomeController> {
                   const Spacer(),
                   GestureDetector(
                     onTap: controller.toggleLiveFilter,
-                    child: Text(
-                      'Show All',
-                      style: TextStyle(color: Colors.white38, fontSize: 12.sp),
+                    child: Icon(
+                      Icons.close,
+                      size: 20.sp,
+                      color: Colors.white70,
                     ),
                   ),
                 ],
@@ -220,68 +241,37 @@ class HomeView extends GetView<HomeController> {
           ),
           SizedBox(height: 16.h),
           Expanded(
-            child: Obx(
-              () {
-                final isLiveFilter = controller.isLiveFilterActive.value;
-                final meetings = controller.filteredMeetings;
-                final races = controller.raceList;
+            child: Obx(() {
+              final isLiveFilter = controller.isLiveFilterActive.value;
+              final meetings = controller.filteredMeetings;
+              final races = controller.raceList;
 
-                if (isLiveFilter) {
-                  if (races.isEmpty && !controller.isLoading.value) {
-                    return Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.settings_input_antenna,
-                            color: Colors.red.withOpacity(0.5),
-                            size: 48.sp,
-                          ),
-                          SizedBox(height: 16.h),
-                          Text(
-                            'No live races right now',
-                            style: TextStyle(color: Colors.white38, fontSize: 16.sp),
-                          ),
-                          SizedBox(height: 8.h),
-                          Text(
-                            'Tap the antenna icon to see all races',
-                            style: TextStyle(color: Colors.white24, fontSize: 12.sp),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  return ListView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                    itemCount: races.length,
-                    itemBuilder: (context, index) {
-                      final race = races[index];
-                      return GestureDetector(
-                        onTap: () => Get.toNamed(
-                          AppRoutes.RACE_DETAILS,
-                          arguments: race,
-                        ),
-                        child: _buildLiveRaceCard(race),
-                      );
-                    },
-                  );
-                }
-
-                if (meetings.isEmpty && !controller.isLoading.value) {
+              if (isLiveFilter) {
+                if (races.isEmpty && !controller.isLoading.value) {
                   return Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          Icons.emoji_events_outlined,
-                          color: Colors.white24,
+                          Icons.settings_input_antenna,
+                          color: Colors.red.withOpacity(0.5),
                           size: 48.sp,
                         ),
                         SizedBox(height: 16.h),
                         Text(
-                          'No races found',
-                          style: TextStyle(color: Colors.white38, fontSize: 16.sp),
+                          'No live races right now',
+                          style: TextStyle(
+                            color: Colors.white38,
+                            fontSize: 16.sp,
+                          ),
+                        ),
+                        SizedBox(height: 8.h),
+                        Text(
+                          'Tap the antenna icon to see all races',
+                          style: TextStyle(
+                            color: Colors.white24,
+                            fontSize: 12.sp,
+                          ),
                         ),
                       ],
                     ),
@@ -289,33 +279,74 @@ class HomeView extends GetView<HomeController> {
                 }
 
                 return ListView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                  itemCount: meetings.length,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 8.h,
+                  ),
+                  itemCount: races.length,
                   itemBuilder: (context, index) {
-                    final meeting = meetings[index];
-                    final race = {
-                      'country': meeting.country,
-                      'flag': _getFlagCode(meeting.country),
-                      'race': meeting.location,
-                      'isLive': meeting.isLive,
-                      'racesCount': '${meeting.racesCount} races',
-                    };
-                    final representativeRace = RaceModel(
-                      location: meeting.location,
-                      country: meeting.country,
-                      date: DateFormat('yyyy-MM-dd').format(controller.selectedDate),
-                    );
+                    final race = races[index];
                     return GestureDetector(
-                      onTap: () => Get.toNamed(
-                        AppRoutes.RACE_BULLETIN,
-                        arguments: representativeRace,
-                      ),
-                      child: _buildRaceCard(race),
+                      onTap: () =>
+                          Get.toNamed(AppRoutes.RACE_DETAILS, arguments: race),
+                      child: _buildLiveRaceCard(race),
                     );
                   },
                 );
-              },
-            ),
+              }
+
+              if (meetings.isEmpty && !controller.isLoading.value) {
+                return Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.emoji_events_outlined,
+                        color: Colors.white24,
+                        size: 48.sp,
+                      ),
+                      SizedBox(height: 16.h),
+                      Text(
+                        'No races found',
+                        style: TextStyle(
+                          color: Colors.white38,
+                          fontSize: 16.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              return ListView.builder(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                itemCount: meetings.length,
+                itemBuilder: (context, index) {
+                  final meeting = meetings[index];
+                  final race = {
+                    'country': meeting.country,
+                    'flag': _getFlagCode(meeting.country),
+                    'race': meeting.location,
+                    'isLive': meeting.isLive,
+                    'racesCount': '${meeting.racesCount} races',
+                  };
+                  final representativeRace = RaceModel(
+                    location: meeting.location,
+                    country: meeting.country,
+                    date: DateFormat(
+                      'yyyy-MM-dd',
+                    ).format(controller.selectedDate),
+                  );
+                  return GestureDetector(
+                    onTap: () => Get.toNamed(
+                      AppRoutes.RACE_BULLETIN,
+                      arguments: representativeRace,
+                    ),
+                    child: _buildRaceCard(race),
+                  );
+                },
+              );
+            }),
           ),
         ],
       ),
@@ -610,13 +641,13 @@ class HomeView extends GetView<HomeController> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                          racesCount,
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.bold,
+                            racesCount,
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
                           SizedBox(width: 4.w),
                           Icon(
                             Icons.arrow_forward_ios,
@@ -651,10 +682,7 @@ class HomeView extends GetView<HomeController> {
       decoration: BoxDecoration(
         color: const Color(0xFF0F1419),
         borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(
-          color: Colors.red.withOpacity(0.3),
-          width: 1.5,
-        ),
+        border: Border.all(color: Colors.red.withOpacity(0.3), width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.red.withOpacity(0.08),
@@ -674,10 +702,7 @@ class HomeView extends GetView<HomeController> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    Colors.red.withOpacity(0.03),
-                    Colors.transparent,
-                  ],
+                  colors: [Colors.red.withOpacity(0.03), Colors.transparent],
                 ),
               ),
             ),
@@ -701,14 +726,15 @@ class HomeView extends GetView<HomeController> {
                         child: Image.network(
                           'https://flagcdn.com/w160/$flagCode.png',
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Container(
-                            color: Colors.grey[900],
-                            child: Icon(
-                              Icons.flag,
-                              color: Colors.white24,
-                              size: 18.sp,
-                            ),
-                          ),
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(
+                                color: Colors.grey[900],
+                                child: Icon(
+                                  Icons.flag,
+                                  color: Colors.white24,
+                                  size: 18.sp,
+                                ),
+                              ),
                         ),
                       ),
                     ),
@@ -747,9 +773,7 @@ class HomeView extends GetView<HomeController> {
                       decoration: BoxDecoration(
                         color: Colors.red.withOpacity(0.15),
                         borderRadius: BorderRadius.circular(6.r),
-                        border: Border.all(
-                          color: Colors.red.withOpacity(0.6),
-                        ),
+                        border: Border.all(color: Colors.red.withOpacity(0.6)),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -1192,7 +1216,10 @@ class HomeView extends GetView<HomeController> {
 
   String _getFlagCode(String country) {
     final c = country.toLowerCase();
-    if (c.contains('united kingdom') || c.contains('uk') || c.contains('great britain') || c.contains('gb')) {
+    if (c.contains('united kingdom') ||
+        c.contains('uk') ||
+        c.contains('great britain') ||
+        c.contains('gb')) {
       return 'gb';
     }
     if (c.contains('france') || c.contains('fr')) {
