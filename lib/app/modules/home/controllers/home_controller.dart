@@ -7,6 +7,44 @@ import 'package:which_win/data/models/race_model.dart';
 import 'package:which_win/data/models/meeting_model.dart';
 import 'package:which_win/data/repositories/race_repository.dart';
 
+class MeetingGroup {
+  final String country;
+  final String location;
+  final List<RaceModel> races;
+
+  MeetingGroup({
+    required this.country,
+    required this.location,
+    required this.races,
+  });
+
+  bool get isLive => races.any((r) => r.status == 'LIVE');
+  int get racesCount => races.length;
+}
+
+class MeetingModel {
+  final String country;
+  final String location;
+  final int racesCount;
+  final bool isLive;
+
+  MeetingModel({
+    required this.country,
+    required this.location,
+    required this.racesCount,
+    required this.isLive,
+  });
+
+  factory MeetingModel.fromJson(Map<String, dynamic> json) {
+    return MeetingModel(
+      country: json['country'] ?? 'Unknown',
+      location: json['location'] ?? 'Unknown',
+      racesCount: json['racesCount'] ?? 0,
+      isLive: json['isLive'] ?? false,
+    );
+  }
+}
+
 class HomeController extends GetxController {
   final RaceRepo _raceRepo = Get.find<RaceRepo>();
   late final CalendarController _calendarController;
@@ -17,17 +55,40 @@ class HomeController extends GetxController {
   final categories = <String>['All'].obs;
 
   final raceList = <RaceModel>[].obs;
+  final meetingsList = <MeetingModel>[].obs;
   final isLoading = false.obs;
   final isLoadMore = false.obs;
   final meta = Rxn<RaceMeta>();
   final searchQuery = ''.obs;
 
-  final meetingGroups = <MeetingModel>[].obs;
+  List<MeetingModel> get filteredMeetings {
+    if (selectedCategory.value == 'All') {
+      return meetingsList;
+    }
+    return meetingsList.where((m) => m.location == selectedCategory.value).toList();
+  }
 
-  void _updateMeetingGroups() {
-    final Map<String, List<RaceModel>> groupedRaces = {};
-    final Map<String, String> locationToCountry = {};
+  DateTime get selectedDate => _calendarController.selectedDate.value;
 
+  String? _getCountryCodeFromRegion(String region) {
+    switch (region) {
+      case 'UK':
+        return 'GB';
+      case 'USA':
+        return 'USA';
+      case 'Europe':
+        return 'FR';
+      case 'Asia':
+        return 'HK';
+      case 'Australia':
+        return 'AUS';
+      default:
+        return null;
+    }
+  }
+
+  List<MeetingGroup> get meetingGroups {
+    final list = <MeetingGroup>[];
     for (final race in raceList) {
       final location = race.location ?? 'Unknown';
       final country = race.country ?? 'Unknown';
@@ -51,35 +112,39 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     _calendarController = Get.find<CalendarController>();
-
-    // Add scroll listener for pagination
-    scrollController.addListener(() {
-      // Trigger load-more ONLY when user reaches the very bottom of the scroll view
-      if (scrollController.position.pixels >=
-          scrollController.position.maxScrollExtent - 10) {
-        final currentMeta = meta.value;
-        if (!isLoading.value &&
-            !isLoadMore.value &&
-            currentMeta != null &&
-            (currentMeta.page ?? 1) < (currentMeta.totalPage ?? 1)) {
-          isLoadMore.value = true; // Synchronously guard to prevent double-triggering
-          fetchRaces(isRefresh: false);
-        }
-      }
-    });
-
-    // Listen to calendar date changes, reset category filter, and fetch races
+    // Listen to calendar date changes and fetch locations & races
     ever(_calendarController.selectedDate, (_) {
       selectedCategory.value = 'All';
+      fetchLocations();
       fetchRaces(isRefresh: true);
     });
+    fetchLocations();
     fetchRaces();
   }
 
-  @override
-  void onClose() {
-    scrollController.dispose();
-    super.onClose();
+  Future<void> fetchLocations() async {
+    try {
+      final dateStr = DateFormat('yyyy-MM-dd').format(_calendarController.selectedDate.value);
+      final countryCode = _getCountryCodeFromRegion(selectedRegion.value);
+      final response = await _raceRepo.getRaceLocations(
+        date: dateStr,
+        status: selectedStatus.value == 'All' ? null : selectedStatus.value.toUpperCase(),
+        search: searchQuery.value.trim().isEmpty ? null : searchQuery.value.trim(),
+        country: countryCode,
+      );
+      ApiChecker.checkGetApi(response);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> fetchedData = response.data['data'] ?? [];
+        final parsedMeetings = fetchedData.map((e) => MeetingModel.fromJson(e)).toList();
+        meetingsList.assignAll(parsedMeetings);
+        
+        final uniqueLocations = parsedMeetings.map((m) => m.location).toList();
+        categories.assignAll(['All', ...uniqueLocations]);
+      }
+    } catch (e) {
+      // Error handled by ApiChecker
+    }
   }
 
   Future<void> fetchRaces({bool isRefresh = true}) async {
@@ -91,6 +156,7 @@ class HomeController extends GetxController {
 
     try {
       final dateStr = DateFormat('yyyy-MM-dd').format(_calendarController.selectedDate.value);
+      final countryCode = _getCountryCodeFromRegion(selectedRegion.value);
       final response = await _raceRepo.getRaces(
         page: isRefresh ? 1 : (meta.value?.page ?? 0) + 1,
         limit: 20,
@@ -98,6 +164,7 @@ class HomeController extends GetxController {
         location: selectedCategory.value == 'All' ? null : selectedCategory.value,
         date: dateStr,
         search: searchQuery.value.trim().isEmpty ? null : searchQuery.value.trim(),
+        country: countryCode,
       );
 
       ApiChecker.checkGetApi(response);
@@ -137,17 +204,20 @@ class HomeController extends GetxController {
 
   void setStatus(String status) {
     selectedStatus.value = status;
+    fetchLocations();
     fetchRaces();
   }
 
   void setRegion(String region) {
     selectedRegion.value = region;
+    fetchLocations();
     fetchRaces();
   }
 
   void resetFilters() {
     selectedStatus.value = 'All';
     selectedRegion.value = 'All';
+    fetchLocations();
     fetchRaces();
   }
 
@@ -158,7 +228,7 @@ class HomeController extends GetxController {
 
   void searchRaces(String query) {
     searchQuery.value = query;
-    selectedCategory.value = 'All';
+    fetchLocations();
     fetchRaces();
   }
 }
