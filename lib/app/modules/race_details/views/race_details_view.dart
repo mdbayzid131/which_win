@@ -96,18 +96,35 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                   SizedBox(width: 8.w),
                   _buildTab('Analysis', 2),
                   SizedBox(width: 16.w),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 8.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1E293B),
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    child: Text(
-                      'Open All Details',
-                      style: TextStyle(color: Colors.white, fontSize: 14.sp),
+                  GestureDetector(
+                    onTap: () {
+                      final details = controller.raceDetails.value;
+                      if (details != null) {
+                        _showRankingDetails(context, details);
+                      }
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 8.h,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF004D40), Color(0xFF00695C)],
+                        ),
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.bar_chart, color: const Color(0xFF4DB6AC), size: 16.sp),
+                          SizedBox(width: 6.w),
+                          Text(
+                            'Rankings',
+                            style: TextStyle(color: const Color(0xFF4DB6AC), fontSize: 14.sp, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -596,8 +613,16 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     final age = horse?.age != null ? '${horse!.age}yo' : '';
     final color = horse?.color ?? '';
     final weightText = entry.weight != null ? '${entry.weight}kg' : '';
-    final totalEarnings = horse?.totalEarnings ?? 0.0;
-    final formattedEarnings = _formatCurrency(totalEarnings);
+    // Per-horse unique fields
+    final winProbPct = entry.winProb != null
+        ? '${(entry.winProb! * 100).toStringAsFixed(1)}% WIN'
+        : '';
+    final confidenceLabel = entry.aiConfidence?.toUpperCase() ?? '';
+    final confidenceColor = confidenceLabel == 'HIGH'
+        ? const Color(0xFF1B5E20)
+        : confidenceLabel == 'MEDIUM'
+            ? const Color(0xFFF57F17)
+            : const Color(0xFF37474F);
 
     // Form history
     String formHistory = '';
@@ -692,18 +717,37 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                         ],
                       ),
                     ),
-                    // Price and Code
+                    // Per-horse unique stats
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(
-                          formattedEarnings,
-                          style: TextStyle(
-                            color: const Color(0xFF4DB6AC),
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold,
+                        if (winProbPct.isNotEmpty)
+                          Text(
+                            winProbPct,
+                            style: TextStyle(
+                              color: const Color(0xFF4DB6AC),
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
+                        if (confidenceLabel.isNotEmpty)
+                          Container(
+                            margin: EdgeInsets.only(top: 4.h),
+                            padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                            decoration: BoxDecoration(
+                              color: confidenceColor.withOpacity(0.15),
+                              borderRadius: BorderRadius.circular(4.r),
+                              border: Border.all(color: confidenceColor.withOpacity(0.5)),
+                            ),
+                            child: Text(
+                              confidenceLabel,
+                              style: TextStyle(
+                                color: confidenceColor,
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                         Row(
                           children: [
                             Text(
@@ -816,11 +860,248 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     });
   }
 
-  void _showHorseDetails(
-    BuildContext context,
-    String horseName,
-    num? currentHorsePower,
-  ) {
+  void _showRankingDetails(BuildContext context, RaceDetailsData details) {
+    final entries = [...(details.entries ?? [])];
+    entries.sort((a, b) => (a.rank ?? 999).compareTo(b.rank ?? 999));
+
+    final rankColors = [
+      const Color(0xFFFFD700), // Gold
+      const Color(0xFFC0C0C0), // Silver
+      const Color(0xFFCD7F32), // Bronze
+      const Color(0xFF1E88E5),
+      const Color(0xFF43A047),
+      const Color(0xFF8E24AA),
+    ];
+
+    Get.bottomSheet(
+      Container(
+        height: Get.height * 0.88,
+        decoration: BoxDecoration(
+          color: const Color(0xFF0A0F14),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+          border: Border.all(color: Colors.white12),
+        ),
+        child: Column(
+          children: [
+            // Handle bar
+            Container(
+              margin: EdgeInsets.only(top: 12.h),
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: Colors.white24,
+                borderRadius: BorderRadius.circular(2.r),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+              child: Row(
+                children: [
+                  Icon(Icons.bar_chart, color: const Color(0xFF4DB6AC), size: 22.sp),
+                  SizedBox(width: 10.w),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'AI Race Rankings',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        '${entries.length} runners · ${details.location ?? ''}',
+                        style: TextStyle(color: Colors.white38, fontSize: 12.sp),
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: () => Get.back(),
+                    child: Icon(Icons.close, color: Colors.white38, size: 24.sp),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(color: Colors.white12, height: 1),
+            Expanded(
+              child: ListView.builder(
+                padding: EdgeInsets.all(16.w),
+                itemCount: entries.length,
+                itemBuilder: (ctx, index) {
+                  final entry = entries[index];
+                  final rank = entry.rank ?? (index + 1);
+                  final name = entry.horse?.name ?? 'Horse ${index + 1}';
+                  final score = entry.normalizedScore?.toInt() ?? 0;
+                  final winProb = entry.winProb ?? 0.0;
+                  final fairOdds = entry.winOddsFair;
+                  final confidence = (entry.aiConfidence ?? '').toUpperCase();
+                  final analysis = entry.aiAnalysis ?? '';
+                  final jockeyName = entry.jockeyName ?? '';
+
+                  final rankColor = rankColors[(rank - 1).clamp(0, rankColors.length - 1)];
+                  final scoreColor = score >= 70
+                      ? const Color(0xFF4DB6AC)
+                      : score >= 50
+                          ? Colors.orange
+                          : Colors.white54;
+
+                  final confColor = confidence == 'HIGH'
+                      ? const Color(0xFF1B5E20)
+                      : confidence == 'MEDIUM'
+                          ? const Color(0xFFF57F17)
+                          : const Color(0xFF37474F);
+
+                  return Container(
+                    margin: EdgeInsets.only(bottom: 14.h),
+                    padding: EdgeInsets.all(14.w),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0F1419),
+                      borderRadius: BorderRadius.circular(14.r),
+                      border: Border.all(
+                        color: rank <= 3 ? rankColor.withOpacity(0.3) : Colors.white12,
+                        width: rank <= 3 ? 1.5 : 1,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            // Rank badge
+                            Container(
+                              width: 36.w,
+                              height: 36.w,
+                              decoration: BoxDecoration(
+                                color: rankColor.withOpacity(0.15),
+                                shape: BoxShape.circle,
+                                border: Border.all(color: rankColor.withOpacity(0.5)),
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                '#$rank',
+                                style: TextStyle(
+                                  color: rankColor,
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    name,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  if (jockeyName.isNotEmpty)
+                                    Text(
+                                      'Jockey: $jockeyName',
+                                      style: TextStyle(color: Colors.white38, fontSize: 11.sp),
+                                    ),
+                                ],
+                              ),
+                            ),
+                            // Score box
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  '$score',
+                                  style: TextStyle(
+                                    color: scoreColor,
+                                    fontSize: 22.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  'Rating',
+                                  style: TextStyle(color: Colors.white24, fontSize: 10.sp),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 12.h),
+                        // Score bar
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(4.r),
+                          child: LinearProgressIndicator(
+                            value: score / 100.0,
+                            backgroundColor: Colors.white12,
+                            valueColor: AlwaysStoppedAnimation<Color>(scoreColor),
+                            minHeight: 6.h,
+                          ),
+                        ),
+                        SizedBox(height: 10.h),
+                        // Stats row
+                        Row(
+                          children: [
+                            _buildRankStat('WIN PROB', '${(winProb * 100).toStringAsFixed(1)}%', Colors.white70),
+                            SizedBox(width: 16.w),
+                            if (fairOdds != null)
+                              _buildRankStat('FAIR ODDS', '${fairOdds.toStringAsFixed(1)}x', Colors.white70),
+                            const Spacer(),
+                            if (confidence.isNotEmpty)
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+                                decoration: BoxDecoration(
+                                  color: confColor.withOpacity(0.15),
+                                  borderRadius: BorderRadius.circular(4.r),
+                                  border: Border.all(color: confColor.withOpacity(0.5)),
+                                ),
+                                child: Text(
+                                  confidence,
+                                  style: TextStyle(
+                                    color: confColor,
+                                    fontSize: 10.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                        if (analysis.isNotEmpty) ...[
+                          SizedBox(height: 10.h),
+                          Text(
+                            analysis,
+                            style: TextStyle(color: Colors.white54, fontSize: 11.sp, fontStyle: FontStyle.italic),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+    );
+  }
+
+  Widget _buildRankStat(String label, String value, Color color) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(color: Colors.white24, fontSize: 9.sp)),
+        Text(value, style: TextStyle(color: color, fontSize: 12.sp, fontWeight: FontWeight.bold)),
+      ],
+    );
+  }
+
+  void _showHorseDetails(BuildContext context, String horseName, num? currentHorsePower) {
     Get.bottomSheet(
       Obx(() {
         if (controller.isHorseLoading.value) {

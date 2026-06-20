@@ -81,7 +81,6 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
 
   Widget _buildRaceItem(RaceModel raceModel, int raceNumber) {
     final trackType = raceModel.trackType ?? 'Turf';
-    final prize = raceModel.prize ?? '';
     final entriesCount = raceModel.entriesCount ?? 0;
     
     String restMessage = '';
@@ -177,23 +176,23 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                     ],
                   ),
                 ),
-                // Price and Horses
+                // Horses count
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(
-                      prize,
-                      style: TextStyle(
-                        color: const Color(0xFF4DB6AC),
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF003D33),
+                        borderRadius: BorderRadius.circular(6.r),
                       ),
-                    ),
-                    Text(
-                      '$entriesCount horses',
-                      style: TextStyle(
-                        color: Colors.white38,
-                        fontSize: 12.sp,
+                      child: Text(
+                        '$entriesCount runners',
+                        style: TextStyle(
+                          color: const Color(0xFF4DB6AC),
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
