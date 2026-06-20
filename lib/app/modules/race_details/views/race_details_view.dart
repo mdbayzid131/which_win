@@ -88,47 +88,71 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  _buildTab('Horses', 0),
-                  SizedBox(width: 8.w),
-                  _buildTab('Statistics', 1),
-                  SizedBox(width: 8.w),
-                  _buildTab('Analysis', 2),
-                  SizedBox(width: 16.w),
-                  GestureDetector(
-                    onTap: () {
-                      final details = controller.raceDetails.value;
-                      if (details != null) {
-                        _showRankingDetails(context, details);
-                      }
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 8.h,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF004D40), Color(0xFF00695C)],
+              child: Obx(() {
+                final isLive = controller.isLive.value;
+                final isPremium = controller.isPremium.value;
+                return Row(
+                  children: [
+                    _buildTab('Horses', 0),
+                    SizedBox(width: 8.w),
+                    _buildTab('Statistics', 1),
+                    SizedBox(width: 8.w),
+                    _buildTab('Analysis', 2),
+                    SizedBox(width: 16.w),
+                    // Rankings button
+                    GestureDetector(
+                      onTap: () {
+                        if (!isPremium) {
+                          _showPremiumPrompt(context);
+                          return;
+                        }
+                        final details = controller.raceDetails.value;
+                        if (details != null) {
+                          _showRankingDetails(context, details);
+                        }
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 8.h,
                         ),
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.bar_chart, color: const Color(0xFF4DB6AC), size: 16.sp),
-                          SizedBox(width: 6.w),
-                          Text(
-                            'Rankings',
-                            style: TextStyle(color: const Color(0xFF4DB6AC), fontSize: 14.sp, fontWeight: FontWeight.bold),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: isPremium
+                                ? [const Color(0xFF004D40), const Color(0xFF00695C)]
+                                : [const Color(0xFF1E1E1E), const Color(0xFF2A2A2A)],
                           ),
-                        ],
+                          borderRadius: BorderRadius.circular(8.r),
+                          border: isPremium
+                              ? null
+                              : Border.all(color: Colors.white12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              isPremium ? Icons.bar_chart : Icons.lock_outline,
+                              color: isPremium ? const Color(0xFF4DB6AC) : Colors.white38,
+                              size: 16.sp,
+                            ),
+                            SizedBox(width: 6.w),
+                            Text(
+                              'Rankings',
+                              style: TextStyle(
+                                color: isPremium ? const Color(0xFF4DB6AC) : Colors.white38,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                    // LIVE badge — shown only when SSE is connected
+                    if (isLive) ...[SizedBox(width: 10.w), _buildLiveBadge()],
+                  ],
+                );
+              }),
             ),
           ),
 
@@ -170,7 +194,11 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                   itemCount: entries.length,
                   itemBuilder: (context, index) {
                     final entry = entries[index];
-                    final score = entry.normalizedScore?.toInt() ?? 0;
+                    // Free users see dashes for prediction score on items after the first
+                    final isPremium = controller.isPremium.value;
+                    final score = isPremium
+                        ? (entry.normalizedScore?.toInt() ?? 0)
+                        : (index == 0 ? (entry.normalizedScore?.toInt() ?? 0) : 0);
 
                     Color scoreColor = Colors.orange;
                     if (score >= 70) {
@@ -179,12 +207,37 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                       scoreColor = Colors.red;
                     }
 
-                    return _buildHorseCard(context, index, entry, scoreColor);
+                    // Wrap cards after index 0 in a lock overlay for free users
+                    final card = _buildHorseCard(context, index, entry, scoreColor);
+                    if (!isPremium && index > 0) {
+                      return _buildLockedCard(context, card);
+                    }
+                    return card;
                   },
                 );
               } else if (controller.selectedTab.value == 1) {
+                // Statistics — premium only
+                if (!controller.isPremium.value) {
+                  return _buildPremiumLock(
+                    context,
+                    icon: Icons.bar_chart,
+                    label: 'Full Race Statistics',
+                    description:
+                        'Earnings, origin, distance & track stats\nare available for premium subscribers.',
+                  );
+                }
                 return _buildStatisticsTab();
               } else if (controller.selectedTab.value == 2) {
+                // Analysis — premium only
+                if (!controller.isPremium.value) {
+                  return _buildPremiumLock(
+                    context,
+                    icon: Icons.auto_graph,
+                    label: 'AI Win Probability Analysis',
+                    description:
+                        'Algorithm-based predictions, win probabilities\nand confidence scores are premium features.',
+                  );
+                }
                 return _buildAnalysisTab();
               } else {
                 return const Center(
@@ -1498,6 +1551,265 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           ),
         ),
       ],
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // PREMIUM LOCK — full tab overlay
+  // ─────────────────────────────────────────────────────────────────────────
+  Widget _buildPremiumLock(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required String description,
+  }) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 32.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 72.w,
+              height: 72.w,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFFFD700), Color(0xFFFFA000)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFFFD700).withOpacity(0.25),
+                    blurRadius: 20,
+                    spreadRadius: 4,
+                  )
+                ],
+              ),
+              child: Icon(Icons.lock_outline, color: Colors.black87, size: 34.sp),
+            ),
+            SizedBox(height: 20.h),
+            Text(
+              label,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 10.h),
+            Text(
+              description,
+              style: TextStyle(color: Colors.white38, fontSize: 13.sp, height: 1.5),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 28.h),
+            GestureDetector(
+              onTap: () => _showPremiumPrompt(context),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 14.h),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFFD700), Color(0xFFFFA000)],
+                  ),
+                  borderRadius: BorderRadius.circular(12.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFFFFD700).withOpacity(0.3),
+                      blurRadius: 16,
+                      spreadRadius: 2,
+                    )
+                  ],
+                ),
+                child: Text(
+                  '✦  Upgrade to Premium',
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // LOCKED CARD — overlay on individual horse cards for free users
+  // ─────────────────────────────────────────────────────────────────────────
+  Widget _buildLockedCard(BuildContext context, Widget card) {
+    return Stack(
+      children: [
+        // Blurred underlying card
+        IgnorePointer(
+          child: Opacity(opacity: 0.25, child: card),
+        ),
+        // Lock overlay
+        Positioned.fill(
+          child: GestureDetector(
+            onTap: () => _showPremiumPrompt(context),
+            child: Container(
+              margin: EdgeInsets.only(bottom: 12.h),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.55),
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: const Color(0xFFFFD700).withOpacity(0.3)),
+              ),
+              child: Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.lock_outline,
+                        color: const Color(0xFFFFD700), size: 18.sp),
+                    SizedBox(width: 8.w),
+                    Text(
+                      'Premium Only',
+                      style: TextStyle(
+                        color: const Color(0xFFFFD700),
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // LIVE BADGE — pulsing indicator shown while SSE stream is active
+  // ─────────────────────────────────────────────────────────────────────────
+  Widget _buildLiveBadge() {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.6, end: 1.0),
+      duration: const Duration(milliseconds: 800),
+      curve: Curves.easeInOut,
+      builder: (context, value, child) => Opacity(opacity: value, child: child),
+      onEnd: () {},
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(6.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.red.withOpacity(0.5),
+              blurRadius: 8,
+              spreadRadius: 1,
+            )
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 6.w,
+              height: 6.w,
+              decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+            ),
+            SizedBox(width: 4.w),
+            Text(
+              'LIVE',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 10.sp,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // PREMIUM UPGRADE PROMPT — bottom sheet
+  // ─────────────────────────────────────────────────────────────────────────
+  void _showPremiumPrompt(BuildContext context) {
+    Get.bottomSheet(
+      Container(
+        padding: EdgeInsets.fromLTRB(24.w, 20.h, 24.w, 40.h),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0A0F14),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+          border: Border.all(color: const Color(0xFFFFD700).withOpacity(0.3)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40.w, height: 4.h,
+              decoration: BoxDecoration(
+                color: Colors.white24,
+                borderRadius: BorderRadius.circular(2.r),
+              ),
+            ),
+            SizedBox(height: 24.h),
+            Icon(Icons.workspace_premium_rounded,
+                color: const Color(0xFFFFD700), size: 48.sp),
+            SizedBox(height: 16.h),
+            Text(
+              'Unlock Premium',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 22.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 10.h),
+            Text(
+              'Get full access to AI rankings, win probabilities,\nrace statistics, and live score updates.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white54, fontSize: 13.sp, height: 1.6),
+            ),
+            SizedBox(height: 28.h),
+            GestureDetector(
+              onTap: () {
+                Get.back();
+                Get.toNamed('/subscription');
+              },
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 16.h),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFFD700), Color(0xFFFFA000)],
+                  ),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Text(
+                  'View Plans',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 12.h),
+            GestureDetector(
+              onTap: () => Get.back(),
+              child: Text(
+                'Maybe later',
+                style: TextStyle(color: Colors.white38, fontSize: 13.sp),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -12,6 +12,7 @@ class ApiConstants {
   static const String getRaceDates = 'race/dates';
   static const String getRaceLocations = 'race/locations';
   static const String getRaceStatistics = 'race/'; // append {id}/statistics
+  static const String raceStream = 'race/'; // append {id}/stream  (SSE endpoint)
   static const String getHorseProfile = 'horse/'; // append {id}
 
   // Notification Endpoints
