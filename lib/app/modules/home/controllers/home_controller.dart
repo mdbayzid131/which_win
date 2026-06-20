@@ -7,8 +7,6 @@ import 'package:which_win/data/models/race_model.dart';
 import 'package:which_win/data/models/meeting_model.dart';
 import 'package:which_win/data/repositories/race_repository.dart';
 
-
-
 class HomeController extends GetxController {
   final RaceRepo _raceRepo = Get.find<RaceRepo>();
   late final CalendarController _calendarController;
@@ -29,7 +27,9 @@ class HomeController extends GetxController {
     if (selectedCategory.value == 'All') {
       return meetingsList;
     }
-    return meetingsList.where((m) => m.location == selectedCategory.value).toList();
+    return meetingsList
+        .where((m) => m.location == selectedCategory.value)
+        .toList();
   }
 
   DateTime get selectedDate => _calendarController.selectedDate.value;
@@ -51,8 +51,6 @@ class HomeController extends GetxController {
     }
   }
 
-
-
   @override
   void onInit() {
     super.onInit();
@@ -69,21 +67,29 @@ class HomeController extends GetxController {
 
   Future<void> fetchLocations() async {
     try {
-      final dateStr = DateFormat('yyyy-MM-dd').format(_calendarController.selectedDate.value);
+      final dateStr = DateFormat(
+        'yyyy-MM-dd',
+      ).format(_calendarController.selectedDate.value);
       final countryCode = _getCountryCodeFromRegion(selectedRegion.value);
       final response = await _raceRepo.getRaceLocations(
         date: dateStr,
-        status: selectedStatus.value == 'All' ? null : selectedStatus.value.toUpperCase(),
-        search: searchQuery.value.trim().isEmpty ? null : searchQuery.value.trim(),
+        status: selectedStatus.value == 'All'
+            ? null
+            : selectedStatus.value.toUpperCase(),
+        search: searchQuery.value.trim().isEmpty
+            ? null
+            : searchQuery.value.trim(),
         country: countryCode,
       );
       ApiChecker.checkGetApi(response);
 
       if (response.statusCode == 200) {
         final List<dynamic> fetchedData = response.data['data'] ?? [];
-        final parsedMeetings = fetchedData.map((e) => MeetingModel.fromJson(e)).toList();
+        final parsedMeetings = fetchedData
+            .map((e) => MeetingModel.fromJson(e))
+            .toList();
         meetingsList.assignAll(parsedMeetings);
-        
+
         final uniqueLocations = parsedMeetings.map((m) => m.location).toList();
         categories.assignAll(['All', ...uniqueLocations]);
       }
@@ -100,15 +106,23 @@ class HomeController extends GetxController {
     }
 
     try {
-      final dateStr = DateFormat('yyyy-MM-dd').format(_calendarController.selectedDate.value);
+      final dateStr = DateFormat(
+        'yyyy-MM-dd',
+      ).format(_calendarController.selectedDate.value);
       final countryCode = _getCountryCodeFromRegion(selectedRegion.value);
       final response = await _raceRepo.getRaces(
         page: isRefresh ? 1 : (meta.value?.page ?? 0) + 1,
         limit: 20,
-        status: selectedStatus.value == 'All' ? null : selectedStatus.value.toUpperCase(),
-        location: selectedCategory.value == 'All' ? null : selectedCategory.value,
+        status: selectedStatus.value == 'All'
+            ? null
+            : selectedStatus.value.toUpperCase(),
+        location: selectedCategory.value == 'All'
+            ? null
+            : selectedCategory.value,
         date: dateStr,
-        search: searchQuery.value.trim().isEmpty ? null : searchQuery.value.trim(),
+        search: searchQuery.value.trim().isEmpty
+            ? null
+            : searchQuery.value.trim(),
         country: countryCode,
       );
 
@@ -122,7 +136,6 @@ class HomeController extends GetxController {
           raceList.addAll(raceResponse.data ?? []);
         }
         meta.value = raceResponse.meta;
-
 
         // Dynamically update categories only when no category filter is active
         if (selectedCategory.value == 'All') {
@@ -177,4 +190,3 @@ class HomeController extends GetxController {
     fetchRaces();
   }
 }
-
