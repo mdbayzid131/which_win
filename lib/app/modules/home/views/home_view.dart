@@ -222,8 +222,51 @@ class HomeView extends GetView<HomeController> {
           Expanded(
             child: Obx(
               () {
-                final meetings = controller.filteredMeetings;
                 final isLiveFilter = controller.isLiveFilterActive.value;
+                final meetings = controller.filteredMeetings;
+                final races = controller.raceList;
+
+                if (isLiveFilter) {
+                  if (races.isEmpty && !controller.isLoading.value) {
+                    return Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.settings_input_antenna,
+                            color: Colors.red.withOpacity(0.5),
+                            size: 48.sp,
+                          ),
+                          SizedBox(height: 16.h),
+                          Text(
+                            'No live races right now',
+                            style: TextStyle(color: Colors.white38, fontSize: 16.sp),
+                          ),
+                          SizedBox(height: 8.h),
+                          Text(
+                            'Tap the antenna icon to see all races',
+                            style: TextStyle(color: Colors.white24, fontSize: 12.sp),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                    itemCount: races.length,
+                    itemBuilder: (context, index) {
+                      final race = races[index];
+                      return GestureDetector(
+                        onTap: () => Get.toNamed(
+                          AppRoutes.RACE_DETAILS,
+                          arguments: race,
+                        ),
+                        child: _buildLiveRaceCard(race),
+                      );
+                    },
+                  );
+                }
 
                 if (meetings.isEmpty && !controller.isLoading.value) {
                   return Center(
@@ -231,26 +274,15 @@ class HomeView extends GetView<HomeController> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          isLiveFilter
-                              ? Icons.settings_input_antenna
-                              : Icons.emoji_events_outlined,
-                          color: isLiveFilter ? Colors.red.withOpacity(0.5) : Colors.white24,
+                          Icons.emoji_events_outlined,
+                          color: Colors.white24,
                           size: 48.sp,
                         ),
                         SizedBox(height: 16.h),
                         Text(
-                          isLiveFilter
-                              ? 'No live races right now'
-                              : 'No races found',
+                          'No races found',
                           style: TextStyle(color: Colors.white38, fontSize: 16.sp),
                         ),
-                        if (isLiveFilter) ...[  
-                          SizedBox(height: 8.h),
-                          Text(
-                            'Tap the antenna icon to see all races',
-                            style: TextStyle(color: Colors.white24, fontSize: 12.sp),
-                          ),
-                        ],
                       ],
                     ),
                   );
@@ -258,9 +290,9 @@ class HomeView extends GetView<HomeController> {
 
                 return ListView.builder(
                   padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                  itemCount: controller.filteredMeetings.length,
+                  itemCount: meetings.length,
                   itemBuilder: (context, index) {
-                    final meeting = controller.filteredMeetings[index];
+                    final meeting = meetings[index];
                     final race = {
                       'country': meeting.country,
                       'flag': _getFlagCode(meeting.country),
@@ -594,6 +626,215 @@ class HomeView extends GetView<HomeController> {
                         ],
                       ),
                     ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLiveRaceCard(RaceModel race) {
+    final String country = race.country ?? 'Unknown';
+    final String raceName = race.name ?? 'Race';
+    final String location = race.location ?? 'Unknown Course';
+    final String flagCode = _getFlagCode(country);
+    final String time = race.time ?? '';
+    final String distance = race.distance ?? '';
+    final String trackType = race.trackType ?? 'Turf';
+    final String score = race.tahmin1X ?? '';
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 16.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F1419),
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(
+          color: Colors.red.withOpacity(0.3),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.red.withOpacity(0.08),
+            blurRadius: 15,
+            spreadRadius: 2,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        children: [
+          // Background subtle gradient
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.red.withOpacity(0.03),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(16.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    // Flag
+                    Container(
+                      width: 44.w,
+                      height: 44.w,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white24, width: 2),
+                      ),
+                      child: ClipOval(
+                        child: Image.network(
+                          'https://flagcdn.com/w160/$flagCode.png',
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            color: Colors.grey[900],
+                            child: Icon(
+                              Icons.flag,
+                              color: Colors.white24,
+                              size: 18.sp,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 12.w),
+                    // Race course & Time
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            location.toUpperCase(),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          SizedBox(height: 2.h),
+                          Text(
+                            '$country • $time',
+                            style: TextStyle(
+                              color: Colors.white54,
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Live pulsing badge
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 4.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(6.r),
+                        border: Border.all(
+                          color: Colors.red.withOpacity(0.6),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 6.w,
+                            height: 6.w,
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          SizedBox(width: 6.w),
+                          Text(
+                            'LIVE',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 12.h),
+                const Divider(color: Colors.white10, height: 1),
+                SizedBox(height: 12.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            raceName,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            '$trackType · $distance',
+                            style: TextStyle(
+                              color: Colors.white38,
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (score.isNotEmpty)
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 6.h,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFFE65100), Color(0xFFFF8F00)],
+                          ),
+                          borderRadius: BorderRadius.circular(8.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFFFF8F00).withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          'AI Score: $score',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ],

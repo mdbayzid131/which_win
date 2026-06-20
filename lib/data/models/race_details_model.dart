@@ -88,6 +88,7 @@ class RaceEntry {
   final String? horseId;
   final String? jockeyId;
   final String? jockeyName;
+  final String? trainerName;
   final double? weight;
   final int? draw;
   final double? horsePower;
@@ -98,14 +99,19 @@ class RaceEntry {
   final double? winProb;
   final double? winOddsFair;
   final double? placeProb;
+  final double? eachWayProb;
   final double? goingSuitabilityScore;
   final double? distanceSuitabilityScore;
+  final double? courseSpecialistScore;
+  final double? drawBiasScore;
   final double? jockeyFormScore;
   final double? trainerFormScore;
   final int? aiSelectionRank;
   final String? aiConfidence;
   final double? aiConfidenceScore;
   final String? aiAnalysis;
+  final bool? hasValueEdge;
+  final double? valueEdgePercent;
   final HorseModel? horse;
 
   RaceEntry({
@@ -114,6 +120,7 @@ class RaceEntry {
     this.horseId,
     this.jockeyId,
     this.jockeyName,
+    this.trainerName,
     this.weight,
     this.draw,
     this.horsePower,
@@ -124,14 +131,19 @@ class RaceEntry {
     this.winProb,
     this.winOddsFair,
     this.placeProb,
+    this.eachWayProb,
     this.goingSuitabilityScore,
     this.distanceSuitabilityScore,
+    this.courseSpecialistScore,
+    this.drawBiasScore,
     this.jockeyFormScore,
     this.trainerFormScore,
     this.aiSelectionRank,
     this.aiConfidence,
     this.aiConfidenceScore,
     this.aiAnalysis,
+    this.hasValueEdge,
+    this.valueEdgePercent,
     this.horse,
   });
 
@@ -142,6 +154,7 @@ class RaceEntry {
       horseId: json['horseId'],
       jockeyId: json['jockeyId'],
       jockeyName: json['jockeyName'],
+      trainerName: json['trainerName'],
       weight: (json['weight'] as num?)?.toDouble(),
       draw: json['draw'],
       horsePower: (json['horsePower'] as num?)?.toDouble(),
@@ -152,14 +165,19 @@ class RaceEntry {
       winProb: (json['winProb'] as num?)?.toDouble(),
       winOddsFair: (json['winOddsFair'] as num?)?.toDouble(),
       placeProb: (json['placeProb'] as num?)?.toDouble(),
+      eachWayProb: (json['eachWayProb'] as num?)?.toDouble(),
       goingSuitabilityScore: (json['goingSuitabilityScore'] as num?)?.toDouble(),
       distanceSuitabilityScore: (json['distanceSuitabilityScore'] as num?)?.toDouble(),
+      courseSpecialistScore: (json['courseSpecialistScore'] as num?)?.toDouble(),
+      drawBiasScore: (json['drawBiasScore'] as num?)?.toDouble(),
       jockeyFormScore: (json['jockeyFormScore'] as num?)?.toDouble(),
       trainerFormScore: (json['trainerFormScore'] as num?)?.toDouble(),
       aiSelectionRank: json['aiSelectionRank'],
       aiConfidence: json['aiConfidence'],
       aiConfidenceScore: (json['aiConfidenceScore'] as num?)?.toDouble(),
       aiAnalysis: json['aiAnalysis'],
+      hasValueEdge: json['hasValueEdge'] as bool?,
+      valueEdgePercent: (json['valueEdgePercent'] as num?)?.toDouble(),
       horse: json['horse'] != null ? HorseModel.fromJson(json['horse']) : null,
     );
   }
