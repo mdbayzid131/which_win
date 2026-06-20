@@ -159,6 +159,7 @@ class HomeController extends GetxController {
 
   final selectedStatus = 'All'.obs;
   final selectedRegion = 'All'.obs;
+  final isLiveFilterActive = false.obs;
 
   void setStatus(String status) {
     selectedStatus.value = status;
@@ -186,6 +187,20 @@ class HomeController extends GetxController {
 
   void searchRaces(String query) {
     searchQuery.value = query;
+    fetchLocations();
+    fetchRaces();
+  }
+
+  /// Toggles the LIVE filter in the app bar.
+  /// ON  → status=LIVE, fetches only live races.
+  /// OFF → resets to All.
+  void toggleLiveFilter() {
+    isLiveFilterActive.value = !isLiveFilterActive.value;
+    if (isLiveFilterActive.value) {
+      selectedStatus.value = 'LIVE';
+    } else {
+      selectedStatus.value = 'All';
+    }
     fetchLocations();
     fetchRaces();
   }

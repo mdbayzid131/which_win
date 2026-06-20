@@ -37,10 +37,45 @@ class HomeView extends GetView<HomeController> {
           ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.settings_input_antenna, color: Colors.white),
-            onPressed: () {},
-          ),
+          // LIVE filter button — pulses red when active
+          Obx(() {
+            final isLive = controller.isLiveFilterActive.value;
+            return GestureDetector(
+              onTap: controller.toggleLiveFilter,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                decoration: BoxDecoration(
+                  color: isLive ? Colors.red.withOpacity(0.15) : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(
+                    color: isLive ? Colors.red.withOpacity(0.6) : Colors.transparent,
+                  ),
+                  boxShadow: isLive
+                      ? [
+                          BoxShadow(
+                            color: Colors.red.withOpacity(0.35),
+                            blurRadius: 10,
+                            spreadRadius: 1,
+                          )
+                        ]
+                      : [],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.settings_input_antenna,
+                      color: isLive ? Colors.red : Colors.white54,
+                      size: 20.sp,
+                    ),
+                    if (isLive) ...[SizedBox(width: 4.w), Text('LIVE', style: TextStyle(color: Colors.red, fontSize: 11.sp, fontWeight: FontWeight.bold, letterSpacing: 1))],
+                  ],
+                ),
+              ),
+            );
+          }),
           IconButton(
             icon: const Icon(
               Icons.calendar_today_outlined,
@@ -56,6 +91,65 @@ class HomeView extends GetView<HomeController> {
       ),
       body: Column(
         children: [
+          // ── LIVE Filter Banner ────────────────────────────────────────────
+          Obx(() {
+            if (!controller.isLiveFilterActive.value) return const SizedBox.shrink();
+            return Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.red.withOpacity(0.18),
+                    Colors.red.withOpacity(0.05),
+                  ],
+                ),
+                border: const Border(
+                  bottom: BorderSide(color: Colors.red, width: 1),
+                ),
+              ),
+              child: Row(
+                children: [
+                  TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.4, end: 1.0),
+                    duration: const Duration(milliseconds: 700),
+                    curve: Curves.easeInOut,
+                    builder: (ctx, v, ch) => Opacity(opacity: v, child: ch),
+                    onEnd: () {},
+                    child: Container(
+                      width: 8.w,
+                      height: 8.w,
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(color: Colors.red.withOpacity(0.7), blurRadius: 6, spreadRadius: 1),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10.w),
+                  Text(
+                    'LIVE RACES',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: controller.toggleLiveFilter,
+                    child: Text(
+                      'Show All',
+                      style: TextStyle(color: Colors.white38, fontSize: 12.sp),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
           // Search Bar
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
@@ -127,32 +221,68 @@ class HomeView extends GetView<HomeController> {
           SizedBox(height: 16.h),
           Expanded(
             child: Obx(
-              () => ListView.builder(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                itemCount: controller.filteredMeetings.length,
-                itemBuilder: (context, index) {
-                  final meeting = controller.filteredMeetings[index];
-                  final race = {
-                    'country': meeting.country,
-                    'flag': _getFlagCode(meeting.country),
-                    'race': meeting.location,
-                    'isLive': meeting.isLive,
-                    'racesCount': '${meeting.racesCount} races',
-                  };
-                  final representativeRace = RaceModel(
-                    location: meeting.location,
-                    country: meeting.country,
-                    date: DateFormat('yyyy-MM-dd').format(controller.selectedDate),
-                  );
-                  return GestureDetector(
-                    onTap: () => Get.toNamed(
-                      AppRoutes.RACE_BULLETIN,
-                      arguments: representativeRace,
+              () {
+                final meetings = controller.filteredMeetings;
+                final isLiveFilter = controller.isLiveFilterActive.value;
+
+                if (meetings.isEmpty && !controller.isLoading.value) {
+                  return Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          isLiveFilter
+                              ? Icons.settings_input_antenna
+                              : Icons.emoji_events_outlined,
+                          color: isLiveFilter ? Colors.red.withOpacity(0.5) : Colors.white24,
+                          size: 48.sp,
+                        ),
+                        SizedBox(height: 16.h),
+                        Text(
+                          isLiveFilter
+                              ? 'No live races right now'
+                              : 'No races found',
+                          style: TextStyle(color: Colors.white38, fontSize: 16.sp),
+                        ),
+                        if (isLiveFilter) ...[  
+                          SizedBox(height: 8.h),
+                          Text(
+                            'Tap the antenna icon to see all races',
+                            style: TextStyle(color: Colors.white24, fontSize: 12.sp),
+                          ),
+                        ],
+                      ],
                     ),
-                    child: _buildRaceCard(race),
                   );
-                },
-              ),
+                }
+
+                return ListView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  itemCount: controller.filteredMeetings.length,
+                  itemBuilder: (context, index) {
+                    final meeting = controller.filteredMeetings[index];
+                    final race = {
+                      'country': meeting.country,
+                      'flag': _getFlagCode(meeting.country),
+                      'race': meeting.location,
+                      'isLive': meeting.isLive,
+                      'racesCount': '${meeting.racesCount} races',
+                    };
+                    final representativeRace = RaceModel(
+                      location: meeting.location,
+                      country: meeting.country,
+                      date: DateFormat('yyyy-MM-dd').format(controller.selectedDate),
+                    );
+                    return GestureDetector(
+                      onTap: () => Get.toNamed(
+                        AppRoutes.RACE_BULLETIN,
+                        arguments: representativeRace,
+                      ),
+                      child: _buildRaceCard(race),
+                    );
+                  },
+                );
+              },
             ),
           ),
         ],
