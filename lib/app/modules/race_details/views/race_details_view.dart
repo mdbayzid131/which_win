@@ -43,9 +43,12 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         ),
         title: Obx(() {
           final details = controller.raceDetails.value;
-          final raceName = details?.name ?? controller.race.value?.name ?? 'Race Details';
-          final trackType = details?.trackType ?? controller.race.value?.trackType ?? 'Turf';
-          final distance = details?.distance ?? controller.race.value?.distance ?? '';
+          final raceName =
+              details?.name ?? controller.race.value?.name ?? 'Race Details';
+          final trackType =
+              details?.trackType ?? controller.race.value?.trackType ?? 'Turf';
+          final distance =
+              details?.distance ?? controller.race.value?.distance ?? '';
           final time = details?.time ?? controller.race.value?.time ?? '';
 
           return Row(
@@ -59,7 +62,10 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                 ),
               ),
               SizedBox(width: 8.w),
-              _buildHeaderTag(details?.status ?? controller.race.value?.status ?? 'UPCOMING', const Color(0xFF1E293B)),
+              _buildHeaderTag(
+                details?.status ?? controller.race.value?.status ?? 'UPCOMING',
+                const Color(0xFF1E293B),
+              ),
               SizedBox(width: 4.w),
               _buildHeaderTag(
                 trackType,
@@ -115,7 +121,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               if (controller.isLoading.value) {
                 return const Center(
                   child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4DB6AC)),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Color(0xFF4DB6AC),
+                    ),
                   ),
                 );
               }
@@ -134,7 +142,10 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                 final entries = details.entries ?? [];
                 if (entries.isEmpty) {
                   return const Center(
-                    child: Text('No horses registered', style: TextStyle(color: Colors.white38)),
+                    child: Text(
+                      'No horses registered',
+                      style: TextStyle(color: Colors.white38),
+                    ),
                   );
                 }
                 return ListView.builder(
@@ -143,7 +154,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                   itemBuilder: (context, index) {
                     final entry = entries[index];
                     final score = entry.normalizedScore?.toInt() ?? 0;
-                    
+
                     Color scoreColor = Colors.orange;
                     if (score >= 70) {
                       scoreColor = const Color(0xFF2E7D32);
@@ -151,12 +162,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                       scoreColor = Colors.red;
                     }
 
-                    return _buildHorseCard(
-                      context,
-                      index,
-                      entry,
-                      scoreColor,
-                    );
+                    return _buildHorseCard(context, index, entry, scoreColor);
                   },
                 );
               } else if (controller.selectedTab.value == 1) {
@@ -384,7 +390,10 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
 
     if (stats == null) {
       return const Center(
-        child: Text('No statistics available', style: TextStyle(color: Colors.white38)),
+        child: Text(
+          'No statistics available',
+          style: TextStyle(color: Colors.white38),
+        ),
       );
     }
 
@@ -395,30 +404,78 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       crossAxisSpacing: 12.w,
       childAspectRatio: 1.1,
       children: [
-        _buildStatCard('EARNINGS', (stats.earnings ?? []).map((e) {
-          return _StatItem('${e.horseName}: ${e.amount}', (e.percentage ?? 0) / 100.0);
-        }).toList()),
-        _buildStatCard('ORIGIN', (stats.origin ?? []).map((e) {
-          return _StatItem('${e.country} ${e.percentage}%', (e.percentage ?? 0) / 100.0);
-        }).toList()),
-        _buildStatCard('DISTANCE', (stats.distance ?? []).map((e) {
-          return _StatItem('${e.label}: ${e.detail}', (e.percentage ?? 0) / 100.0);
-        }).toList()),
-        _buildStatCard('TRACK', (stats.track ?? []).map((e) {
-          return _StatItem('${e.surface}: ${e.detail}', (e.percentage ?? 0) / 100.0);
-        }).toList()),
-        _buildStatCard('CITY', (stats.city ?? []).map((e) {
-          return _StatItem('${e.name} ${e.percentage}%', (e.percentage ?? 0) / 100.0);
-        }).toList()),
-        _buildStatCard('JOCKEY', (stats.jockey ?? []).map((e) {
-          return _StatItem('${e.name}: ${e.percentage}%', (e.percentage ?? 0) / 100.0);
-        }).toList()),
-        _buildStatCard('CO-RACES', (stats.coRaces ?? []).map((e) {
-          return _StatItem('${e.horseName} ${e.score}', (e.percentage ?? 0) / 100.0);
-        }).toList()),
-        _buildStatCard('BEST TIME', (stats.bestTime ?? []).map((e) {
-          return _StatItem('${e.horseName} ${e.time}', (e.percentage ?? 0) / 100.0);
-        }).toList()),
+        _buildStatCard(
+          'EARNINGS',
+          (stats.earnings ?? []).map((e) {
+            return _StatItem(
+              '${e.horseName}: ${e.amount}',
+              (e.percentage ?? 0) / 100.0,
+            );
+          }).toList(),
+        ),
+        _buildStatCard(
+          'ORIGIN',
+          (stats.origin ?? []).map((e) {
+            return _StatItem(
+              '${e.country} ${e.percentage}%',
+              (e.percentage ?? 0) / 100.0,
+            );
+          }).toList(),
+        ),
+        _buildStatCard(
+          'DISTANCE',
+          (stats.distance ?? []).map((e) {
+            return _StatItem(
+              '${e.label}: ${e.detail}',
+              (e.percentage ?? 0) / 100.0,
+            );
+          }).toList(),
+        ),
+        _buildStatCard(
+          'TRACK',
+          (stats.track ?? []).map((e) {
+            return _StatItem(
+              '${e.surface}: ${e.detail}',
+              (e.percentage ?? 0) / 100.0,
+            );
+          }).toList(),
+        ),
+        _buildStatCard(
+          'CITY',
+          (stats.city ?? []).map((e) {
+            return _StatItem(
+              '${e.name} ${e.percentage}%',
+              (e.percentage ?? 0) / 100.0,
+            );
+          }).toList(),
+        ),
+        _buildStatCard(
+          'JOCKEY',
+          (stats.jockey ?? []).map((e) {
+            return _StatItem(
+              '${e.name}: ${e.percentage}%',
+              (e.percentage ?? 0) / 100.0,
+            );
+          }).toList(),
+        ),
+        _buildStatCard(
+          'CO-RACES',
+          (stats.coRaces ?? []).map((e) {
+            return _StatItem(
+              '${e.horseName} ${e.score}',
+              (e.percentage ?? 0) / 100.0,
+            );
+          }).toList(),
+        ),
+        _buildStatCard(
+          'BEST TIME',
+          (stats.bestTime ?? []).map((e) {
+            return _StatItem(
+              '${e.horseName} ${e.time}',
+              (e.percentage ?? 0) / 100.0,
+            );
+          }).toList(),
+        ),
       ],
     );
   }
@@ -526,7 +583,12 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     });
   }
 
-  Widget _buildHorseCard(BuildContext context, int index, RaceEntry entry, Color scoreColor) {
+  Widget _buildHorseCard(
+    BuildContext context,
+    int index,
+    RaceEntry entry,
+    Color scoreColor,
+  ) {
     final horse = entry.horse;
     final horseName = horse?.name ?? 'Unknown';
     final score = entry.normalizedScore?.toInt() ?? 0;
@@ -540,7 +602,10 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     // Form history
     String formHistory = '';
     if (horse?.results != null) {
-      formHistory = horse!.results!.take(6).map((r) => '${r.position ?? ''}').join('');
+      formHistory = horse!.results!
+          .take(6)
+          .map((r) => '${r.position ?? ''}')
+          .join('');
     }
 
     return Obx(() {
@@ -701,7 +766,10 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                                   text: 'PERFORMANCE: ',
                                   style: TextStyle(color: Colors.white38),
                                 ),
-                                TextSpan(text: 'Best: ${horse?.bestTime ?? 'N/A'} ${horse?.bestTimeLocation ?? ''}'),
+                                TextSpan(
+                                  text:
+                                      'Best: ${horse?.bestTime ?? 'N/A'} ${horse?.bestTimeLocation ?? ''}',
+                                ),
                               ],
                             ),
                           ),
@@ -710,7 +778,11 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                           onTap: () {
                             if (horse?.id != null) {
                               controller.fetchHorseProfile(horse!.id!);
-                              _showHorseDetails(context, horseName, entry.horsePower ?? 94);
+                              _showHorseDetails(
+                                context,
+                                horseName,
+                                entry.horsePower ?? 94,
+                              );
                             }
                           },
                           child: Container(
@@ -744,7 +816,11 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     });
   }
 
-  void _showHorseDetails(BuildContext context, String horseName, num? currentHorsePower) {
+  void _showHorseDetails(
+    BuildContext context,
+    String horseName,
+    num? currentHorsePower,
+  ) {
     Get.bottomSheet(
       Obx(() {
         if (controller.isHorseLoading.value) {
@@ -787,21 +863,34 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         final thirds = horse.thirds ?? 0;
         final totalRaces = horse.totalRaces ?? 0;
 
-        final winRate = totalRaces > 0 ? ((wins / totalRaces) * 100).toStringAsFixed(0) : '0';
-        final top3Rate = totalRaces > 0 ? (((wins + seconds + thirds) / totalRaces) * 100).toStringAsFixed(0) : '0';
+        final winRate = totalRaces > 0
+            ? ((wins / totalRaces) * 100).toStringAsFixed(0)
+            : '0';
+        final top3Rate = totalRaces > 0
+            ? (((wins + seconds + thirds) / totalRaces) * 100).toStringAsFixed(
+                0,
+              )
+            : '0';
 
         // Avg Position calculation
         final results = horse.results ?? [];
         double avgPosition = 0.0;
         if (results.isNotEmpty) {
-          final sum = results.fold<int>(0, (previous, result) => previous + (result.position ?? 0));
+          final sum = results.fold<int>(
+            0,
+            (previous, result) => previous + (result.position ?? 0),
+          );
           avgPosition = sum / results.length;
         }
-        final avgPosText = results.isNotEmpty ? avgPosition.toStringAsFixed(1) : '0.0';
+        final avgPosText = results.isNotEmpty
+            ? avgPosition.toStringAsFixed(1)
+            : '0.0';
 
         // HP Score from current race parameter or fallback
-        final String hpScoreText = currentHorsePower != null 
-            ? (currentHorsePower is double ? currentHorsePower.toStringAsFixed(1) : '$currentHorsePower')
+        final String hpScoreText = currentHorsePower != null
+            ? (currentHorsePower is double
+                  ? currentHorsePower.toStringAsFixed(1)
+                  : '$currentHorsePower')
             : 'N/A';
 
         // Earnings format
@@ -809,10 +898,14 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         final String earningsText = _formatCurrency(totalEarnings);
 
         // Best Time
-        final bestTimeText = '${horse.bestTime ?? ''} ${horse.bestTimeLocation ?? ''}';
+        final bestTimeText =
+            '${horse.bestTime ?? ''} ${horse.bestTimeLocation ?? ''}';
 
         // Last 6 form
-        final last6Form = results.take(6).map((r) => '${r.position ?? ''}').join('');
+        final last6Form = results
+            .take(6)
+            .map((r) => '${r.position ?? ''}')
+            .join('');
 
         return Container(
           height: Get.height * 0.85,
@@ -842,7 +935,10 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                       ),
                       Text(
                         '${horse.age ?? 0}yo ${horse.color ?? ''} · ${horse.country ?? ''}',
-                        style: TextStyle(color: Colors.white38, fontSize: 14.sp),
+                        style: TextStyle(
+                          color: Colors.white38,
+                          fontSize: 14.sp,
+                        ),
                       ),
                     ],
                   ),
@@ -887,15 +983,28 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               SizedBox(height: 12.h),
               Row(
                 children: [
-                  Expanded(child: _buildInfoBox('Best Time', bestTimeText.trim().isEmpty ? 'N/A' : bestTimeText)),
+                  Expanded(
+                    child: _buildInfoBox(
+                      'Best Time',
+                      bestTimeText.trim().isEmpty ? 'N/A' : bestTimeText,
+                    ),
+                  ),
                   SizedBox(width: 12.w),
-                  Expanded(child: _buildInfoBox('Last 6', last6Form.isEmpty ? 'N/A' : last6Form)),
+                  Expanded(
+                    child: _buildInfoBox(
+                      'Last 6',
+                      last6Form.isEmpty ? 'N/A' : last6Form,
+                    ),
+                  ),
                 ],
               ),
               SizedBox(height: 20.h),
 
               // Details
-              _buildPopupSection('PEDIGREE', 'Sire: ${horse.sireName ?? 'N/A'} · Dam: ${horse.damName ?? 'N/A'}'),
+              _buildPopupSection(
+                'PEDIGREE',
+                'Sire: ${horse.sireName ?? 'N/A'} · Dam: ${horse.damName ?? 'N/A'}',
+              ),
               SizedBox(height: 16.h),
               _buildPopupSection(
                 'TEAM',
@@ -919,7 +1028,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                   itemBuilder: (context, idx) {
                     final run = results[idx];
                     final pos = run.position ?? 0;
-                    
+
                     Color badgeColor = Colors.grey;
                     if (pos == 1) {
                       badgeColor = const Color(0xFF1B5E20);
