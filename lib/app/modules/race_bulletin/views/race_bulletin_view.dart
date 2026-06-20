@@ -82,13 +82,15 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
   Widget _buildRaceItem(RaceModel raceModel, int raceNumber) {
     final trackType = raceModel.trackType ?? 'Turf';
     final entriesCount = raceModel.entriesCount ?? 0;
-    
+    String labelText = 'AI Prediction: ';
     String restMessage = '';
     if (raceModel.predictionMessage != null && raceModel.predictionMessage!.isNotEmpty) {
       final msg = raceModel.predictionMessage!;
       if (msg.toLowerCase().startsWith('who beat whom:')) {
+        labelText = 'Who beat whom: ';
         restMessage = msg.substring(14).trim();
       } else {
+        labelText = 'AI Prediction: ';
         restMessage = msg;
       }
     }
@@ -209,7 +211,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                 text: TextSpan(
                   style: TextStyle(color: Colors.white38, fontSize: 13.sp),
                   children: [
-                    const TextSpan(text: 'Who beat whom: '),
+                    TextSpan(text: labelText),
                     TextSpan(
                       text: restMessage,
                       style: const TextStyle(color: Colors.orange),
