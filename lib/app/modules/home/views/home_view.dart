@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:which_win/app/modules/home/controllers/home_controller.dart';
 import 'package:which_win/app/modules/calendar/controllers/calendar_controller.dart';
 import 'package:which_win/app/routes/app_pages.dart';
+import 'package:which_win/data/models/race_model.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});

@@ -7,43 +7,7 @@ import 'package:which_win/data/models/race_model.dart';
 import 'package:which_win/data/models/meeting_model.dart';
 import 'package:which_win/data/repositories/race_repository.dart';
 
-class MeetingGroup {
-  final String country;
-  final String location;
-  final List<RaceModel> races;
 
-  MeetingGroup({
-    required this.country,
-    required this.location,
-    required this.races,
-  });
-
-  bool get isLive => races.any((r) => r.status == 'LIVE');
-  int get racesCount => races.length;
-}
-
-class MeetingModel {
-  final String country;
-  final String location;
-  final int racesCount;
-  final bool isLive;
-
-  MeetingModel({
-    required this.country,
-    required this.location,
-    required this.racesCount,
-    required this.isLive,
-  });
-
-  factory MeetingModel.fromJson(Map<String, dynamic> json) {
-    return MeetingModel(
-      country: json['country'] ?? 'Unknown',
-      location: json['location'] ?? 'Unknown',
-      racesCount: json['racesCount'] ?? 0,
-      isLive: json['isLive'] ?? false,
-    );
-  }
-}
 
 class HomeController extends GetxController {
   final RaceRepo _raceRepo = Get.find<RaceRepo>();
@@ -87,26 +51,7 @@ class HomeController extends GetxController {
     }
   }
 
-  List<MeetingGroup> get meetingGroups {
-    final list = <MeetingGroup>[];
-    for (final race in raceList) {
-      final location = race.location ?? 'Unknown';
-      final country = race.country ?? 'Unknown';
 
-      groupedRaces.putIfAbsent(location, () => []).add(race);
-      locationToCountry[location] = country;
-    }
-
-    final newList = groupedRaces.entries.map((entry) {
-      return MeetingModel(
-        location: entry.key,
-        country: locationToCountry[entry.key] ?? 'Unknown',
-        races: entry.value,
-      );
-    }).toList();
-
-    meetingGroups.assignAll(newList);
-  }
 
   @override
   void onInit() {
@@ -177,7 +122,7 @@ class HomeController extends GetxController {
           raceList.addAll(raceResponse.data ?? []);
         }
         meta.value = raceResponse.meta;
-        _updateMeetingGroups();
+
 
         // Dynamically update categories only when no category filter is active
         if (selectedCategory.value == 'All') {

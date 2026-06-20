@@ -1,16 +1,22 @@
-import 'package:which_win/data/models/race_model.dart';
-
 class MeetingModel {
   final String country;
   final String location;
-  final List<RaceModel> races;
+  final int racesCount;
+  final bool isLive;
 
   MeetingModel({
     required this.country,
     required this.location,
-    required this.races,
+    required this.racesCount,
+    required this.isLive,
   });
 
-  bool get isLive => races.any((r) => r.status?.toUpperCase() == 'LIVE');
-  int get racesCount => races.length;
+  factory MeetingModel.fromJson(Map<String, dynamic> json) {
+    return MeetingModel(
+      country: json['country'] ?? 'Unknown',
+      location: json['location'] ?? 'Unknown',
+      racesCount: json['racesCount'] ?? 0,
+      isLive: json['isLive'] ?? false,
+    );
+  }
 }
