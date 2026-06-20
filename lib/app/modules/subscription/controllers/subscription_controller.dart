@@ -69,8 +69,10 @@ class SubscriptionController extends GetxController {
   }
 
   Future<void> _fetchStoreProducts() async {
+    debugPrint('SubscriptionController: Initializing product fetching...');
     final bool isAvailable = await _iap.isAvailable();
     if (!isAvailable) {
+      debugPrint('SubscriptionController ERROR: In-app billing is NOT available on this device!');
       isStoreLoading.value = false;
       return;
     }
@@ -81,13 +83,33 @@ class SubscriptionController extends GetxController {
           ? _iosProductIds
           : {_androidPremiumProductId};
 
+      debugPrint('SubscriptionController: Querying product details for IDs: $idsToQuery');
       final ProductDetailsResponse response = await _iap.queryProductDetails(
         idsToQuery,
       );
+      
+      debugPrint('SubscriptionController: Query finished.');
+      debugPrint('SubscriptionController: Found products count: ${response.productDetails.length}');
+      for (var product in response.productDetails) {
+        debugPrint(' - Product ID: ${product.id}, Price: ${product.price}, Title: ${product.title}');
+        if (product is GooglePlayProductDetails) {
+          debugPrint('   - Android Offer details: ${product.productDetails.subscriptionOfferDetails?.map((o) => o.basePlanId).toList()}');
+          debugPrint('   - Subscription Index: ${product.subscriptionIndex}');
+        }
+      }
+      
+      if (response.notFoundIDs.isNotEmpty) {
+        debugPrint('SubscriptionController WARNING: Product IDs not found in Store: ${response.notFoundIDs}');
+      }
+      
+      if (response.error != null) {
+        debugPrint('SubscriptionController ERROR from store query: ${response.error!.message}');
+      }
+
       storeProducts.assignAll(response.productDetails);
       _populatePlansFromStore();
     } catch (e) {
-      // Handle error
+      debugPrint('SubscriptionController EXCEPTION fetching products: $e');
     } finally {
       isStoreLoading.value = false;
     }
@@ -133,45 +155,78 @@ class SubscriptionController extends GetxController {
       }
     } else if (GetPlatform.isAndroid) {
       final androidProducts = storeProducts.whereType<GooglePlayProductDetails>().toList();
-      androidProducts.sort((a, b) {
-        final aBase = _getAndroidBasePlanId(a);
-        final bBase = _getAndroidBasePlanId(b);
-        if (aBase.contains('weekly')) return -1;
-        if (bBase.contains('weekly')) return 1;
-        if (aBase.contains('monthly')) return -1;
-        if (bBase.contains('monthly')) return 1;
-        return 0;
-      });
+      debugPrint('SubscriptionController: Populating plans from ${androidProducts.length} Android products');
 
       for (final product in androidProducts) {
         final basePlanId = _getAndroidBasePlanId(product);
-        if (basePlanId.isEmpty) continue;
-
-        final duration = basePlanId.contains('weekly')
-            ? 'WEEKLY'
-            : basePlanId.contains('monthly')
-                ? 'MONTHLY'
-                : 'YEARLY';
-
-        final name = duration == 'WEEKLY'
-            ? '1 Week'
-            : duration == 'MONTHLY'
-                ? '1 Month'
-                : '1 Year';
-
-        localPlans.add(SubscriptionPlanModel(
-          id: basePlanId,
-          name: name,
-          description: product.description,
-          price: product.rawPrice,
-          currency: product.currencyCode,
-          duration: duration,
-          productId: product.id,
-        ));
+        if (basePlanId.isNotEmpty) {
+          debugPrint('SubscriptionController: Found base plan ID "$basePlanId" for product "${product.id}" via index');
+          _addPlan(localPlans, product, basePlanId);
+        } else {
+          // Fallback 1: Manually iterate subscriptionOfferDetails if available
+          final offers = product.productDetails.subscriptionOfferDetails;
+          if (offers != null && offers.isNotEmpty) {
+            debugPrint('SubscriptionController: basePlanId empty via index, iterating subscriptionOfferDetails manually');
+            for (final offer in offers) {
+              final bId = offer.basePlanId;
+              if (bId.isNotEmpty) {
+                debugPrint('SubscriptionController: Found base plan ID "$bId" manually');
+                _addPlan(localPlans, product, bId);
+              }
+            }
+          } else {
+            // Fallback 2: Simple product ID fallback
+            debugPrint('SubscriptionController: No offers found, falling back to product ID "${product.id}"');
+            _addPlan(localPlans, product, product.id);
+          }
+        }
       }
+
+      // Sort plans: weekly -> monthly -> yearly
+      localPlans.sort((a, b) {
+        final aId = a.id?.toLowerCase() ?? '';
+        final bId = b.id?.toLowerCase() ?? '';
+        if (aId.contains('weekly')) return -1;
+        if (bId.contains('weekly')) return 1;
+        if (aId.contains('monthly')) return -1;
+        if (bId.contains('monthly')) return 1;
+        return 0;
+      });
+
+      debugPrint('SubscriptionController: Populated ${localPlans.length} plans successfully');
     }
 
     plans.assignAll(localPlans);
+  }
+
+  void _addPlan(List<SubscriptionPlanModel> localPlans, GooglePlayProductDetails product, String id) {
+    if (localPlans.any((p) => p.id == id)) {
+      debugPrint('SubscriptionController: Plan with ID "$id" already exists, skipping duplicate');
+      return;
+    }
+
+    final duration = id.toLowerCase().contains('weekly')
+        ? 'WEEKLY'
+        : id.toLowerCase().contains('monthly')
+            ? 'MONTHLY'
+            : 'YEARLY';
+
+    final name = duration == 'WEEKLY'
+        ? '1 Week'
+        : duration == 'MONTHLY'
+            ? '1 Month'
+            : '1 Year';
+
+    localPlans.add(SubscriptionPlanModel(
+      id: id,
+      name: name,
+      description: product.description,
+      price: product.rawPrice,
+      currency: product.currencyCode,
+      duration: duration,
+      productId: product.id,
+    ));
+    debugPrint('SubscriptionController: Added Android plan: ID=$id, name=$name, duration=$duration, price=${product.price}');
   }
 
   String _getAndroidBasePlanId(GooglePlayProductDetails product) {
@@ -199,12 +254,18 @@ class SubscriptionController extends GetxController {
       GooglePlayProductDetails? matchingProduct;
       for (final p in storeProducts) {
         if (p is GooglePlayProductDetails) {
-          if (_getAndroidBasePlanId(p) == plan.id) {
-            matchingProduct = p;
-            break;
+          if (p.id == plan.productId) {
+            final basePlanId = _getAndroidBasePlanId(p);
+            if (basePlanId == plan.id || (basePlanId.isEmpty && p.id == plan.id)) {
+              matchingProduct = p;
+              break;
+            }
           }
         }
       }
+      matchingProduct ??= storeProducts
+          .whereType<GooglePlayProductDetails>()
+          .firstWhereOrNull((p) => p.id == plan.productId);
       if (matchingProduct != null) {
         return matchingProduct.price;
       }
@@ -238,26 +299,26 @@ class SubscriptionController extends GetxController {
         );
         await _iap.buyNonConsumable(purchaseParam: purchaseParam);
       } else if (GetPlatform.isAndroid) {
-        final expectedBasePlanId = plan.id;
         GooglePlayProductDetails? matchingProduct;
         for (final p in storeProducts) {
           if (p is GooglePlayProductDetails) {
-            final index = p.subscriptionIndex;
-            if (index != null) {
-              final offers = p.productDetails.subscriptionOfferDetails;
-              if (offers != null && index < offers.length) {
-                if (offers[index].basePlanId == expectedBasePlanId) {
-                  matchingProduct = p;
-                  break;
-                }
+            if (p.id == plan.productId) {
+              final basePlanId = _getAndroidBasePlanId(p);
+              if (basePlanId == plan.id || (basePlanId.isEmpty && p.id == plan.id)) {
+                matchingProduct = p;
+                break;
               }
             }
           }
         }
 
+        matchingProduct ??= storeProducts
+            .whereType<GooglePlayProductDetails>()
+            .firstWhereOrNull((p) => p.id == plan.productId);
+
         if (matchingProduct == null) {
           throw Exception(
-            'Google Play Store subscription details not loaded yet.',
+            'Google Play Store subscription details for "${plan.productId}" not loaded yet.',
           );
         }
 
@@ -351,5 +412,14 @@ class SubscriptionController extends GetxController {
       Get.snackbar('Error', 'Restore failed: $e');
       isLoading.value = false;
     }
+  }
+}
+
+extension _IterableExtensions<T> on Iterable<T> {
+  T? firstWhereOrNull(bool Function(T) test) {
+    for (final element in this) {
+      if (test(element)) return element;
+    }
+    return null;
   }
 }
