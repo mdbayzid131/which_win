@@ -28,7 +28,10 @@ class SubscriptionView extends GetView<SubscriptionController> {
         ),
         leadingWidth: 80.w,
       ),
-      body: Obx(() {
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: Obx(() {
         if (controller.plans.isEmpty) {
           return _buildNoPlanFound();
         }
@@ -47,6 +50,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
           ],
         );
       }),
+    ),
     );
   }
 

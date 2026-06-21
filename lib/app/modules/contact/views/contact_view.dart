@@ -40,7 +40,10 @@ class ContactView extends GetView<ContactController> {
           child: Container(color: Colors.white12, height: 1.h),
         ),
       ),
-      body: SingleChildScrollView(
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: SingleChildScrollView(
         padding: EdgeInsets.all(24.w),
         child: Column(
           children: [
@@ -157,6 +160,7 @@ class ContactView extends GetView<ContactController> {
           ],
         ),
       ),
+    ),
     );
   }
 

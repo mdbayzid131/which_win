@@ -38,7 +38,10 @@ class PrivacyPolicyView extends GetView<PrivacyPolicyController> {
           child: Container(color: Colors.white12, height: 1.h),
         ),
       ),
-      body: Obx(() {
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: Obx(() {
         if (controller.isLoading.value) {
           return const Center(
             child: CircularProgressIndicator(
@@ -146,6 +149,7 @@ class PrivacyPolicyView extends GetView<PrivacyPolicyController> {
           ),
         );
       }),
+    ),
     );
   }
 }

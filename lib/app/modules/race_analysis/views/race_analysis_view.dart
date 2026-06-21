@@ -11,7 +11,10 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Obx(() {
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: Obx(() {
         if (controller.isLoading.value) {
           return const Center(
             child: CircularProgressIndicator(
@@ -342,6 +345,7 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
           ),
         );
       }),
+    ),
     );
   }
 

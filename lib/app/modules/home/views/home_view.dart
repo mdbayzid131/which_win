@@ -188,7 +188,10 @@ class HomeView extends GetView<HomeController> {
                   onChanged: controller.searchRaces,
                   decoration: InputDecoration(
                     hintText: 'Search country...',
-                    hintStyle: TextStyle(color: Colors.white38, fontSize: 16.sp),
+                    hintStyle: TextStyle(
+                      color: Colors.white38,
+                      fontSize: 16.sp,
+                    ),
                     prefixIcon: const Icon(Icons.search, color: Colors.white38),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(vertical: 12.h),
@@ -199,15 +202,15 @@ class HomeView extends GetView<HomeController> {
             // Categories
             SizedBox(
               height: 40.h,
-              child: Obx(
-                () => ListView.builder(
+              child: Obx(() {
+                final selectedCategory = controller.selectedCategory.value;
+                return ListView.builder(
                   scrollDirection: Axis.horizontal,
                   padding: EdgeInsets.symmetric(horizontal: 12.w),
                   itemCount: controller.categories.length,
                   itemBuilder: (context, index) {
                     final category = controller.categories[index];
-                    final isSelected =
-                        controller.selectedCategory.value == category;
+                    final isSelected = selectedCategory == category;
                     return GestureDetector(
                       onTap: () => controller.selectCategory(category),
                       child: Container(
@@ -238,8 +241,8 @@ class HomeView extends GetView<HomeController> {
                       ),
                     );
                   },
-                ),
-              ),
+                );
+              }),
             ),
             SizedBox(height: 16.h),
             Expanded(
@@ -289,8 +292,10 @@ class HomeView extends GetView<HomeController> {
                     itemBuilder: (context, index) {
                       final race = races[index];
                       return GestureDetector(
-                        onTap: () =>
-                            Get.toNamed(AppRoutes.RACE_DETAILS, arguments: race),
+                        onTap: () => Get.toNamed(
+                          AppRoutes.RACE_DETAILS,
+                          arguments: race,
+                        ),
                         child: _buildLiveRaceCard(race),
                       );
                     },
@@ -321,7 +326,10 @@ class HomeView extends GetView<HomeController> {
                 }
 
                 return ListView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 8.h,
+                  ),
                   itemCount: meetings.length,
                   itemBuilder: (context, index) {
                     final meeting = meetings[index];
@@ -884,170 +892,180 @@ class HomeView extends GetView<HomeController> {
           border: Border.all(color: Colors.white12),
         ),
         padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
-        child: Column(
-          children: [
-            // Handle
-            Container(
-              width: 40.w,
-              height: 4.h,
-              decoration: BoxDecoration(
-                color: Colors.white12,
-                borderRadius: BorderRadius.circular(2.r),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            children: [
+              // Handle
+              Container(
+                width: 40.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: Colors.white12,
+                  borderRadius: BorderRadius.circular(2.r),
+                ),
               ),
-            ),
-            SizedBox(height: 24.h),
-            // Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Obx(
-                  () => Text(
-                    DateFormat(
-                      'MMMM yyyy',
-                    ).format(calendarController.focusedDate.value),
+              SizedBox(height: 24.h),
+              // Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Obx(
+                    () => Text(
+                      DateFormat(
+                        'MMMM yyyy',
+                      ).format(calendarController.focusedDate.value),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () => calendarController.prevMonth(),
+                        icon: const Icon(
+                          Icons.chevron_left,
+                          color: Colors.white,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => calendarController.nextMonth(),
+                        icon: const Icon(
+                          Icons.chevron_right,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.h),
+              // Week Days
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map((day) {
+                  return SizedBox(
+                    width: 40.w,
+                    child: Center(
+                      child: Text(
+                        day,
+                        style: TextStyle(
+                          color: Colors.white38,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              SizedBox(height: 16.h),
+              // Calendar Grid
+              Expanded(
+                child: Obx(() {
+                  final focusedDate = calendarController.focusedDate.value;
+                  final daysInMonth = DateTime(
+                    focusedDate.year,
+                    focusedDate.month + 1,
+                    0,
+                  ).day;
+                  final firstDayOfWeek = DateTime(
+                    focusedDate.year,
+                    focusedDate.month,
+                    1,
+                  ).weekday;
+
+                  return GridView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 7,
+                          mainAxisSpacing: 8,
+                          crossAxisSpacing: 8,
+                        ),
+                    itemCount: daysInMonth + (firstDayOfWeek - 1),
+                    itemBuilder: (context, index) {
+                      if (index < firstDayOfWeek - 1) {
+                        return const SizedBox();
+                      }
+
+                      final day = index - (firstDayOfWeek - 2);
+                      final date = DateTime(
+                        focusedDate.year,
+                        focusedDate.month,
+                        day,
+                      );
+                      final isSelected = DateUtils.isSameDay(
+                        date,
+                        calendarController.selectedDate.value,
+                      );
+                      final isToday = DateUtils.isSameDay(date, DateTime.now());
+
+                      return GestureDetector(
+                        onTap: () {
+                          calendarController.selectDate(date);
+                          Get.back(); // Close on selection
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? const Color(0xFF4DB6AC)
+                                : (isToday
+                                      ? Colors.white.withOpacity(0.05)
+                                      : Colors.transparent),
+                            borderRadius: BorderRadius.circular(12.r),
+                            border: isToday && !isSelected
+                                ? Border.all(
+                                    color: const Color(
+                                      0xFF4DB6AC,
+                                    ).withOpacity(0.5),
+                                  )
+                                : null,
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            '$day',
+                            style: TextStyle(
+                              color: isSelected ? Colors.black : Colors.white,
+                              fontSize: 14.sp,
+                              fontWeight: isSelected || isToday
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }),
+              ),
+              // Footer Action
+              SizedBox(
+                width: double.infinity,
+                height: 50.h,
+                child: ElevatedButton(
+                  onPressed: () => Get.back(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF004D40),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                  ),
+                  child: Text(
+                    'Close',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 20.sp,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: () => calendarController.prevMonth(),
-                      icon: const Icon(Icons.chevron_left, color: Colors.white),
-                    ),
-                    IconButton(
-                      onPressed: () => calendarController.nextMonth(),
-                      icon: const Icon(
-                        Icons.chevron_right,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(height: 16.h),
-            // Week Days
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map((day) {
-                return SizedBox(
-                  width: 40.w,
-                  child: Center(
-                    child: Text(
-                      day,
-                      style: TextStyle(color: Colors.white38, fontSize: 14.sp),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-            SizedBox(height: 16.h),
-            // Calendar Grid
-            Expanded(
-              child: Obx(() {
-                final focusedDate = calendarController.focusedDate.value;
-                final daysInMonth = DateTime(
-                  focusedDate.year,
-                  focusedDate.month + 1,
-                  0,
-                ).day;
-                final firstDayOfWeek = DateTime(
-                  focusedDate.year,
-                  focusedDate.month,
-                  1,
-                ).weekday;
-
-                return GridView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 7,
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
-                  ),
-                  itemCount: daysInMonth + (firstDayOfWeek - 1),
-                  itemBuilder: (context, index) {
-                    if (index < firstDayOfWeek - 1) {
-                      return const SizedBox();
-                    }
-
-                    final day = index - (firstDayOfWeek - 2);
-                    final date = DateTime(
-                      focusedDate.year,
-                      focusedDate.month,
-                      day,
-                    );
-                    final isSelected = DateUtils.isSameDay(
-                      date,
-                      calendarController.selectedDate.value,
-                    );
-                    final isToday = DateUtils.isSameDay(date, DateTime.now());
-
-                    return GestureDetector(
-                      onTap: () {
-                        calendarController.selectDate(date);
-                        Get.back(); // Close on selection
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? const Color(0xFF4DB6AC)
-                              : (isToday
-                                    ? Colors.white.withOpacity(0.05)
-                                    : Colors.transparent),
-                          borderRadius: BorderRadius.circular(12.r),
-                          border: isToday && !isSelected
-                              ? Border.all(
-                                  color: const Color(
-                                    0xFF4DB6AC,
-                                  ).withOpacity(0.5),
-                                )
-                              : null,
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          '$day',
-                          style: TextStyle(
-                            color: isSelected ? Colors.black : Colors.white,
-                            fontSize: 14.sp,
-                            fontWeight: isSelected || isToday
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                );
-              }),
-            ),
-            // Footer Action
-            SizedBox(
-              width: double.infinity,
-              height: 50.h,
-              child: ElevatedButton(
-                onPressed: () => Get.back(),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF004D40),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                ),
-                child: Text(
-                  'Close',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
               ),
-            ),
-            SizedBox(height: 16.h),
-          ],
+              SizedBox(height: 16.h),
+            ],
+          ),
         ),
       ),
       isScrollControlled: true,
@@ -1063,93 +1081,99 @@ class HomeView extends GetView<HomeController> {
           border: Border.all(color: Colors.white12),
         ),
         padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Handle
-            Center(
-              child: Container(
-                width: 40.w,
-                height: 4.h,
-                decoration: BoxDecoration(
-                  color: Colors.white12,
-                  borderRadius: BorderRadius.circular(2.r),
-                ),
-              ),
-            ),
-            SizedBox(height: 24.h),
-            Text(
-              'Filter Races',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 24.h),
-
-            _buildFilterSection(
-              'Race Status',
-              ['All', 'Live', 'Upcoming', 'Resulted'],
-              controller.selectedStatus,
-              (val) => controller.setStatus(val),
-            ),
-
-            SizedBox(height: 24.h),
-
-            _buildFilterSection(
-              'Regions',
-              ['All', 'UK', 'USA', 'Europe', 'Asia', 'Australia'],
-              controller.selectedRegion,
-              (val) => controller.setRegion(val),
-            ),
-
-            SizedBox(height: 40.h),
-
-            // Actions
-            Row(
-              children: [
-                Expanded(
-                  child: TextButton(
-                    onPressed: () {
-                      controller.resetFilters();
-                      Get.back();
-                    },
-                    child: Text(
-                      'Reset All',
-                      style: TextStyle(color: Colors.white38, fontSize: 16.sp),
-                    ),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Handle
+              Center(
+                child: Container(
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: Colors.white12,
+                    borderRadius: BorderRadius.circular(2.r),
                   ),
                 ),
-                SizedBox(width: 16.w),
-                Expanded(
-                  flex: 2,
-                  child: SizedBox(
-                    height: 50.h,
-                    child: ElevatedButton(
-                      onPressed: () => Get.back(),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF004D40),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                      ),
+              ),
+              SizedBox(height: 24.h),
+              Text(
+                'Filter Races',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 24.h),
+
+              _buildFilterSection(
+                'Race Status',
+                ['All', 'Live', 'Upcoming', 'Resulted'],
+                controller.selectedStatus,
+                (val) => controller.setStatus(val),
+              ),
+
+              SizedBox(height: 24.h),
+
+              _buildFilterSection(
+                'Regions',
+                ['All', 'UK', 'USA', 'Europe', 'Asia', 'Australia'],
+                controller.selectedRegion,
+                (val) => controller.setRegion(val),
+              ),
+
+              SizedBox(height: 40.h),
+
+              // Actions
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        controller.resetFilters();
+                        Get.back();
+                      },
                       child: Text(
-                        'Apply Filters',
+                        'Reset All',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.white38,
                           fontSize: 16.sp,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 16.h),
-          ],
+                  SizedBox(width: 16.w),
+                  Expanded(
+                    flex: 2,
+                    child: SizedBox(
+                      height: 50.h,
+                      child: ElevatedButton(
+                        onPressed: () => Get.back(),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF004D40),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                        ),
+                        child: Text(
+                          'Apply Filters',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.h),
+            ],
+          ),
         ),
       ),
       isScrollControlled: true,

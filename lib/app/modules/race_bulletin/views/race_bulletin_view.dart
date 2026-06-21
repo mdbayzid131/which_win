@@ -71,48 +71,52 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
           ],
         ),
       ),
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4DB6AC)),
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: Obx(() {
+          if (controller.isLoading.value) {
+            return const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4DB6AC)),
+              ),
+            );
+          }
+
+          if (controller.raceList.isEmpty) {
+            return Center(
+              child: Text(
+                'No races found for this meeting',
+                style: TextStyle(color: Colors.white38, fontSize: 16.sp),
+              ),
+            );
+          }
+
+          return RefreshIndicator(
+            color: const Color(0xFF4DB6AC),
+            backgroundColor: const Color(0xFF0F1419),
+            onRefresh: () => controller.fetchRaces(),
+            child: ListView.builder(
+              padding: EdgeInsets.all(16.w),
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemCount: controller.raceList.length,
+              itemBuilder: (context, index) {
+                final raceModel = controller.raceList[index];
+                return GestureDetector(
+                  onTap: () {
+                    if (raceModel.status == 'FINISHED') {
+                      Get.toNamed(AppRoutes.RACE_ANALYSIS, arguments: raceModel);
+                    } else {
+                      Get.toNamed(AppRoutes.RACE_DETAILS, arguments: raceModel);
+                    }
+                  },
+                  child: _buildRaceItem(raceModel, index + 1),
+                );
+              },
             ),
           );
-        }
-
-        if (controller.raceList.isEmpty) {
-          return Center(
-            child: Text(
-              'No races found for this meeting',
-              style: TextStyle(color: Colors.white38, fontSize: 16.sp),
-            ),
-          );
-        }
-
-        return RefreshIndicator(
-          color: const Color(0xFF4DB6AC),
-          backgroundColor: const Color(0xFF0F1419),
-          onRefresh: () => controller.fetchRaces(),
-          child: ListView.builder(
-            padding: EdgeInsets.all(16.w),
-            physics: const AlwaysScrollableScrollPhysics(),
-            itemCount: controller.raceList.length,
-            itemBuilder: (context, index) {
-              final raceModel = controller.raceList[index];
-              return GestureDetector(
-                onTap: () {
-                  if (raceModel.status == 'FINISHED') {
-                    Get.toNamed(AppRoutes.RACE_ANALYSIS, arguments: raceModel);
-                  } else {
-                    Get.toNamed(AppRoutes.RACE_DETAILS, arguments: raceModel);
-                  }
-                },
-                child: _buildRaceItem(raceModel, index + 1),
-              );
-            },
-          ),
-        );
-      }),
+        }),
+      ),
     );
   }
 

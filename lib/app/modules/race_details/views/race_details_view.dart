@@ -94,8 +94,11 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           );
         }),
       ),
-      body: Column(
-        children: [
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: Column(
+          children: [
           // Tabs
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
@@ -182,6 +185,8 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           // Tab Content
           Expanded(
             child: Obx(() {
+              // ignore: unused_local_variable
+              final isPremium = controller.isPremium.value;
               if (controller.isLoading.value) {
                 return const Center(
                   child: CircularProgressIndicator(
@@ -281,6 +286,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           ),
         ],
       ),
+    ),
     );
   }
 
@@ -974,8 +980,10 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
           border: Border.all(color: Colors.white12),
         ),
-        child: Column(
-          children: [
+        child: SafeArea(
+          top: false,
+          child: Column(
+            children: [
             // Handle bar
             Container(
               margin: EdgeInsets.only(top: 12.h),
@@ -1226,6 +1234,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           ],
         ),
       ),
+    ),
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
     );
@@ -1350,9 +1359,12 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             border: Border.all(color: Colors.white12),
           ),
           padding: EdgeInsets.all(20.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+          child: SafeArea(
+            top: false,
+            bottom: true,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
               // Header
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1515,8 +1527,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               ),
             ],
           ),
-        );
-      }),
+        ),
+      );
+    }),
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
     );
@@ -1865,15 +1878,17 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
   void _showPremiumPrompt(BuildContext context) {
     Get.bottomSheet(
       Container(
-        padding: EdgeInsets.fromLTRB(24.w, 20.h, 24.w, 40.h),
+        padding: EdgeInsets.fromLTRB(24.w, 20.h, 24.w, 16.h),
         decoration: BoxDecoration(
           color: const Color(0xFF0A0F14),
           borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
           border: Border.all(color: const Color(0xFFFFD700).withOpacity(0.3)),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+        child: SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
             Container(
               width: 40.w,
               height: 4.h,
@@ -1944,6 +1959,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           ],
         ),
       ),
+    ),
     );
   }
 }

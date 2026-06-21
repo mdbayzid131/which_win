@@ -37,7 +37,10 @@ class RateUsView extends GetView<RateUsController> {
           child: Container(color: Colors.white12, height: 1.h),
         ),
       ),
-      body: Center(
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: Center(
         child: Padding(
           padding: EdgeInsets.all(24.w),
           child: Column(
@@ -117,6 +120,7 @@ class RateUsView extends GetView<RateUsController> {
           ),
         ),
       ),
+    ),
     );
   }
 }
