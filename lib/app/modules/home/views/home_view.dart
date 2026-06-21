@@ -429,7 +429,11 @@ class HomeView extends GetView<HomeController> {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                _buildDrawerItem(Icons.emoji_events_sharp, 'Races', () {}),
+                _buildDrawerItem(
+                  Icons.emoji_events_sharp,
+                  'Races',
+                  () => Get.back(),
+                ),
                 _buildDrawerItem(
                   Icons.notifications_outlined,
                   'Notifications',
