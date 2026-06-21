@@ -104,173 +104,215 @@ class HomeView extends GetView<HomeController> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // ── LIVE Filter Banner ────────────────────────────────────────────
-          Obx(() {
-            if (!controller.isLiveFilterActive.value)
-              return const SizedBox.shrink();
-            return Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.red.withOpacity(0.18),
-                    Colors.red.withOpacity(0.05),
+      body: SafeArea(
+        top: false,
+        child: Column(
+          children: [
+            // ── LIVE Filter Banner ────────────────────────────────────────────
+            Obx(() {
+              if (!controller.isLiveFilterActive.value)
+                return const SizedBox.shrink();
+              return Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.red.withOpacity(0.18),
+                      Colors.red.withOpacity(0.05),
+                    ],
+                  ),
+                  border: const Border(
+                    bottom: BorderSide(color: Colors.red, width: 1),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    TweenAnimationBuilder<double>(
+                      tween: Tween(begin: 0.4, end: 1.0),
+                      duration: const Duration(milliseconds: 700),
+                      curve: Curves.easeInOut,
+                      builder: (ctx, v, ch) => Opacity(opacity: v, child: ch),
+                      onEnd: () {},
+                      child: Container(
+                        width: 8.w,
+                        height: 8.w,
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.red.withOpacity(0.7),
+                              blurRadius: 6,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 10.w),
+                    Text(
+                      'LIVE RACES',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                    const Spacer(),
+                    GestureDetector(
+                      onTap: controller.toggleLiveFilter,
+                      child: Icon(
+                        Icons.close,
+                        size: 20.sp,
+                        color: Colors.white70,
+                      ),
+                    ),
                   ],
                 ),
-                border: const Border(
-                  bottom: BorderSide(color: Colors.red, width: 1),
+              );
+            }),
+            // Search Bar
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              child: Container(
+                height: 50.h,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1A1A1A),
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(color: Colors.white12),
+                ),
+                child: TextField(
+                  style: const TextStyle(color: Colors.white),
+                  onChanged: controller.searchRaces,
+                  decoration: InputDecoration(
+                    hintText: 'Search country...',
+                    hintStyle: TextStyle(color: Colors.white38, fontSize: 16.sp),
+                    prefixIcon: const Icon(Icons.search, color: Colors.white38),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(vertical: 12.h),
+                  ),
                 ),
               ),
-              child: Row(
-                children: [
-                  TweenAnimationBuilder<double>(
-                    tween: Tween(begin: 0.4, end: 1.0),
-                    duration: const Duration(milliseconds: 700),
-                    curve: Curves.easeInOut,
-                    builder: (ctx, v, ch) => Opacity(opacity: v, child: ch),
-                    onEnd: () {},
-                    child: Container(
-                      width: 8.w,
-                      height: 8.w,
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.red.withOpacity(0.7),
-                            blurRadius: 6,
-                            spreadRadius: 1,
+            ),
+            // Categories
+            SizedBox(
+              height: 40.h,
+              child: Obx(
+                () => ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.symmetric(horizontal: 12.w),
+                  itemCount: controller.categories.length,
+                  itemBuilder: (context, index) {
+                    final category = controller.categories[index];
+                    final isSelected =
+                        controller.selectedCategory.value == category;
+                    return GestureDetector(
+                      onTap: () => controller.selectCategory(category),
+                      child: Container(
+                        margin: EdgeInsets.symmetric(horizontal: 4.w),
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? const Color(0xFFFF6600)
+                              : const Color(0xFF1A1A1A),
+                          borderRadius: BorderRadius.circular(20.r),
+                          border: Border.all(
+                            color: isSelected
+                                ? Colors.transparent
+                                : Colors.white12,
+                          ),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          category,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.sp,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            SizedBox(height: 16.h),
+            Expanded(
+              child: Obx(() {
+                final isLiveFilter = controller.isLiveFilterActive.value;
+                final meetings = controller.filteredMeetings;
+                final races = controller.raceList;
+
+                if (isLiveFilter) {
+                  if (races.isEmpty && !controller.isLoading.value) {
+                    return Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.settings_input_antenna,
+                            color: Colors.red.withOpacity(0.5),
+                            size: 48.sp,
+                          ),
+                          SizedBox(height: 16.h),
+                          Text(
+                            'No live races right now',
+                            style: TextStyle(
+                              color: Colors.white38,
+                              fontSize: 16.sp,
+                            ),
+                          ),
+                          SizedBox(height: 8.h),
+                          Text(
+                            'Tap the antenna icon to see all races',
+                            style: TextStyle(
+                              color: Colors.white24,
+                              fontSize: 12.sp,
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                  SizedBox(width: 10.w),
-                  Text(
-                    'LIVE RACES',
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.5,
-                    ),
-                  ),
-                  const Spacer(),
-                  GestureDetector(
-                    onTap: controller.toggleLiveFilter,
-                    child: Icon(
-                      Icons.close,
-                      size: 20.sp,
-                      color: Colors.white70,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }),
-          // Search Bar
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-            child: Container(
-              height: 50.h,
-              decoration: BoxDecoration(
-                color: const Color(0xFF1A1A1A),
-                borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: Colors.white12),
-              ),
-              child: TextField(
-                style: const TextStyle(color: Colors.white),
-                onChanged: controller.searchRaces,
-                decoration: InputDecoration(
-                  hintText: 'Search country...',
-                  hintStyle: TextStyle(color: Colors.white38, fontSize: 16.sp),
-                  prefixIcon: const Icon(Icons.search, color: Colors.white38),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: 12.h),
-                ),
-              ),
-            ),
-          ),
-          // Categories
-          SizedBox(
-            height: 40.h,
-            child: Obx(
-              () => ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.symmetric(horizontal: 12.w),
-                itemCount: controller.categories.length,
-                itemBuilder: (context, index) {
-                  final category = controller.categories[index];
-                  final isSelected =
-                      controller.selectedCategory.value == category;
-                  return GestureDetector(
-                    onTap: () => controller.selectCategory(category),
-                    child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 4.w),
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? const Color(0xFFFF6600)
-                            : const Color(0xFF1A1A1A),
-                        borderRadius: BorderRadius.circular(20.r),
-                        border: Border.all(
-                          color: isSelected
-                              ? Colors.transparent
-                              : Colors.white12,
-                        ),
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        category,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-          SizedBox(height: 16.h),
-          Expanded(
-            child: Obx(() {
-              final isLiveFilter = controller.isLiveFilterActive.value;
-              final meetings = controller.filteredMeetings;
-              final races = controller.raceList;
+                    );
+                  }
 
-              if (isLiveFilter) {
-                if (races.isEmpty && !controller.isLoading.value) {
+                  return ListView.builder(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 8.h,
+                    ),
+                    itemCount: races.length,
+                    itemBuilder: (context, index) {
+                      final race = races[index];
+                      return GestureDetector(
+                        onTap: () =>
+                            Get.toNamed(AppRoutes.RACE_DETAILS, arguments: race),
+                        child: _buildLiveRaceCard(race),
+                      );
+                    },
+                  );
+                }
+
+                if (meetings.isEmpty && !controller.isLoading.value) {
                   return Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          Icons.settings_input_antenna,
-                          color: Colors.red.withOpacity(0.5),
+                          Icons.emoji_events_outlined,
+                          color: Colors.white24,
                           size: 48.sp,
                         ),
                         SizedBox(height: 16.h),
                         Text(
-                          'No live races right now',
+                          'No races found',
                           style: TextStyle(
                             color: Colors.white38,
                             fontSize: 16.sp,
-                          ),
-                        ),
-                        SizedBox(height: 8.h),
-                        Text(
-                          'Tap the antenna icon to see all races',
-                          style: TextStyle(
-                            color: Colors.white24,
-                            fontSize: 12.sp,
                           ),
                         ),
                       ],
@@ -279,76 +321,37 @@ class HomeView extends GetView<HomeController> {
                 }
 
                 return ListView.builder(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 8.h,
-                  ),
-                  itemCount: races.length,
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  itemCount: meetings.length,
                   itemBuilder: (context, index) {
-                    final race = races[index];
+                    final meeting = meetings[index];
+                    final race = {
+                      'country': meeting.country,
+                      'flag': _getFlagCode(meeting.country),
+                      'race': meeting.location,
+                      'isLive': meeting.isLive,
+                      'racesCount': '${meeting.racesCount} races',
+                    };
+                    final representativeRace = RaceModel(
+                      location: meeting.location,
+                      country: meeting.country,
+                      date: DateFormat(
+                        'yyyy-MM-dd',
+                      ).format(controller.selectedDate),
+                    );
                     return GestureDetector(
-                      onTap: () =>
-                          Get.toNamed(AppRoutes.RACE_DETAILS, arguments: race),
-                      child: _buildLiveRaceCard(race),
+                      onTap: () => Get.toNamed(
+                        AppRoutes.RACE_BULLETIN,
+                        arguments: representativeRace,
+                      ),
+                      child: _buildRaceCard(race),
                     );
                   },
                 );
-              }
-
-              if (meetings.isEmpty && !controller.isLoading.value) {
-                return Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.emoji_events_outlined,
-                        color: Colors.white24,
-                        size: 48.sp,
-                      ),
-                      SizedBox(height: 16.h),
-                      Text(
-                        'No races found',
-                        style: TextStyle(
-                          color: Colors.white38,
-                          fontSize: 16.sp,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }
-
-              return ListView.builder(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                itemCount: meetings.length,
-                itemBuilder: (context, index) {
-                  final meeting = meetings[index];
-                  final race = {
-                    'country': meeting.country,
-                    'flag': _getFlagCode(meeting.country),
-                    'race': meeting.location,
-                    'isLive': meeting.isLive,
-                    'racesCount': '${meeting.racesCount} races',
-                  };
-                  final representativeRace = RaceModel(
-                    location: meeting.location,
-                    country: meeting.country,
-                    date: DateFormat(
-                      'yyyy-MM-dd',
-                    ).format(controller.selectedDate),
-                  );
-                  return GestureDetector(
-                    onTap: () => Get.toNamed(
-                      AppRoutes.RACE_BULLETIN,
-                      arguments: representativeRace,
-                    ),
-                    child: _buildRaceCard(race),
-                  );
-                },
-              );
-            }),
-          ),
-        ],
+              }),
+            ),
+          ],
+        ),
       ),
     );
   }
