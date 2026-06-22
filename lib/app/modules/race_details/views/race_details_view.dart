@@ -112,6 +112,8 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                     _buildTab('Statistics', 1),
                     SizedBox(width: 8.w),
                     _buildTab('Analysis', 2),
+                    SizedBox(width: 8.w),
+                    _buildTab('Bulletin', 3),
                     SizedBox(width: 16.w),
                     // Rankings button
                     GestureDetector(
@@ -272,6 +274,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                   );
                 }
                 return _buildAnalysisTab();
+              } else if (controller.selectedTab.value == 3) {
+                // Bulletin — shows horses in API order by actual draw/horse number
+                return _buildBulletinTab(details);
               } else {
                 return const Center(
                   child: Text(
@@ -285,6 +290,296 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         ],
       ),
     ),
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // BULLETIN TAB
+  // Shows horses in their original API order (NO rank/score sorting).
+  // The horse number is the actual draw number from the API.
+  // ─────────────────────────────────────────────────────────────────────────
+
+  Widget _buildBulletinTab(RaceDetailsData details) {
+    final entries = details.entries ?? [];
+    if (entries.isEmpty) {
+      return const Center(
+        child: Text(
+          'No horses registered',
+          style: TextStyle(color: Colors.white38),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      itemCount: entries.length,
+      itemBuilder: (context, index) {
+        final entry = entries[index];
+        return _buildBulletinHorseCard(entry, index);
+      },
+    );
+  }
+
+  Widget _buildBulletinHorseCard(RaceEntry entry, int fallbackIndex) {
+    final horse = entry.horse;
+    final horseName = horse?.name ?? 'Unknown Horse';
+    final jockeyName = entry.jockeyName ?? 'Unknown Jockey';
+    final trainerName = entry.trainerName ?? 'N/A';
+    final age = horse?.age != null ? '${horse!.age}yo' : 'N/A';
+    final color = horse?.color ?? 'N/A';
+    final sex = horse?.sex ?? '';
+    final weightText = entry.weight != null ? '${entry.weight!.toStringAsFixed(0)} kg' : 'N/A';
+    final earnings = horse?.totalEarnings;
+    final earningsText = earnings != null
+        ? earnings >= 1000000
+            ? '₺${(earnings / 1000000).toStringAsFixed(1)}M'
+            : earnings >= 1000
+            ? '₺${(earnings / 1000).toStringAsFixed(0)}K'
+            : '₺${earnings.toStringAsFixed(0)}'
+        : 'N/A';
+
+    // Actual horse number from draw field (not rank, not index)
+    // draw is the stall/gate draw assigned by the racing authority
+    final horseNumber = entry.draw ?? (fallbackIndex + 1);
+
+    // Sire / Dam
+    final sireName = horse?.sireName ?? 'N/A';
+    final damName = horse?.damName ?? 'N/A';
+
+    // Color palette cycling for horse number badge
+    final numberColors = [
+      const Color(0xFFE53935), // Red
+      const Color(0xFF1E88E5), // Blue
+      const Color(0xFF43A047), // Green
+      const Color(0xFF8E24AA), // Purple
+      const Color(0xFFFB8C00), // Orange
+      const Color(0xFF00897B), // Teal
+      const Color(0xFFD81B60), // Pink
+      const Color(0xFF6D4C41), // Brown
+      const Color(0xFF546E7A), // Blue-grey
+      const Color(0xFFC0CA33), // Lime
+    ];
+    final badgeColor = numberColors[(horseNumber - 1).abs() % numberColors.length];
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 12.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F1419),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: Colors.white12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(14.w),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── Horse Number Badge ──────────────────────────────────
+            Column(
+              children: [
+                Container(
+                  width: 48.w,
+                  height: 48.w,
+                  decoration: BoxDecoration(
+                    color: badgeColor.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(10.r),
+                    border: Border.all(
+                      color: badgeColor.withOpacity(0.6),
+                      width: 1.5,
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '$horseNumber',
+                        style: TextStyle(
+                          color: badgeColor,
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w900,
+                          height: 1.0,
+                        ),
+                      ),
+                      Text(
+                        'NO',
+                        style: TextStyle(
+                          color: badgeColor.withOpacity(0.7),
+                          fontSize: 8.sp,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(width: 14.w),
+
+            // ── Horse & Jockey Details ─────────────────────────────
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Horse name
+                  Text(
+                    horseName,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 4.h),
+
+                  // Age · Color · Sex line
+                  Text(
+                    [age, color, if (sex.isNotEmpty) sex].join(' · '),
+                    style: TextStyle(
+                      color: Colors.white54,
+                      fontSize: 12.sp,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+
+                  // Pedigree: Sire / Dam
+                  Row(
+                    children: [
+                      Icon(Icons.account_tree_outlined,
+                          color: Colors.white24, size: 12.sp),
+                      SizedBox(width: 4.w),
+                      Expanded(
+                        child: Text(
+                          'Sire: $sireName  ·  Dam: $damName',
+                          style: TextStyle(
+                            color: Colors.white38,
+                            fontSize: 11.sp,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 6.h),
+
+                  // Jockey row
+                  Row(
+                    children: [
+                      Icon(Icons.person_outline,
+                          color: const Color(0xFF4DB6AC), size: 13.sp),
+                      SizedBox(width: 4.w),
+                      Expanded(
+                        child: Text(
+                          jockeyName,
+                          style: TextStyle(
+                            color: const Color(0xFF4DB6AC),
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 4.h),
+
+                  // Trainer row
+                  Row(
+                    children: [
+                      Icon(Icons.sports_outlined,
+                          color: Colors.white24, size: 12.sp),
+                      SizedBox(width: 4.w),
+                      Expanded(
+                        child: Text(
+                          'Trainer: $trainerName',
+                          style: TextStyle(
+                            color: Colors.white38,
+                            fontSize: 11.sp,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            // ── Stats Column (Weight + Earnings) ──────────────────
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                // Earnings
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 8.w,
+                    vertical: 4.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1B5E20).withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(6.r),
+                    border: Border.all(
+                      color: const Color(0xFF4CAF50).withOpacity(0.3),
+                    ),
+                  ),
+                  child: Text(
+                    earningsText,
+                    style: TextStyle(
+                      color: const Color(0xFF81C784),
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 6.h),
+
+                // Weight tag
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 8.w,
+                    vertical: 4.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1E293B),
+                    borderRadius: BorderRadius.circular(6.r),
+                    border: Border.all(color: Colors.white10),
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.scale_outlined,
+                        color: Colors.white38,
+                        size: 12.sp,
+                      ),
+                      SizedBox(height: 2.h),
+                      Text(
+                        weightText,
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 
