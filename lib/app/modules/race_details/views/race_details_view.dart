@@ -300,7 +300,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
   // ─────────────────────────────────────────────────────────────────────────
 
   Widget _buildBulletinTab(RaceDetailsData details) {
-    final entries = details.entries ?? [];
+    final entries = [...(details.entries ?? [])];
     if (entries.isEmpty) {
       return const Center(
         child: Text(
@@ -310,17 +310,28 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       );
     }
 
+    // Sort by draw (stall/gate) number ascending
+    entries.sort((a, b) {
+      final aDraw = a.draw ?? 999;
+      final bDraw = b.draw ?? 999;
+      return aDraw.compareTo(bDraw);
+    });
+
     return ListView.builder(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       itemCount: entries.length,
       itemBuilder: (context, index) {
         final entry = entries[index];
-        return _buildBulletinHorseCard(entry, index);
+        return _buildBulletinHorseCard(context, entry, index);
       },
     );
   }
 
-  Widget _buildBulletinHorseCard(RaceEntry entry, int fallbackIndex) {
+  Widget _buildBulletinHorseCard(
+    BuildContext context,
+    RaceEntry entry,
+    int fallbackIndex,
+  ) {
     final horse = entry.horse;
     final horseName = horse?.name ?? 'Unknown Horse';
     final jockeyName = entry.jockeyName ?? 'Unknown Jockey';
@@ -339,7 +350,6 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         : 'N/A';
 
     // Actual horse number from draw field (not rank, not index)
-    // draw is the stall/gate draw assigned by the racing authority
     final horseNumber = entry.draw ?? (fallbackIndex + 1);
 
     // Sire / Dam
@@ -361,225 +371,588 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     ];
     final badgeColor = numberColors[(horseNumber - 1).abs() % numberColors.length];
 
-    return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0F1419),
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.white12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
+    // Career details
+    final totalRaces = horse?.totalRaces ?? 0;
+    final wins = horse?.wins ?? 0;
+    final seconds = horse?.seconds ?? 0;
+    final thirds = horse?.thirds ?? 0;
+    final fourths = horse?.fourths ?? 0;
+    final winRate = totalRaces > 0 ? (wins / totalRaces * 100).toStringAsFixed(1) : '0';
+    final placeRate = totalRaces > 0 ? ((wins + seconds + thirds) / totalRaces * 100).toStringAsFixed(1) : '0';
+    final owner = horse?.owner ?? 'N/A';
+    final country = horse?.country ?? 'N/A';
+    final bestTime = horse?.bestTime ?? 'N/A';
+    final bestTimeLocation = horse?.bestTimeLocation ?? '';
+
+    // Jockey Model career stats
+    final jModel = entry.jockey;
+    final jTotalRides = jModel?.totalRides ?? 0;
+    final jWins = jModel?.wins ?? 0;
+    final jSeconds = jModel?.seconds ?? 0;
+    final jThirds = jModel?.thirds ?? 0;
+    final jWinRate = jTotalRides > 0 ? (jWins / jTotalRides * 100).toStringAsFixed(1) : '0';
+    final jPlaceRate = jTotalRides > 0 ? ((jWins + jSeconds + jThirds) / jTotalRides * 100).toStringAsFixed(1) : '0';
+    final jRidesLast30 = jModel?.ridesLast30d ?? 0;
+    final jWinsLast30 = jModel?.winsLast30d ?? 0;
+    final jWinRateLast30 = jRidesLast30 > 0 ? (jWinsLast30 / jRidesLast30 * 100).toStringAsFixed(1) : '0';
+
+    // Jockey & Trainer Form/Power details (Premium fields)
+    final jockeyPower = entry.jockeyPower;
+    final jockeyForm = entry.jockeyFormScore;
+    final trainerForm = entry.trainerFormScore;
+
+    // AI details (Premium fields)
+    final winProbVal = entry.winProb;
+    final winProbText = winProbVal != null ? '${(winProbVal * 100).toStringAsFixed(1)}%' : 'N/A';
+    final placeProbVal = entry.placeProb;
+    final placeProbText = placeProbVal != null ? '${(placeProbVal * 100).toStringAsFixed(1)}%' : 'N/A';
+    final eachWayProbVal = entry.eachWayProb;
+    final eachWayProbText = eachWayProbVal != null ? '${(eachWayProbVal * 100).toStringAsFixed(1)}%' : 'N/A';
+    final fairOdds = entry.winOddsFair;
+    final rating = entry.normalizedScore?.toInt();
+    final confidence = entry.aiConfidence?.toUpperCase() ?? '';
+    final category = entry.category?.toUpperCase() ?? 'N/A';
+    final valueEdge = entry.valueEdgePercent;
+
+    return Obx(() {
+      final isExpanded = controller.bulletinExpandedIndex.value == fallbackIndex;
+      final isPremium = controller.isPremium.value;
+
+      return Container(
+        margin: EdgeInsets.only(bottom: 12.h),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0F1419),
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(
+            color: isExpanded ? badgeColor.withOpacity(0.5) : Colors.white12,
+            width: isExpanded ? 1.5 : 1,
           ),
-        ],
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(14.w),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── Horse Number Badge ──────────────────────────────────
-            Column(
-              children: [
-                Container(
-                  width: 48.w,
-                  height: 48.w,
-                  decoration: BoxDecoration(
-                    color: badgeColor.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(10.r),
-                    border: Border.all(
-                      color: badgeColor.withOpacity(0.6),
-                      width: 1.5,
-                    ),
-                  ),
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '$horseNumber',
-                        style: TextStyle(
-                          color: badgeColor,
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w900,
-                          height: 1.0,
-                        ),
-                      ),
-                      Text(
-                        'NO',
-                        style: TextStyle(
-                          color: badgeColor.withOpacity(0.7),
-                          fontSize: 8.sp,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(width: 14.w),
-
-            // ── Horse & Jockey Details ─────────────────────────────
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Horse name
-                  Text(
-                    horseName,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: 4.h),
-
-                  // Age · Color · Sex line
-                  Text(
-                    [age, color, if (sex.isNotEmpty) sex].join(' · '),
-                    style: TextStyle(
-                      color: Colors.white54,
-                      fontSize: 12.sp,
-                    ),
-                  ),
-                  SizedBox(height: 8.h),
-
-                  // Pedigree: Sire / Dam
-                  Row(
-                    children: [
-                      Icon(Icons.account_tree_outlined,
-                          color: Colors.white24, size: 12.sp),
-                      SizedBox(width: 4.w),
-                      Expanded(
-                        child: Text(
-                          'Sire: $sireName  ·  Dam: $damName',
-                          style: TextStyle(
-                            color: Colors.white38,
-                            fontSize: 11.sp,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 6.h),
-
-                  // Jockey row
-                  Row(
-                    children: [
-                      Icon(Icons.person_outline,
-                          color: const Color(0xFF4DB6AC), size: 13.sp),
-                      SizedBox(width: 4.w),
-                      Expanded(
-                        child: Text(
-                          jockeyName,
-                          style: TextStyle(
-                            color: const Color(0xFF4DB6AC),
-                            fontSize: 13.sp,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 4.h),
-
-                  // Trainer row
-                  Row(
-                    children: [
-                      Icon(Icons.sports_outlined,
-                          color: Colors.white24, size: 12.sp),
-                      SizedBox(width: 4.w),
-                      Expanded(
-                        child: Text(
-                          'Trainer: $trainerName',
-                          style: TextStyle(
-                            color: Colors.white38,
-                            fontSize: 11.sp,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            // ── Stats Column (Weight + Earnings) ──────────────────
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                // Earnings
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 8.w,
-                    vertical: 4.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1B5E20).withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(6.r),
-                    border: Border.all(
-                      color: const Color(0xFF4CAF50).withOpacity(0.3),
-                    ),
-                  ),
-                  child: Text(
-                    earningsText,
-                    style: TextStyle(
-                      color: const Color(0xFF81C784),
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 6.h),
-
-                // Weight tag
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 8.w,
-                    vertical: 4.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1E293B),
-                    borderRadius: BorderRadius.circular(6.r),
-                    border: Border.all(color: Colors.white10),
-                  ),
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.scale_outlined,
-                        color: Colors.white38,
-                        size: 12.sp,
-                      ),
-                      SizedBox(height: 2.h),
-                      Text(
-                        weightText,
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 11.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
+        child: Column(
+          children: [
+            // Card Header (Tap to Expand/Collapse)
+            GestureDetector(
+              onTap: () => controller.toggleBulletinExpand(fallbackIndex),
+              behavior: HitTestBehavior.opaque,
+              child: Padding(
+                padding: EdgeInsets.all(14.w),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Horse Number Badge
+                    Container(
+                      width: 48.w,
+                      height: 48.w,
+                      decoration: BoxDecoration(
+                        color: badgeColor.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(10.r),
+                        border: Border.all(
+                          color: badgeColor.withOpacity(0.6),
+                          width: 1.5,
+                        ),
+                      ),
+                      alignment: Alignment.center,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '$horseNumber',
+                            style: TextStyle(
+                              color: badgeColor,
+                              fontSize: 20.sp,
+                              fontWeight: FontWeight.w900,
+                              height: 1.0,
+                            ),
+                          ),
+                          Text(
+                            'NO',
+                            style: TextStyle(
+                              color: badgeColor.withOpacity(0.7),
+                              fontSize: 8.sp,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 14.w),
+
+                    // Horse details summary
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            horseName,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            [age, color, if (sex.isNotEmpty) sex].join(' · '),
+                            style: TextStyle(
+                              color: Colors.white54,
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            'Jockey: $jockeyName',
+                            style: TextStyle(
+                              color: const Color(0xFF4DB6AC),
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+
+                    // Earnings + Weight + Expand Icon Column
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1B5E20).withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(6.r),
+                            border: Border.all(
+                              color: const Color(0xFF4CAF50).withOpacity(0.3),
+                            ),
+                          ),
+                          child: Text(
+                            earningsText,
+                            style: TextStyle(
+                              color: const Color(0xFF81C784),
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 4.h),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1E293B),
+                            borderRadius: BorderRadius.circular(4.r),
+                            border: Border.all(color: Colors.white10),
+                          ),
+                          child: Text(
+                            weightText,
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 4.h),
+                        Icon(
+                          isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                          color: badgeColor,
+                          size: 18.sp,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // Expanded content details
+            if (isExpanded) ...[
+              const Divider(color: Colors.white12, height: 1),
+              Padding(
+                padding: EdgeInsets.all(14.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Section 1: Pedigree & Team
+                    _buildSubSectionTitle(Icons.account_tree_outlined, 'Pedigree & Team', badgeColor),
+                    SizedBox(height: 8.h),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: _buildInfoText('Sire', sireName),
+                        ),
+                        Expanded(
+                          child: _buildInfoText('Dam', damName),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 6.h),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: _buildInfoText('Trainer', trainerName),
+                        ),
+                        Expanded(
+                          child: _buildInfoText('Owner', owner),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 6.h),
+                    _buildInfoText('Origin / Country', country),
+                    
+                    SizedBox(height: 16.h),
+
+                    // Section 2: Career History
+                    _buildSubSectionTitle(Icons.emoji_events_outlined, 'Career Performance', badgeColor),
+                    SizedBox(height: 8.h),
+                    Row(
+                      children: [
+                        Expanded(child: _buildInfoText('Total Starts', '$totalRaces')),
+                        Expanded(child: _buildInfoText('Wins (1st)', '$wins')),
+                        Expanded(child: _buildInfoText('Places (1-3)', '${wins + seconds + thirds}')),
+                      ],
+                    ),
+                    SizedBox(height: 6.h),
+                    Row(
+                      children: [
+                        Expanded(child: _buildInfoText('Win Rate', '$winRate%')),
+                        Expanded(child: _buildInfoText('Place Rate', '$placeRate%')),
+                        Expanded(child: _buildInfoText('Career Form', '$wins-$seconds-$thirds-$fourths')),
+                      ],
+                    ),
+                    if (bestTime != 'N/A') ...[
+                      SizedBox(height: 6.h),
+                      _buildInfoText('Best Time', '$bestTime ${bestTimeLocation.isNotEmpty ? "@ $bestTimeLocation" : ""}'),
+                    ],
+
+                    SizedBox(height: 16.h),
+
+                    // Section 3: Jockey & Trainer Performance
+                    _buildSubSectionTitle(Icons.person_outline, 'Jockey & Trainer Info', badgeColor),
+                    SizedBox(height: 8.h),
+                    Row(
+                      children: [
+                        Expanded(child: _buildInfoText('Jockey', jockeyName)),
+                        Expanded(child: _buildInfoText('Trainer', trainerName)),
+                      ],
+                    ),
+                    if (jTotalRides > 0) ...[
+                      SizedBox(height: 6.h),
+                      Row(
+                        children: [
+                          Expanded(child: _buildInfoText('Jockey Starts', '$jTotalRides')),
+                          Expanded(child: _buildInfoText('Jockey Wins', '$jWins')),
+                          Expanded(child: _buildInfoText('Jockey Win Rate', '$jWinRate%')),
+                        ],
+                      ),
+                      SizedBox(height: 6.h),
+                      Row(
+                        children: [
+                          Expanded(child: _buildInfoText('Jockey Places (1-3)', '${jWins + jSeconds + jThirds}')),
+                          Expanded(child: _buildInfoText('Jockey Place Rate', '$jPlaceRate%')),
+                          Expanded(child: _buildInfoText('Last 30 Days', '$jWinsLast30 / $jRidesLast30 ($jWinRateLast30%)')),
+                        ],
+                      ),
+                    ],
+                    if (isPremium && (jockeyPower != null || jockeyForm != null)) ...[
+                      SizedBox(height: 10.h),
+                      Row(
+                        children: [
+                          if (jockeyPower != null)
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildProgressBarLabel('Jockey Power', '${jockeyPower.toStringAsFixed(0)}%'),
+                                  SizedBox(height: 4.h),
+                                  _buildProgressBar(jockeyPower / 100, const Color(0xFF4DB6AC)),
+                                ],
+                              ),
+                            ),
+                          if (jockeyPower != null && jockeyForm != null) SizedBox(width: 16.w),
+                          if (jockeyForm != null)
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildProgressBarLabel('Jockey Form', '${jockeyForm.toStringAsFixed(0)}%'),
+                                  SizedBox(height: 4.h),
+                                  _buildProgressBar(jockeyForm / 100, const Color(0xFF81C784)),
+                                ],
+                              ),
+                            ),
+                        ],
+                      ),
+                    ],
+                    if (isPremium && trainerForm != null) ...[
+                      SizedBox(height: 10.h),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildProgressBarLabel('Trainer Form', '${trainerForm.toStringAsFixed(0)}%'),
+                          SizedBox(height: 4.h),
+                          _buildProgressBar(trainerForm / 100, const Color(0xFF64B5F6)),
+                        ],
+                      ),
+                    ],
+
+                    SizedBox(height: 16.h),
+
+                    // Section 4: AI Analysis & Suitability (Premium)
+                    _buildSubSectionTitle(Icons.auto_awesome, 'AI Prediction & Suitability', badgeColor),
+                    SizedBox(height: 8.h),
+                    if (!isPremium) ...[
+                      // Locked content overlay
+                      GestureDetector(
+                        onTap: () => _showPremiumPrompt(context),
+                        child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 12.w),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.03),
+                            borderRadius: BorderRadius.circular(8.r),
+                            border: Border.all(color: Colors.white10),
+                          ),
+                          child: Column(
+                            children: [
+                              Icon(Icons.lock_outline, color: const Color(0xFF4DB6AC), size: 24.sp),
+                              SizedBox(height: 8.h),
+                              Text(
+                                'AI Predictions & Suitability Analysis',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 4.h),
+                              Text(
+                                'Tap to unlock Win Probability, Fair Odds, and track/distance suitability scores.',
+                                style: TextStyle(
+                                  color: Colors.white38,
+                                  fontSize: 11.sp,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ] else ...[
+                      // Premium AI Details
+                      Row(
+                        children: [
+                          Expanded(child: _buildInfoText('AI Selection Rating', rating != null ? '$rating' : 'N/A')),
+                          Expanded(child: _buildInfoText('Win Probability', winProbText)),
+                          Expanded(child: _buildInfoText('Fair Odds', fairOdds != null ? '${fairOdds.toStringAsFixed(1)}x' : 'N/A')),
+                        ],
+                      ),
+                      SizedBox(height: 6.h),
+                      Row(
+                        children: [
+                          Expanded(child: _buildInfoText('Place Probability', placeProbText)),
+                          Expanded(child: _buildInfoText('Each-Way Prob', eachWayProbText)),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Confidence',
+                                  style: TextStyle(color: Colors.white38, fontSize: 10.sp),
+                                ),
+                                SizedBox(height: 2.h),
+                                Text(
+                                  confidence.isEmpty ? 'N/A' : confidence,
+                                  style: TextStyle(
+                                    color: confidence == 'HIGH'
+                                        ? const Color(0xFF81C784)
+                                        : confidence == 'MEDIUM'
+                                            ? const Color(0xFFFFB74D)
+                                            : Colors.white,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (category != 'N/A' || valueEdge != null) ...[
+                        SizedBox(height: 6.h),
+                        Row(
+                          children: [
+                            Expanded(child: _buildInfoText('Horse Category', category)),
+                            Expanded(child: _buildInfoText('Value Edge', valueEdge != null ? '${(valueEdge * 100).toStringAsFixed(1)}%' : 'N/A')),
+                            const Expanded(child: SizedBox()),
+                          ],
+                        ),
+                      ],
+
+                      // Suitability Progress Bars
+                      SizedBox(height: 12.h),
+                      Text(
+                        'AI Suitability Scores',
+                        style: TextStyle(color: Colors.white54, fontSize: 11.sp, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 8.h),
+                      _buildSuitabilityRow('Going Suitability', entry.goingSuitabilityScore),
+                      SizedBox(height: 6.h),
+                      _buildSuitabilityRow('Distance Suitability', entry.distanceSuitabilityScore),
+                      SizedBox(height: 6.h),
+                      _buildSuitabilityRow('Course Specialist', entry.courseSpecialistScore),
+                      SizedBox(height: 6.h),
+                      _buildSuitabilityRow('Draw Bias', entry.drawBiasScore),
+
+                      // AI Analysis text
+                      if (entry.aiAnalysis != null && entry.aiAnalysis!.isNotEmpty) ...[
+                        SizedBox(height: 12.h),
+                        Text(
+                          'AI Analysis Summary',
+                          style: TextStyle(color: Colors.white54, fontSize: 11.sp, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 4.h),
+                        Text(
+                          entry.aiAnalysis!,
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 11.sp,
+                            fontStyle: FontStyle.italic,
+                            height: 1.3,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
+      );
+    });
+  }
+
+  Widget _buildSubSectionTitle(IconData icon, String title, Color color) {
+    return Row(
+      children: [
+        Icon(icon, color: color, size: 14.sp),
+        SizedBox(width: 6.w),
+        Text(
+          title.toUpperCase(),
+          style: TextStyle(
+            color: color,
+            fontSize: 11.sp,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.5,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInfoText(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.white38,
+            fontSize: 10.sp,
+          ),
+        ),
+        SizedBox(height: 2.h),
+        Text(
+          value.isEmpty ? 'N/A' : value,
+          style: TextStyle(
+            color: Colors.white70,
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w500,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProgressBarLabel(String label, String valText) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(color: Colors.white38, fontSize: 10.sp),
+        ),
+        Text(
+          valText,
+          style: TextStyle(color: Colors.white70, fontSize: 10.sp, fontWeight: FontWeight.bold),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProgressBar(double value, Color color) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(2.r),
+      child: LinearProgressIndicator(
+        value: value.clamp(0.0, 1.0),
+        backgroundColor: Colors.white12,
+        valueColor: AlwaysStoppedAnimation<Color>(color),
+        minHeight: 4.h,
       ),
+    );
+  }
+
+  Widget _buildSuitabilityRow(String label, double? score) {
+    final val = score ?? 0.0;
+    Color barColor = Colors.orange;
+    if (val >= 70) {
+      barColor = const Color(0xFF4DB6AC);
+    } else if (val < 50) {
+      barColor = const Color(0xFFE57373);
+    }
+    return Row(
+      children: [
+        SizedBox(
+          width: 100.w,
+          child: Text(
+            label,
+            style: TextStyle(color: Colors.white38, fontSize: 10.sp),
+          ),
+        ),
+        SizedBox(width: 8.w),
+        Expanded(
+          child: _buildProgressBar(val / 100, barColor),
+        ),
+        SizedBox(width: 8.w),
+        SizedBox(
+          width: 28.w,
+          child: Text(
+            score != null ? '${score.toStringAsFixed(0)}' : 'N/A',
+            style: TextStyle(
+              color: score != null ? barColor : Colors.white24,
+              fontSize: 10.sp,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.end,
+          ),
+        ),
+      ],
     );
   }
 

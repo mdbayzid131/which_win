@@ -21,6 +21,7 @@ class RaceDetailsController extends GetxController {
   final isStatsLoading = false.obs;
   final selectedTab = 0.obs;
   final expandedIndex = (-1).obs;
+  final bulletinExpandedIndex = (-1).obs;
 
   /// Whether the current user has an active premium subscription.
   /// Loaded from local storage immediately on init (no network needed).
@@ -213,6 +214,14 @@ class RaceDetailsController extends GetxController {
       expandedIndex.value = -1;
     } else {
       expandedIndex.value = index;
+    }
+  }
+
+  void toggleBulletinExpand(int index) {
+    if (bulletinExpandedIndex.value == index) {
+      bulletinExpandedIndex.value = -1;
+    } else {
+      bulletinExpandedIndex.value = index;
     }
   }
 

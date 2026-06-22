@@ -113,6 +113,7 @@ class RaceEntry {
   final bool? hasValueEdge;
   final double? valueEdgePercent;
   final HorseModel? horse;
+  final JockeyModel? jockey;
 
   RaceEntry({
     this.id,
@@ -145,6 +146,7 @@ class RaceEntry {
     this.hasValueEdge,
     this.valueEdgePercent,
     this.horse,
+    this.jockey,
   });
 
   factory RaceEntry.fromJson(Map<String, dynamic> json) {
@@ -179,6 +181,7 @@ class RaceEntry {
       hasValueEdge: json['hasValueEdge'] as bool?,
       valueEdgePercent: (json['valueEdgePercent'] as num?)?.toDouble(),
       horse: json['horse'] != null ? HorseModel.fromJson(json['horse']) : null,
+      jockey: json['jockey'] != null ? JockeyModel.fromJson(json['jockey']) : null,
     );
   }
 }
@@ -291,13 +294,37 @@ class HorseModel {
 class JockeyModel {
   final String? id;
   final String? name;
+  final int? totalRides;
+  final int? wins;
+  final int? seconds;
+  final int? thirds;
+  final int? fourths;
+  final int? ridesLast30d;
+  final int? winsLast30d;
 
-  JockeyModel({this.id, this.name});
+  JockeyModel({
+    this.id,
+    this.name,
+    this.totalRides,
+    this.wins,
+    this.seconds,
+    this.thirds,
+    this.fourths,
+    this.ridesLast30d,
+    this.winsLast30d,
+  });
 
   factory JockeyModel.fromJson(Map<String, dynamic> json) {
     return JockeyModel(
       id: json['id'],
       name: json['name'],
+      totalRides: json['totalRides'],
+      wins: json['wins'],
+      seconds: json['seconds'],
+      thirds: json['thirds'],
+      fourths: json['fourths'],
+      ridesLast30d: json['ridesLast30d'],
+      winsLast30d: json['winsLast30d'],
     );
   }
 }
