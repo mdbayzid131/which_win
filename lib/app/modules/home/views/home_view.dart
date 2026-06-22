@@ -110,8 +110,9 @@ class HomeView extends GetView<HomeController> {
           children: [
             // ── LIVE Filter Banner ────────────────────────────────────────────
             Obx(() {
-              if (!controller.isLiveFilterActive.value)
+              if (!controller.isLiveFilterActive.value) {
                 return const SizedBox.shrink();
+              }
               return Container(
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
@@ -399,7 +400,7 @@ class HomeView extends GetView<HomeController> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
+                    SizedBox(
                       width:
                           280.w, // Increased width so the logo can grow larger
                       height: 160.h, // Increased height to allow scaling
