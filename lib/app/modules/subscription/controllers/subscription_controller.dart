@@ -341,35 +341,50 @@ class SubscriptionController extends GetxController {
     List<PurchaseDetails> purchaseDetailsList,
   ) async {
     for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
+      debugPrint('SubscriptionController: Purchase stream updated: ProductID=${purchaseDetails.productID}, Status=${purchaseDetails.status}');
       if (purchaseDetails.status == PurchaseStatus.pending) {
         isLoading.value = true;
       } else {
-        if (purchaseDetails.status == PurchaseStatus.error) {
-          Get.snackbar(
-            'Error',
-            'Payment failed: ${purchaseDetails.error?.message}',
-          );
-          isLoading.value = false;
-        } else if (purchaseDetails.status == PurchaseStatus.purchased ||
-            purchaseDetails.status == PurchaseStatus.restored) {
-          final bool valid = await _validatePurchaseAndActivate(
-            purchaseDetails,
-          );
-          if (valid) {
+        try {
+          if (purchaseDetails.status == PurchaseStatus.error) {
             Get.snackbar(
-              'Success',
-              'Your subscription is active!',
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: const Color(0xFF00695C),
-              colorText: Colors.white,
+              'Error',
+              'Payment failed: ${purchaseDetails.error?.message}',
             );
-          } else {
-            Get.snackbar('Error', 'Failed to verify purchase with backend.');
+          } else if (purchaseDetails.status == PurchaseStatus.canceled) {
+            Get.snackbar(
+              'Cancelled',
+              'Purchase was cancelled by user.',
+              snackPosition: SnackPosition.BOTTOM,
+            );
+          } else if (purchaseDetails.status == PurchaseStatus.purchased ||
+              purchaseDetails.status == PurchaseStatus.restored) {
+            final bool valid = await _validatePurchaseAndActivate(
+              purchaseDetails,
+            );
+            if (valid) {
+              Get.snackbar(
+                'Success',
+                'Your subscription is active!',
+                snackPosition: SnackPosition.BOTTOM,
+                backgroundColor: const Color(0xFF00695C),
+                colorText: Colors.white,
+              );
+            } else {
+              Get.snackbar('Error', 'Failed to verify purchase with backend.');
+            }
           }
+        } catch (e) {
+          debugPrint('SubscriptionController: Error handling purchase update: $e');
+        } finally {
           isLoading.value = false;
         }
         if (purchaseDetails.pendingCompletePurchase) {
-          await _iap.completePurchase(purchaseDetails);
+          try {
+            await _iap.completePurchase(purchaseDetails);
+          } catch (e) {
+            debugPrint('SubscriptionController: Error completing purchase: $e');
+          }
         }
       }
     }
@@ -410,6 +425,7 @@ class SubscriptionController extends GetxController {
       await _iap.restorePurchases();
     } catch (e) {
       Get.snackbar('Error', 'Restore failed: $e');
+    } finally {
       isLoading.value = false;
     }
   }

@@ -183,6 +183,11 @@ class FirebaseNotificationService {
           retryCount++;
           Helpers.debug('⏳ Waiting for APNS Token... (Retry: $retryCount)');
         }
+
+        if (apnsToken == null) {
+          Helpers.warning('⚠️ APNS Token is null. Skipping FCM Token retrieval (expected on Simulators or if Push Notifications capability is not enabled in Xcode).');
+          return null;
+        }
       }
 
       token = await _messaging.getToken();
