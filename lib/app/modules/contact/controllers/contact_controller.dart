@@ -18,13 +18,13 @@ class ContactController extends GetxController {
         emailController.text.trim().isEmpty ||
         subjectController.text.trim().isEmpty ||
         messageController.text.trim().isEmpty) {
-      CustomSnackBar.error('Please fill all fields');
+      CustomSnackBar.error('please_fill_fields'.tr);
       return;
     }
 
     // Basic email format check
     if (!GetUtils.isEmail(emailController.text.trim())) {
-      CustomSnackBar.error('Please enter a valid email address');
+      CustomSnackBar.error('valid_email_error'.tr);
       return;
     }
 
@@ -38,14 +38,14 @@ class ContactController extends GetxController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        CustomSnackBar.success('Message sent successfully!');
+        CustomSnackBar.success('message_sent_success'.tr);
         nameController.clear();
         emailController.clear();
         subjectController.clear();
         messageController.clear();
       }
     } catch (e) {
-      CustomSnackBar.error('Failed to send message');
+      CustomSnackBar.error('message_send_failed'.tr);
     } finally {
       isLoading.value = false;
     }

@@ -31,7 +31,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                   Icon(Icons.arrow_back, color: Colors.white, size: 16.sp),
                   SizedBox(width: 4.w),
                   Text(
-                    'Back',
+                    'back'.tr,
                     style: TextStyle(color: Colors.white, fontSize: 14.sp),
                   ),
                 ],
@@ -161,7 +161,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                             ),
                             SizedBox(width: 6.w),
                             Text(
-                              'Rankings',
+                              'rankings'.tr,
                               style: TextStyle(
                                 color: isPremium
                                     ? const Color(0xFF4DB6AC)
@@ -199,10 +199,10 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
 
               final details = controller.raceDetails.value;
               if (details == null) {
-                return const Center(
+                return Center(
                   child: Text(
-                    'Failed to load race details',
-                    style: TextStyle(color: Colors.white38),
+                    'failed_load_details'.tr,
+                    style: const TextStyle(color: Colors.white38),
                   ),
                 );
               }
@@ -210,10 +210,10 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               if (controller.selectedTab.value == 0) {
                 final entries = details.entries ?? [];
                 if (entries.isEmpty) {
-                  return const Center(
+                  return Center(
                     child: Text(
-                      'No horses registered',
-                      style: TextStyle(color: Colors.white38),
+                      'no_horses_registered'.tr,
+                      style: const TextStyle(color: Colors.white38),
                     ),
                   );
                 }
@@ -302,10 +302,10 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
   Widget _buildBulletinTab(RaceDetailsData details) {
     final entries = [...(details.entries ?? [])];
     if (entries.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
-          'No horses registered',
-          style: TextStyle(color: Colors.white38),
+          'no_horses_registered'.tr,
+          style: const TextStyle(color: Colors.white38),
         ),
       );
     }
@@ -510,7 +510,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                           ),
                           SizedBox(height: 4.h),
                           Text(
-                            'Jockey: $jockeyName',
+                            '${'jockey'.tr}$jockeyName',
                             style: TextStyle(
                               color: const Color(0xFF4DB6AC),
                               fontSize: 12.sp,
@@ -1268,7 +1268,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            title,
+            '${title.toLowerCase().replaceAll('-', '_')}_stat'.tr,
             style: TextStyle(
               color: const Color(0xFF4DB6AC),
               fontSize: 12.sp,
@@ -1347,7 +1347,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             borderRadius: BorderRadius.circular(8.r),
           ),
           child: Text(
-            text,
+            text.toLowerCase().tr,
             style: TextStyle(
               color: isSelected ? const Color(0xFF4DB6AC) : Colors.white38,
               fontSize: 14.sp,
@@ -1675,7 +1675,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'AI Race Rankings',
+                          'ai_race_rankings'.tr,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 18.sp,
@@ -1685,7 +1685,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          '${entries.length} runners · ${details.location ?? ''}',
+                          '${entries.length} ${'runners'.tr} · ${details.location ?? ''}',
                           style: TextStyle(
                             color: Colors.white38,
                             fontSize: 12.sp,
@@ -1792,7 +1792,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                                   ),
                                   if (jockeyName.isNotEmpty)
                                     Text(
-                                      'Jockey: $jockeyName',
+                                      '${'jockey'.tr}$jockeyName',
                                       style: TextStyle(
                                         color: Colors.white38,
                                         fontSize: 11.sp,
@@ -1814,7 +1814,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                                   ),
                                 ),
                                 Text(
-                                  'Rating',
+                                  'rating'.tr,
                                   style: TextStyle(
                                     color: Colors.white24,
                                     fontSize: 10.sp,
@@ -1842,14 +1842,14 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                         Row(
                           children: [
                             _buildRankStat(
-                              'WIN PROB',
+                              'win_prob_upper'.tr,
                               '${(winProb * 100).toStringAsFixed(1)}%',
                               Colors.white70,
                             ),
                             SizedBox(width: 16.w),
                             if (fairOdds != null)
                               _buildRankStat(
-                                'FAIR ODDS',
+                                'fair_odds_upper'.tr,
                                 '${fairOdds.toStringAsFixed(1)}x',
                                 Colors.white70,
                               ),
@@ -1868,7 +1868,13 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                                   ),
                                 ),
                                 child: Text(
-                                  confidence,
+                                  confidence == 'HIGH'
+                                      ? 'high'.tr.toUpperCase()
+                                      : (confidence == 'MEDIUM'
+                                          ? 'medium'.tr.toUpperCase()
+                                          : (confidence == 'LOW'
+                                              ? 'low'.tr.toUpperCase()
+                                              : confidence)),
                                   style: TextStyle(
                                     color: confColor,
                                     fontSize: 10.sp,
@@ -2423,7 +2429,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                   ],
                 ),
                 child: Text(
-                  '✦  Upgrade to Premium',
+                  '✦  ${'upgrade_to_premium'.tr}',
                   style: TextStyle(
                     color: Colors.black87,
                     fontSize: 14.sp,
@@ -2471,7 +2477,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                     ),
                     SizedBox(width: 8.w),
                     Text(
-                      'Premium Only',
+                      'premium_only'.tr,
                       style: TextStyle(
                         color: const Color(0xFFFFD700),
                         fontSize: 13.sp,
@@ -2571,7 +2577,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             ),
             SizedBox(height: 16.h),
             Text(
-              'Unlock Premium',
+              'unlock_premium'.tr,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 22.sp,
@@ -2580,7 +2586,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             ),
             SizedBox(height: 10.h),
             Text(
-              'Get full access to AI rankings, win probabilities,\nrace statistics, and live score updates.',
+              'premium_unlock_desc'.tr,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white54,
@@ -2604,7 +2610,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: Text(
-                  'View Plans',
+                  'view_plans'.tr,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.black87,

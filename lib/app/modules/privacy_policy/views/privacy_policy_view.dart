@@ -19,14 +19,14 @@ class PrivacyPolicyView extends GetView<PrivacyPolicyController> {
           icon: Row(
             children: [
               Icon(Icons.arrow_back_ios, color: Colors.white, size: 16.sp),
-              Text('Back', style: TextStyle(color: Colors.white, fontSize: 14.sp)),
+              Text('back'.tr, style: TextStyle(color: Colors.white, fontSize: 14.sp)),
             ],
           ),
           onPressed: () => Get.back(),
         ),
         leadingWidth: 80.w,
         title: Text(
-          'Privacy Policy',
+          'privacy_policy'.tr,
           style: TextStyle(
             color: Colors.white,
             fontSize: 18.sp,
@@ -58,7 +58,7 @@ class PrivacyPolicyView extends GetView<PrivacyPolicyController> {
                 Icon(Icons.error_outline, color: Colors.white24, size: 60.sp),
                 SizedBox(height: 16.h),
                 Text(
-                  'Failed to load privacy policy',
+                  'failed_load_privacy'.tr,
                   style: TextStyle(color: Colors.white70, fontSize: 16.sp),
                 ),
                 SizedBox(height: 24.h),
@@ -70,7 +70,7 @@ class PrivacyPolicyView extends GetView<PrivacyPolicyController> {
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                   ),
-                  child: Text('Retry', style: TextStyle(color: Colors.black, fontSize: 14.sp)),
+                  child: Text('retry'.tr, style: TextStyle(color: Colors.black, fontSize: 14.sp)),
                 ),
               ],
             ),

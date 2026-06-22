@@ -18,14 +18,14 @@ class RateUsView extends GetView<RateUsController> {
           icon: Row(
             children: [
               Icon(Icons.arrow_back_ios, color: Colors.white, size: 16.sp),
-              Text('Back', style: TextStyle(color: Colors.white, fontSize: 14.sp)),
+              Text('back'.tr, style: TextStyle(color: Colors.white, fontSize: 14.sp)),
             ],
           ),
           onPressed: () => Get.back(),
         ),
         leadingWidth: 80.w,
         title: Text(
-          'Rate us',
+          'rate_us'.tr,
           style: TextStyle(
             color: Colors.white,
             fontSize: 18.sp,
@@ -54,7 +54,7 @@ class RateUsView extends GetView<RateUsController> {
               ),
               SizedBox(height: 32.h),
               Text(
-                'How was your experience?',
+                'experience_question'.tr,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white,
@@ -64,7 +64,7 @@ class RateUsView extends GetView<RateUsController> {
               ),
               SizedBox(height: 12.h),
               Text(
-                'Your feedback helps us improve',
+                'feedback_improve_hint'.tr,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white38,
@@ -107,7 +107,7 @@ class RateUsView extends GetView<RateUsController> {
                     ),
                   ),
                   child: Text(
-                    'Submit Rating',
+                    'submit_rating'.tr,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16.sp,

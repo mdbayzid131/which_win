@@ -3,9 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:which_win/app/routes/app_pages.dart';
 import 'package:which_win/core/bindings/initial_binding.dart';
+import 'package:which_win/core/localization/app_translations.dart';
 
 class WhichWinApp extends StatelessWidget {
-  const WhichWinApp({super.key});
+  final Locale? initialLocale;
+  const WhichWinApp({super.key, this.initialLocale});
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +26,9 @@ class WhichWinApp extends StatelessWidget {
             scaffoldBackgroundColor: const Color(0xffffffff),
           ),
           themeMode: ThemeMode.light,
+          translations: AppTranslations(),
+          locale: initialLocale ?? const Locale('en'),
+          fallbackLocale: const Locale('en'),
           initialRoute: AppRoutes.initial,
           initialBinding: InitialBinding(),
           getPages: AppPages.routes,
@@ -32,3 +37,4 @@ class WhichWinApp extends StatelessWidget {
     );
   }
 }
+

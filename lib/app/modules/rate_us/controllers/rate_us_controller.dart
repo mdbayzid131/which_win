@@ -16,7 +16,7 @@ class RateUsController extends GetxController {
 
   Future<void> submitRating() async {
     if (rating.value == 0) {
-      CustomSnackBar.error('Please select a rating');
+      CustomSnackBar.error('please_select_rating'.tr);
       return;
     }
 
@@ -28,11 +28,11 @@ class RateUsController extends GetxController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        CustomSnackBar.success('Thank you for your feedback!');
+        CustomSnackBar.success('thank_you_feedback'.tr);
         Get.back();
       }
     } catch (e) {
-      CustomSnackBar.error('Failed to submit rating');
+      CustomSnackBar.error('failed_submit_rating'.tr);
     } finally {
       isLoading.value = false;
     }

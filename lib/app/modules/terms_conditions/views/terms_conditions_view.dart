@@ -19,14 +19,14 @@ class TermsConditionsView extends GetView<TermsConditionsController> {
           icon: Row(
             children: [
               Icon(Icons.arrow_back_ios, color: Colors.white, size: 16.sp),
-              Text('Back', style: TextStyle(color: Colors.white, fontSize: 14.sp)),
+              Text('back'.tr, style: TextStyle(color: Colors.white, fontSize: 14.sp)),
             ],
           ),
           onPressed: () => Get.back(),
         ),
         leadingWidth: 80.w,
         title: Text(
-          'Terms and Conditions',
+          'terms_conditions'.tr,
           style: TextStyle(
             color: Colors.white,
             fontSize: 18.sp,
@@ -58,7 +58,7 @@ class TermsConditionsView extends GetView<TermsConditionsController> {
                 Icon(Icons.error_outline, color: Colors.white24, size: 60.sp),
                 SizedBox(height: 16.h),
                 Text(
-                  'Failed to load terms and conditions',
+                  'failed_load_terms'.tr,
                   style: TextStyle(color: Colors.white70, fontSize: 16.sp),
                 ),
                 SizedBox(height: 24.h),
@@ -70,7 +70,7 @@ class TermsConditionsView extends GetView<TermsConditionsController> {
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                   ),
-                  child: Text('Retry', style: TextStyle(color: Colors.black, fontSize: 14.sp)),
+                  child: Text('retry'.tr, style: TextStyle(color: Colors.black, fontSize: 14.sp)),
                 ),
               ],
             ),

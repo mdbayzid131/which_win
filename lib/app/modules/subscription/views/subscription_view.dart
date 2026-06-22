@@ -19,7 +19,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
             children: [
               Icon(Icons.arrow_back_ios, color: Colors.white, size: 16.sp),
               Text(
-                'Back',
+                'back'.tr,
                 style: TextStyle(color: Colors.white, fontSize: 14.sp),
               ),
             ],
@@ -89,10 +89,10 @@ class SubscriptionView extends GetView<SubscriptionController> {
             ),
           ),
           SizedBox(height: 16.h),
-          if (onSubscribe != null) _buildPrimaryButton('Subscribe Now', onSubscribe),
+          if (onSubscribe != null) _buildPrimaryButton('subscribe_now'.tr, onSubscribe),
           SizedBox(height: 12.h),
           _buildSecondaryButton(
-            'Restore Purchases',
+            'restore_purchases'.tr,
             () => controller.restorePurchases(),
           ),
           SizedBox(height: 16.h),
@@ -126,7 +126,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
                   _buildBenefitList(),
                   SizedBox(height: 32.h),
                   Text(
-                    'Choose Your Plan',
+                    'choose_plan'.tr,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20.sp,
@@ -150,7 +150,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
             ),
           ),
           SizedBox(height: 16.h),
-          _buildPrimaryButton('Subscribe Now', () => controller.subscribe()),
+          _buildPrimaryButton('subscribe_now'.tr, () => controller.subscribe()),
           SizedBox(height: 16.h),
         ],
       ),
@@ -219,7 +219,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
                         ],
                       ),
                       child: Text(
-                        'BEST VALUE',
+                        'best_value'.tr,
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 9.sp,
@@ -287,7 +287,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
               Icon(Icons.star, color: Colors.white, size: 20.sp),
               SizedBox(width: 8.w),
               Text(
-                'PRO',
+                'pro'.tr,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16.sp,
@@ -313,9 +313,9 @@ class SubscriptionView extends GetView<SubscriptionController> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildFeatureIcon(Icons.psychology, 'AI Tips'),
-          _buildFeatureIcon(Icons.analytics, 'Analysis'),
-          _buildFeatureIcon(Icons.notifications_active, 'Alerts'),
+          _buildFeatureIcon(Icons.psychology, 'ai_tips'.tr),
+          _buildFeatureIcon(Icons.analytics, 'analysis'.tr),
+          _buildFeatureIcon(Icons.notifications_active, 'alerts'.tr),
         ],
       ),
     );
@@ -341,10 +341,10 @@ class SubscriptionView extends GetView<SubscriptionController> {
   Widget _buildBenefitList() {
     return Column(
       children: [
-        _buildBenefitItem('Unlimited AI predictions for all races'),
-        _buildBenefitItem('Detailed performance analytics & statistics'),
-        _buildBenefitItem('Instant push notifications for live results'),
-        _buildBenefitItem('Ad-free experience across the app'),
+        _buildBenefitItem('benefit_predictions'.tr),
+        _buildBenefitItem('benefit_analytics'.tr),
+        _buildBenefitItem('benefit_notifications'.tr),
+        _buildBenefitItem('benefit_ad_free'.tr),
       ],
     );
   }

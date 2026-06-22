@@ -37,9 +37,9 @@ class SplashScreenView extends GetView<SplashScreenController> {
             ),
             const SizedBox(height: 12),
             // Loading Text
-            const Text(
-              'Veriler Alınıyor...',
-              style: TextStyle(
+            Text(
+              'veriler_aliniyor'.tr,
+              style: const TextStyle(
                 color: Colors.grey,
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
@@ -47,10 +47,11 @@ class SplashScreenView extends GetView<SplashScreenController> {
             ),
             const Spacer(flex: 4),
             // Version Text
-            const Text(
-              'Version: 2.1.8',
-              style: TextStyle(color: Colors.grey, fontSize: 12),
+            Text(
+              '${'version'.tr}: 2.1.8',
+              style: const TextStyle(color: Colors.grey, fontSize: 12),
             ),
+
             const SizedBox(height: 20),
           ],
         ),

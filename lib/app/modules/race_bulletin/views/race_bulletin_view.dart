@@ -48,7 +48,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    controller.race.value?.location ?? 'Race Bulletin',
+                    controller.race.value?.location ?? 'races'.tr,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18.sp,
@@ -59,7 +59,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                   ),
                   Obx(
                     () => Text(
-                      '${controller.raceList.length} races · ${controller.race.value?.date?.split('T').first ?? ''}',
+                      '${controller.raceList.length} ${'races'.tr} · ${controller.race.value?.date?.split('T').first ?? ''}',
                       style: TextStyle(color: Colors.white38, fontSize: 12.sp),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -86,7 +86,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
           if (controller.raceList.isEmpty) {
             return Center(
               child: Text(
-                'No races found for this meeting',
+                'no_races_meeting'.tr,
                 style: TextStyle(color: Colors.white38, fontSize: 16.sp),
               ),
             );
@@ -123,16 +123,16 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
   Widget _buildRaceItem(RaceModel raceModel, int raceNumber) {
     final trackType = raceModel.trackType ?? 'Turf';
     final entriesCount = raceModel.entriesCount ?? 0;
-    String labelText = 'AI Prediction: ';
+    String labelText = 'ai_prediction'.tr;
     String restMessage = '';
     if (raceModel.predictionMessage != null &&
         raceModel.predictionMessage!.isNotEmpty) {
       final msg = raceModel.predictionMessage!;
       if (msg.toLowerCase().startsWith('who beat whom:')) {
-        labelText = 'Who beat whom: ';
+        labelText = 'who_beat_whom'.tr;
         restMessage = msg.substring(14).trim();
       } else {
-        labelText = 'AI Prediction: ';
+        labelText = 'ai_prediction'.tr;
         restMessage = msg;
       }
     }
@@ -274,7 +274,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                           ),
                         ),
                         Text(
-                          'RUNNERS',
+                          'runners_label'.tr,
                           style: TextStyle(
                             color: Colors.white38,
                             fontSize: 8.sp,
@@ -385,7 +385,11 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
           Icon(icon, color: textColor, size: 12.sp),
           SizedBox(width: 4.w),
           Text(
-            status.toUpperCase(),
+            status.toUpperCase() == 'LIVE'
+                ? 'live'.tr
+                : (status.toUpperCase() == 'FINISHED'
+                    ? 'finished'.tr
+                    : 'upcoming'.tr),
             style: TextStyle(
               color: textColor,
               fontSize: 10.sp,

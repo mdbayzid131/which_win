@@ -19,7 +19,7 @@ class ContactView extends GetView<ContactController> {
             children: [
               Icon(Icons.arrow_back_ios, color: Colors.white, size: 16.sp),
               Text(
-                'Back',
+                'back'.tr,
                 style: TextStyle(color: Colors.white, fontSize: 14.sp),
               ),
             ],
@@ -28,7 +28,7 @@ class ContactView extends GetView<ContactController> {
         ),
         leadingWidth: 80.w,
         title: Text(
-          'Contact',
+          'contact'.tr,
           style: TextStyle(
             color: Colors.white,
             fontSize: 18.sp,
@@ -52,7 +52,7 @@ class ContactView extends GetView<ContactController> {
             Icon(Icons.phone_in_talk, size: 80.sp, color: Colors.white38),
             SizedBox(height: 24.h),
             Text(
-              'Get in Touch',
+              'get_in_touch'.tr,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24.sp,
@@ -61,29 +61,29 @@ class ContactView extends GetView<ContactController> {
             ),
             SizedBox(height: 8.h),
             Text(
-              "We're here to help you",
+              'we_are_here_help'.tr,
               style: TextStyle(color: Colors.white38, fontSize: 16.sp),
             ),
             SizedBox(height: 40.h),
 
             _buildContactCard(
-              'Email',
+              'email'.tr,
               'support@whichwin.com',
               Icons.email_outlined,
             ),
             SizedBox(height: 16.h),
             _buildContactCard(
-              'Telegram',
+              'telegram'.tr,
               '@whichwin_support',
               Icons.send_rounded,
             ),
             SizedBox(height: 16.h),
-            _buildContactCard('Website', 'www.whichwin.com', Icons.language),
+            _buildContactCard('website'.tr, 'www.whichwin.com', Icons.language),
             SizedBox(height: 40.h),
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Send us a Message',
+                'send_us_message'.tr,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20.sp,
@@ -94,26 +94,26 @@ class ContactView extends GetView<ContactController> {
             SizedBox(height: 16.h),
             _buildTextField(
               controller: controller.nameController,
-              hintText: 'Your Name',
+              hintText: 'your_name'.tr,
               icon: Icons.person_outline,
             ),
             SizedBox(height: 16.h),
             _buildTextField(
               controller: controller.emailController,
-              hintText: 'Your Email',
+              hintText: 'your_email'.tr,
               icon: Icons.mail_outline,
               keyboardType: TextInputType.emailAddress,
             ),
             SizedBox(height: 16.h),
             _buildTextField(
               controller: controller.subjectController,
-              hintText: 'Subject',
+              hintText: 'subject'.tr,
               icon: Icons.subject_rounded,
             ),
             SizedBox(height: 16.h),
             _buildTextField(
               controller: controller.messageController,
-              hintText: 'Type your message here...',
+              hintText: 'type_message_here'.tr,
               icon: Icons.chat_bubble_outline_rounded,
               maxLines: 5,
             ),
@@ -146,7 +146,7 @@ class ContactView extends GetView<ContactController> {
                           ),
                         )
                       : Text(
-                          'Submit Inquiry',
+                          'submit_inquiry'.tr,
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 16.sp,

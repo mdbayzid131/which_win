@@ -25,10 +25,10 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
 
         final details = controller.raceDetails.value;
         if (details == null) {
-          return const Center(
+          return Center(
             child: Text(
-              'Failed to load race analysis details',
-              style: TextStyle(color: Colors.white38),
+              'failed_load_analysis'.tr,
+              style: const TextStyle(color: Colors.white38),
             ),
           );
         }
@@ -205,7 +205,7 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
                             ),
                           ),
                           Text(
-                            'Jockey: $winnerJockeyName',
+                            '${'jockey'.tr}$winnerJockeyName',
                             style: TextStyle(
                               color: Colors.white38,
                               fontSize: 14.sp,
@@ -213,7 +213,7 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
                           ),
                           SizedBox(height: 8.h),
                           Text(
-                            'Winner - $winnerTime',
+                            '${'winner_label'.tr} - $winnerTime',
                             style: TextStyle(
                               color: Colors.orange,
                               fontSize: 14.sp,
@@ -245,7 +245,7 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: _buildInfoColumn('Which Win Tahmini', details.tahmin1X ?? '1X'),
+                          child: _buildInfoColumn('which_win_tahmini'.tr, details.tahmin1X ?? '1X'),
                         ),
                         Expanded(
                           child: Container(
@@ -260,7 +260,7 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
                             child: Column(
                               children: [
                                 Text(
-                                  'Riskli Maç',
+                                  'riskli_mac'.tr,
                                   style: TextStyle(
                                     color: Colors.red,
                                     fontSize: 12.sp,
@@ -275,7 +275,7 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
                                   ),
                                 ),
                                 Text(
-                                  'Güven Seviyesi',
+                                  'guven_seviyesi'.tr,
                                   style: TextStyle(
                                     color: Colors.white24,
                                     fontSize: 10.sp,
@@ -287,8 +287,8 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
                         ),
                         Expanded(
                           child: _buildInfoColumn(
-                            'Program Önerisi',
-                            details.predictionMessage ?? 'Beraberlik İhmal edilmemeli',
+                            'program_onerisi'.tr,
+                            details.predictionMessage ?? 'program_onerisi_fallback'.tr,
                             isSmallText: true,
                           ),
                         ),
@@ -297,10 +297,10 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
                     SizedBox(height: 24.h),
                     Row(
                       children: [
-                        _buildActionButton('Maç sonu', true),
+                        _buildActionButton('mac_sonu'.tr, true),
                         SizedBox(width: 12.w),
                         _buildActionButton(
-                          'Racing Details',
+                          'racing_details'.tr,
                           false,
                           onTap: () => Get.toNamed(AppRoutes.RACE_DETAILS, arguments: controller.race.value),
                         ),
@@ -321,7 +321,7 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
                 child: Column(
                   children: [
                     Text(
-                      'Yapay Zeka Tahmini',
+                      'yapay_zeka_tahmini'.tr,
                       style: TextStyle(color: Colors.white38, fontSize: 12.sp),
                     ),
                     SizedBox(height: 16.h),
@@ -334,9 +334,9 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
                       ],
                     ),
                     SizedBox(height: 12.h),
-                    _buildAnalysisRow('$topWins', 'Galip', '$secondWins'),
-                    _buildAnalysisRow('$topSeconds', 'Berabere', '$secondSeconds'),
-                    _buildAnalysisRow('$topLosses', 'Mağlup', '$secondLosses'),
+                    _buildAnalysisRow('$topWins', 'galip'.tr, '$secondWins'),
+                    _buildAnalysisRow('$topSeconds', 'berabere'.tr, '$secondSeconds'),
+                    _buildAnalysisRow('$topLosses', 'maglup'.tr, '$secondLosses'),
                   ],
                 ),
               ),

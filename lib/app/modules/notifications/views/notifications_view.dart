@@ -20,14 +20,14 @@ class NotificationsView extends GetView<NotificationsController> {
           icon: Row(
             children: [
               Icon(Icons.arrow_back_ios, color: Colors.white, size: 16.sp),
-              Text('Back', style: TextStyle(color: Colors.white, fontSize: 14.sp)),
+              Text('back'.tr, style: TextStyle(color: Colors.white, fontSize: 14.sp)),
             ],
           ),
           onPressed: () => Get.back(),
         ),
         leadingWidth: 80.w,
         title: Text(
-          'Notifications',
+          'notifications'.tr,
           style: TextStyle(
             color: Colors.white,
             fontSize: 18.sp,
@@ -40,7 +40,7 @@ class NotificationsView extends GetView<NotificationsController> {
               return TextButton(
                 onPressed: () => controller.markAllAsRead(),
                 child: Text(
-                  'Mark all read',
+                  'mark_all_read'.tr,
                   style: TextStyle(
                     color: const Color(0xFF4DB6AC),
                     fontSize: 14.sp,
@@ -85,7 +85,7 @@ class NotificationsView extends GetView<NotificationsController> {
                       Icon(Icons.notifications_off_outlined, color: Colors.white24, size: 64.sp),
                       SizedBox(height: 16.h),
                       Text(
-                        'No notifications yet',
+                        'no_notifications'.tr,
                         style: TextStyle(color: Colors.white38, fontSize: 16.sp),
                       ),
                     ],

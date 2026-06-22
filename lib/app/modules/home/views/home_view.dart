@@ -6,6 +6,7 @@ import 'package:which_win/app/modules/home/controllers/home_controller.dart';
 import 'package:which_win/app/modules/calendar/controllers/calendar_controller.dart';
 import 'package:which_win/app/routes/app_pages.dart';
 import 'package:which_win/data/models/race_model.dart';
+import 'package:which_win/core/services/storage_service.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
@@ -153,7 +154,7 @@ class HomeView extends GetView<HomeController> {
                     ),
                     SizedBox(width: 10.w),
                     Text(
-                      'LIVE RACES',
+                      'live_races'.tr,
                       style: TextStyle(
                         color: Colors.red,
                         fontSize: 13.sp,
@@ -188,7 +189,7 @@ class HomeView extends GetView<HomeController> {
                   style: const TextStyle(color: Colors.white),
                   onChanged: controller.searchRaces,
                   decoration: InputDecoration(
-                    hintText: 'Search country...',
+                    hintText: 'search_country'.tr,
                     hintStyle: TextStyle(
                       color: Colors.white38,
                       fontSize: 16.sp,
@@ -230,7 +231,7 @@ class HomeView extends GetView<HomeController> {
                         ),
                         alignment: Alignment.center,
                         child: Text(
-                          category,
+                          category == 'All' ? 'all'.tr : category,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14.sp,
@@ -265,7 +266,7 @@ class HomeView extends GetView<HomeController> {
                           ),
                           SizedBox(height: 16.h),
                           Text(
-                            'No live races right now',
+                            'no_live_races'.tr,
                             style: TextStyle(
                               color: Colors.white38,
                               fontSize: 16.sp,
@@ -273,7 +274,7 @@ class HomeView extends GetView<HomeController> {
                           ),
                           SizedBox(height: 8.h),
                           Text(
-                            'Tap the antenna icon to see all races',
+                            'tap_antenna_hint'.tr,
                             style: TextStyle(
                               color: Colors.white24,
                               fontSize: 12.sp,
@@ -315,7 +316,7 @@ class HomeView extends GetView<HomeController> {
                         ),
                         SizedBox(height: 16.h),
                         Text(
-                          'No races found',
+                          'no_races_found'.tr,
                           style: TextStyle(
                             color: Colors.white38,
                             fontSize: 16.sp,
@@ -432,38 +433,43 @@ class HomeView extends GetView<HomeController> {
               children: [
                 _buildDrawerItem(
                   Icons.emoji_events_sharp,
-                  'Races',
+                  'races'.tr,
                   () => Get.back(),
                 ),
                 _buildDrawerItem(
                   Icons.notifications_outlined,
-                  'Notifications',
+                  'notifications'.tr,
                   () => Get.toNamed(AppRoutes.NOTIFICATIONS),
                 ),
                 _buildDrawerItem(
                   Icons.credit_card_outlined,
-                  'Subscription info',
+                  'subscription_info'.tr,
                   () => Get.toNamed(AppRoutes.SUBSCRIPTION),
                 ),
                 _buildDrawerItem(
                   Icons.phone_outlined,
-                  'Contact',
+                  'contact'.tr,
                   () => Get.toNamed(AppRoutes.CONTACT),
                 ),
                 _buildDrawerItem(
                   Icons.description_outlined,
-                  'Terms and Conditions',
+                  'terms_conditions'.tr,
                   () => Get.toNamed(AppRoutes.TERMS_CONDITIONS),
                 ),
                 _buildDrawerItem(
                   Icons.lock_outline,
-                  'Privacy Policy',
+                  'privacy_policy'.tr,
                   () => Get.toNamed(AppRoutes.PRIVACY_POLICY),
                 ),
                 _buildDrawerItem(
                   Icons.star_outline,
-                  'Rate us',
+                  'rate_us'.tr,
                   () => Get.toNamed(AppRoutes.RATE_US),
+                ),
+                _buildDrawerItem(
+                  Icons.language,
+                  'language'.tr,
+                  () => _showLanguageSelectionBottomSheet(),
                 ),
               ],
             ),
@@ -475,7 +481,7 @@ class HomeView extends GetView<HomeController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Version 2.1.8',
+                  '${'version'.tr} 2.1.8',
                   style: TextStyle(color: Colors.white38, fontSize: 12.sp),
                 ),
                 Text(
@@ -1105,7 +1111,7 @@ class HomeView extends GetView<HomeController> {
               ),
               SizedBox(height: 24.h),
               Text(
-                'Filter Races',
+                'filter_races'.tr,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20.sp,
@@ -1115,7 +1121,7 @@ class HomeView extends GetView<HomeController> {
               SizedBox(height: 24.h),
 
               _buildFilterSection(
-                'Race Status',
+                'race_status'.tr,
                 ['All', 'Live', 'Upcoming', 'Resulted'],
                 controller.selectedStatus,
                 (val) => controller.setStatus(val),
@@ -1124,7 +1130,7 @@ class HomeView extends GetView<HomeController> {
               SizedBox(height: 24.h),
 
               _buildFilterSection(
-                'Regions',
+                'regions'.tr,
                 ['All', 'UK', 'USA', 'Europe', 'Asia', 'Australia'],
                 controller.selectedRegion,
                 (val) => controller.setRegion(val),
@@ -1142,7 +1148,7 @@ class HomeView extends GetView<HomeController> {
                         Get.back();
                       },
                       child: Text(
-                        'Reset All',
+                        'reset_all'.tr,
                         style: TextStyle(
                           color: Colors.white38,
                           fontSize: 16.sp,
@@ -1164,7 +1170,7 @@ class HomeView extends GetView<HomeController> {
                           ),
                         ),
                         child: Text(
-                          'Apply Filters',
+                          'apply_filters'.tr,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16.sp,
@@ -1228,7 +1234,7 @@ class HomeView extends GetView<HomeController> {
                     ),
                   ),
                   child: Text(
-                    option,
+                    _getTranslatedOption(option),
                     style: TextStyle(
                       color: isSelected ? Colors.black : Colors.white70,
                       fontSize: 14.sp,
@@ -1270,5 +1276,99 @@ class HomeView extends GetView<HomeController> {
       return 'au';
     }
     return 'tr';
+  }
+
+  String _getTranslatedOption(String option) {
+    switch (option.toLowerCase()) {
+      case 'all':
+        return 'all'.tr;
+      case 'live':
+        return 'live'.tr;
+      case 'upcoming':
+        return 'upcoming'.tr;
+      case 'resulted':
+        return 'resulted'.tr;
+      default:
+        return option;
+    }
+  }
+
+  void _showLanguageSelectionBottomSheet() {
+    Get.bottomSheet(
+      Container(
+        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0F1419),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+          border: Border.all(color: Colors.white12),
+        ),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Handle
+              Container(
+                width: 40.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: Colors.white24,
+                  borderRadius: BorderRadius.circular(2.r),
+                ),
+              ),
+              SizedBox(height: 24.h),
+              Text(
+                'select_language'.tr,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 24.h),
+              _buildLanguageOption('english'.tr, 'en', '🇺🇸'),
+              SizedBox(height: 12.h),
+              _buildLanguageOption('turkish'.tr, 'tr', '🇹🇷'),
+              SizedBox(height: 16.h),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageOption(String title, String langCode, String flag) {
+    final currentLocale = Get.locale?.languageCode ?? 'en';
+    final isSelected = currentLocale == langCode;
+
+    return ListTile(
+      onTap: () async {
+        await StorageService.setString('language_code', langCode);
+        Get.updateLocale(Locale(langCode));
+        Get.back();
+      },
+      leading: Text(flag, style: TextStyle(fontSize: 24.sp)),
+      title: Text(
+        title,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 16.sp,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        ),
+      ),
+      trailing: isSelected
+          ? const Icon(Icons.check_circle, color: Color(0xFF4DB6AC))
+          : const Icon(Icons.circle_outlined, color: Colors.white24),
+      tileColor: isSelected
+          ? Colors.white.withOpacity(0.05)
+          : Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        side: BorderSide(
+          color: isSelected ? const Color(0xFF4DB6AC) : Colors.white10,
+          width: 1,
+        ),
+      ),
+    );
   }
 }
