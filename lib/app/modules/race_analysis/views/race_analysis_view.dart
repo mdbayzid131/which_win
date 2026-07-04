@@ -10,7 +10,7 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF1E1E1E),
       body: SafeArea(
         top: false,
         bottom: true,

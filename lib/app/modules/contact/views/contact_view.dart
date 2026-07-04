@@ -9,9 +9,9 @@ class ContactView extends GetView<ContactController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF1E1E1E),
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: const Color(0xFF1E1E1E),
         elevation: 0,
         centerTitle: true,
         leading: IconButton(

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:which_win/app/modules/home/controllers/home_controller.dart';
 import 'package:which_win/app/modules/calendar/controllers/calendar_controller.dart';
+import 'package:which_win/app/modules/rate_us/controllers/rate_us_controller.dart';
 import 'package:which_win/app/routes/app_pages.dart';
 import 'package:which_win/data/models/race_model.dart';
 import 'package:which_win/core/services/storage_service.dart';
@@ -17,10 +18,10 @@ class HomeView extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      drawer: _buildDrawer(),
+      backgroundColor: const Color(0xFF1E1E1E),
+      drawer: _buildDrawer(context),
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: const Color(0xFF1E1E1E),
         elevation: 0,
         leading: Builder(
           builder: (context) => IconButton(
@@ -366,9 +367,9 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  Widget _buildDrawer() {
+  Widget _buildDrawer(BuildContext context) {
     return Drawer(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF1E1E1E),
       child: Column(
         children: [
           // Drawer Header with Background Image
@@ -382,11 +383,10 @@ class HomeView extends GetView<HomeController> {
               //   ), // Premium generated background
               //   fit: BoxFit.cover,
               //   opacity: 0.7, // Slightly more visible for the premium image
-              // ),
-              color: Colors.black,
+              color: Colors.transparent,
             ),
             child: Container(
-              color: Colors.black,
+              color: Colors.transparent,
               // decoration: BoxDecoration(
               //   gradient: LinearGradient(
               //     begin: Alignment.topCenter,
@@ -432,22 +432,22 @@ class HomeView extends GetView<HomeController> {
               padding: EdgeInsets.zero,
               children: [
                 _buildDrawerItem(
-                  Icons.emoji_events_sharp,
+                  Icons.emoji_events_outlined,
                   'races'.tr,
                   () => Get.back(),
                 ),
                 _buildDrawerItem(
-                  Icons.notifications_outlined,
+                  Icons.notifications_none_outlined,
                   'notifications'.tr,
                   () => Get.toNamed(AppRoutes.NOTIFICATIONS),
                 ),
                 _buildDrawerItem(
-                  Icons.credit_card_outlined,
+                  Icons.diamond_outlined,
                   'subscription_info'.tr,
                   () => Get.toNamed(AppRoutes.SUBSCRIPTION),
                 ),
                 _buildDrawerItem(
-                  Icons.phone_outlined,
+                  Icons.support_agent_outlined,
                   'contact'.tr,
                   () => Get.toNamed(AppRoutes.CONTACT),
                 ),
@@ -457,17 +457,26 @@ class HomeView extends GetView<HomeController> {
                   () => Get.toNamed(AppRoutes.TERMS_CONDITIONS),
                 ),
                 _buildDrawerItem(
-                  Icons.lock_outline,
+                  Icons.privacy_tip_outlined,
                   'privacy_policy'.tr,
                   () => Get.toNamed(AppRoutes.PRIVACY_POLICY),
                 ),
                 _buildDrawerItem(
-                  Icons.star_outline,
-                  'rate_us'.tr,
-                  () => Get.toNamed(AppRoutes.RATE_US),
+                  Icons.card_giftcard_outlined,
+                  'gift_a_friend'.tr,
+                  () => Get.toNamed(AppRoutes.GIFT_A_FRIEND),
+                  subtitle: 'gift_a_friend_subtitle'.tr,
                 ),
                 _buildDrawerItem(
-                  Icons.language,
+                  Icons.thumb_up_alt_outlined,
+                  'rate_us'.tr,
+                  () {
+                    Get.back();
+                    _showRateUsDialog(context);
+                  },
+                ),
+                _buildDrawerItem(
+                  Icons.translate_outlined,
                   'language'.tr,
                   () => _showLanguageSelectionBottomSheet(),
                 ),
@@ -496,16 +505,143 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  Widget _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
+  Widget _buildDrawerItem(
+    IconData icon,
+    String title,
+    VoidCallback onTap, {
+    String? subtitle,
+  }) {
     return ListTile(
-      leading: Icon(icon, color: Colors.white),
+      leading: Icon(icon, color: const Color(0xFF4DB6AC)),
       title: Text(
         title,
         style: TextStyle(color: Colors.white, fontSize: 16.sp),
       ),
+      subtitle: subtitle != null
+          ? Text(
+              subtitle,
+              style: TextStyle(color: const Color(0xFF4DB6AC).withOpacity(0.7), fontSize: 11.sp),
+            )
+          : null,
       trailing: const Icon(Icons.keyboard_arrow_right, color: Colors.white38),
       onTap: onTap,
     );
+  }
+
+  void _showRateUsDialog(BuildContext context) {
+    final controller = Get.put(RateUsController());
+    
+    Get.dialog(
+      Dialog(
+        backgroundColor: const Color(0xFF1E1E1E),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: GestureDetector(
+                  onTap: () {
+                    Get.back();
+                    Get.delete<RateUsController>();
+                  },
+                  child: const Icon(Icons.close, color: Colors.white54),
+                ),
+              ),
+              Icon(
+                Icons.star_rounded,
+                size: 80.sp,
+                color: Colors.amber,
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                'experience_question'.tr,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 8.h),
+              Text(
+                'feedback_improve_hint'.tr,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white38,
+                  fontSize: 14.sp,
+                ),
+              ),
+              SizedBox(height: 24.h),
+              Obx(() => Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(5, (index) {
+                  return IconButton(
+                    onPressed: () => controller.setRating(index + 1),
+                    icon: Icon(
+                      index < controller.rating.value
+                          ? Icons.star_rounded
+                          : Icons.star_outline_rounded,
+                      color: index < controller.rating.value
+                          ? Colors.amber
+                          : Colors.white24,
+                      size: 36.sp,
+                    ),
+                  );
+                }),
+              )),
+              SizedBox(height: 24.h),
+              Obx(() {
+                final isLoading = controller.isLoading.value;
+                return SizedBox(
+                  width: double.infinity,
+                  height: 48.h,
+                  child: ElevatedButton(
+                    onPressed: isLoading ? null : () async {
+                      await controller.submitRating();
+                      Get.delete<RateUsController>();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF00CC99),
+                      disabledBackgroundColor: const Color(0xFF00CC99).withOpacity(0.5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                    ),
+                    child: isLoading
+                        ? SizedBox(
+                            width: 20.w,
+                            height: 20.w,
+                            child: const CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Text(
+                            'submit_rating'.tr,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                  ),
+                );
+              }),
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: true,
+    ).then((_) {
+      if (Get.isRegistered<RateUsController>()) {
+        Get.delete<RateUsController>();
+      }
+    });
   }
 
   Widget _buildRaceCard(Map<String, dynamic> race) {

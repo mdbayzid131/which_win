@@ -21,6 +21,8 @@ import 'package:which_win/app/modules/race_details/bindings/race_details_binding
 import 'package:which_win/app/modules/race_details/views/race_details_view.dart';
 import 'package:which_win/app/modules/splash_screen/bindings/splash_screen_binding.dart';
 import 'package:which_win/app/modules/splash_screen/views/splash_screen_view.dart';
+import 'package:which_win/app/modules/gift_a_friend/bindings/gift_a_friend_binding.dart';
+import 'package:which_win/app/modules/gift_a_friend/views/gift_a_friend_view.dart';
 
 class AppRoutes {
   static const SPLASH_SCREEN = '/splash-screen';
@@ -34,6 +36,7 @@ class AppRoutes {
   static const TERMS_CONDITIONS = '/terms-conditions';
   static const CONTACT = '/contact';
   static const RATE_US = '/rate-us';
+  static const GIFT_A_FRIEND = '/gift-a-friend';
 
   static String get initial => SPLASH_SCREEN;
 }
@@ -108,6 +111,12 @@ class AppPages {
       name: AppRoutes.RATE_US,
       page: () => const RateUsView(),
       binding: RateUsBinding(),
+      transition: transition,
+    ),
+    GetPage(
+      name: AppRoutes.GIFT_A_FRIEND,
+      page: () => const GiftAFriendView(),
+      binding: GiftAFriendBinding(),
       transition: transition,
     ),
   ];
