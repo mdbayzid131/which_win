@@ -85,7 +85,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.SUBSCRIPTION,
-      page: () => const SubscriptionView(),
+      page: () => SubscriptionView(),
       binding: SubscriptionBinding(),
       transition: transition,
     ),

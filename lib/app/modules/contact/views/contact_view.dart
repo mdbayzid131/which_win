@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:which_win/core/utils/custom_snackbar.dart';
 import '../controllers/contact_controller.dart';
 
 class ContactView extends GetView<ContactController> {
@@ -10,231 +11,340 @@ class ContactView extends GetView<ContactController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF1E1E1E),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1E1E1E),
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: Row(
-            children: [
-              Icon(Icons.arrow_back_ios, color: Colors.white, size: 16.sp),
-              Text(
-                'back'.tr,
-                style: TextStyle(color: Colors.white, fontSize: 14.sp),
-              ),
-            ],
+      body: Stack(
+        children: [
+          // Background Image with dark gradient overlay
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/horse_racing_bg.png',
+              fit: BoxFit.cover,
+            ),
           ),
-          onPressed: () => Get.back(),
-        ),
-        leadingWidth: 80.w,
-        title: Text(
-          'contact'.tr,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18.sp,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.h),
-          child: Container(color: Colors.white12, height: 1.h),
-        ),
-      ),
-      body: SafeArea(
-        top: false,
-        bottom: true,
-        child: SingleChildScrollView(
-        padding: EdgeInsets.all(24.w),
-        child: Column(
-          children: [
-            SizedBox(height: 20.h),
-            // Phone Icon Placeholder (Since I can't generate images for inside code yet, I'll use a large icon with styling)
-            Icon(Icons.phone_in_talk, size: 80.sp, color: Colors.white38),
-            SizedBox(height: 24.h),
-            Text(
-              'get_in_touch'.tr,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            Text(
-              'we_are_here_help'.tr,
-              style: TextStyle(color: Colors.white38, fontSize: 16.sp),
-            ),
-            SizedBox(height: 40.h),
-
-            _buildContactCard(
-              'email'.tr,
-              'support@whichwin.com',
-              Icons.email_outlined,
-            ),
-            SizedBox(height: 16.h),
-            _buildContactCard(
-              'telegram'.tr,
-              '@whichwin_support',
-              Icons.send_rounded,
-            ),
-            SizedBox(height: 16.h),
-            _buildContactCard('website'.tr, 'www.whichwin.com', Icons.language),
-            SizedBox(height: 40.h),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'send_us_message'.tr,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.bold,
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    const Color(0xFF1E1E1E).withOpacity(0.3),
+                    const Color(0xFF1E1E1E).withOpacity(0.8),
+                    const Color(0xFF1E1E1E),
+                  ],
                 ),
               ),
             ),
-            SizedBox(height: 16.h),
-            _buildTextField(
-              controller: controller.nameController,
-              hintText: 'your_name'.tr,
-              icon: Icons.person_outline,
-            ),
-            SizedBox(height: 16.h),
-            _buildTextField(
-              controller: controller.emailController,
-              hintText: 'your_email'.tr,
-              icon: Icons.mail_outline,
-              keyboardType: TextInputType.emailAddress,
-            ),
-            SizedBox(height: 16.h),
-            _buildTextField(
-              controller: controller.subjectController,
-              hintText: 'subject'.tr,
-              icon: Icons.subject_rounded,
-            ),
-            SizedBox(height: 16.h),
-            _buildTextField(
-              controller: controller.messageController,
-              hintText: 'type_message_here'.tr,
-              icon: Icons.chat_bubble_outline_rounded,
-              maxLines: 5,
-            ),
-            SizedBox(height: 32.h),
-            Obx(
-              () => SizedBox(
-                width: double.infinity,
-                height: 54.h,
-                child: ElevatedButton(
-                  onPressed: controller.isLoading.value
-                      ? null
-                      : () => controller.sendContact(),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4DB6AC),
-                    disabledBackgroundColor: const Color(
-                      0xFF4DB6AC,
-                    ).withValues(alpha: 0.5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r),
+          ),
+
+          // Scrollable Content
+          SafeArea(
+            child: CustomScrollView(
+              slivers: [
+                // Top Custom Header
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 8.h,
                     ),
-                    elevation: 0,
-                  ),
-                  child: controller.isLoading.value
-                      ? SizedBox(
-                          height: 24.h,
-                          width: 24.h,
-                          child: const CircularProgressIndicator(
-                            color: Colors.black,
-                            strokeWidth: 2.5,
-                          ),
-                        )
-                      : Text(
-                          'submit_inquiry'.tr,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold,
+                    child: Row(
+                      children: [
+                        _buildBackButton(),
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              'contact'.tr,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
+                        SizedBox(width: 80.w), // Balance the back button
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+
+                // Vertical spacing
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.1,
+                  ),
+                ),
+
+                // Bottom card form (align to bottom)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: _buildBottomContactCard(context),
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 24.h),
-          ],
-        ),
+          ),
+        ],
       ),
-    ),
     );
   }
 
-  Widget _buildTextField({
+  Widget _buildBackButton() {
+    return GestureDetector(
+      onTap: () => Get.back(),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.white24, width: 1.2),
+          borderRadius: BorderRadius.circular(20.r),
+          color: Colors.black.withOpacity(0.2),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 12.sp),
+            SizedBox(width: 6.w),
+            Text(
+              'back'.tr,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 13.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomContactCard(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(32.r),
+          topRight: Radius.circular(32.r),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            blurRadius: 15,
+            offset: const Offset(0, -5),
+          ),
+        ],
+      ),
+      padding: EdgeInsets.fromLTRB(24.w, 32.h, 24.w, 36.h),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Title "Contact"
+          Text(
+            'contact'.tr,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 22.sp,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 24.h),
+
+          // Name Surname field
+          _buildFormTextField(
+            controller: controller.nameController,
+            labelText: 'your_name'.tr,
+            hintText: 'your_name'.tr,
+            icon: Icons.person_rounded,
+          ),
+          SizedBox(height: 18.h),
+
+          // E-Mail field
+          _buildFormTextField(
+            controller: controller.emailController,
+            labelText: 'your_email'.tr,
+            hintText: 'your_email'.tr,
+            icon: Icons.email_rounded,
+            keyboardType: TextInputType.emailAddress,
+          ),
+          SizedBox(height: 18.h),
+
+          // Message field
+          _buildFormTextField(
+            controller: controller.messageController,
+            labelText: 'type_message_here'.tr,
+            hintText: 'type_message_here'.tr,
+            icon: Icons.chat_bubble_rounded,
+            maxLines: 4,
+          ),
+          SizedBox(height: 24.h),
+
+          // Send Button
+          _buildSendButton(),
+          SizedBox(height: 24.h),
+
+          // OR Divider
+          _buildOrDivider(),
+          SizedBox(height: 24.h),
+
+          // Social Media Icons
+          _buildSocialRow(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFormTextField({
     required TextEditingController controller,
+    required String labelText,
     required String hintText,
     required IconData icon,
     int maxLines = 1,
     TextInputType keyboardType = TextInputType.text,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF0F1419),
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.white12),
-      ),
-      child: TextField(
-        controller: controller,
-        maxLines: maxLines,
-        keyboardType: keyboardType,
-        style: TextStyle(color: Colors.white, fontSize: 15.sp),
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: TextStyle(color: Colors.white38, fontSize: 15.sp),
-          prefixIcon: Icon(icon, color: Colors.white38, size: 20.sp),
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 16.w,
-            vertical: maxLines > 1 ? 16.h : 12.h,
-          ),
+    return TextFormField(
+      controller: controller,
+      maxLines: maxLines,
+      keyboardType: keyboardType,
+      style: const TextStyle(color: Colors.white),
+      decoration: InputDecoration(
+        labelText: labelText,
+        labelStyle: const TextStyle(color: Colors.white54),
+        hintText: hintText,
+        hintStyle: const TextStyle(color: Colors.white30),
+        prefixIcon: Icon(icon, color: Colors.white70, size: 22.sp),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          borderSide: const BorderSide(color: Colors.white24),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          borderSide: const BorderSide(color: Color(0xFF4DB6AC)),
+        ),
+        filled: true,
+        fillColor: Colors.black,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: 20.w,
+          vertical: maxLines > 1 ? 16.h : 14.h,
         ),
       ),
     );
   }
 
-  Widget _buildContactCard(String title, String value, IconData icon) {
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0F1419),
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.white12),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(10.w),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(8.r),
+  Widget _buildSendButton() {
+    return Obx(() {
+      final isLoading = controller.isLoading.value;
+      return SizedBox(
+        width: double.infinity,
+        height: 56.h,
+        child: ElevatedButton(
+          onPressed: isLoading
+              ? null
+              : () {
+                  if (controller.subjectController.text.isEmpty) {
+                    controller.subjectController.text = "App Support Message";
+                  }
+                  controller.sendContact();
+                },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF00CC99),
+            disabledBackgroundColor: const Color(0xFF00CC99).withOpacity(0.5),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16.r),
             ),
-            child: Icon(icon, color: Colors.white70, size: 24.sp),
+            elevation: 8,
+            shadowColor: const Color(0xFF00CC99).withOpacity(0.4),
           ),
-          SizedBox(width: 16.w),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(color: Colors.white38, fontSize: 14.sp),
-              ),
-              SizedBox(height: 4.h),
-              Text(
-                value,
-                style: TextStyle(
-                  color: const Color(0xFF4DB6AC),
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
+          child: isLoading
+              ? SizedBox(
+                  width: 24.w,
+                  height: 24.w,
+                  child: const CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2.5,
+                  ),
+                )
+              : Text(
+                  'Send',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-            ],
+        ),
+      );
+    });
+  }
+
+  Widget _buildOrDivider() {
+    return Row(
+      children: [
+        const Expanded(child: Divider(color: Colors.white24)),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: Text(
+            'OR',
+            style: TextStyle(
+              color: Colors.white38,
+              fontSize: 12.sp,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1,
+            ),
           ),
-        ],
-      ),
+        ),
+        const Expanded(child: Divider(color: Colors.white24)),
+      ],
     );
+  }
+
+  Widget _buildSocialRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // Facebook
+        GestureDetector(
+          onTap: () => _openSocialLink('Facebook'),
+          child: SizedBox(
+            width: 52.w,
+            height: 52.w,
+            child: Image.asset(
+              'assets/icons/facebook.png',
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+        SizedBox(width: 20.w),
+        // Instagram
+        GestureDetector(
+          onTap: () => _openSocialLink('Instagram'),
+          child: SizedBox(
+            width: 52.w,
+            height: 52.w,
+            child: Image.asset(
+              'assets/icons/instagram.png',
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+        SizedBox(width: 20.w),
+        // YouTube
+        GestureDetector(
+          onTap: () => _openSocialLink('YouTube'),
+          child: SizedBox(
+            width: 52.w,
+            height: 52.w,
+            child: Image.asset('assets/icons/youtube.png', fit: BoxFit.contain),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _openSocialLink(String platform) {
+    CustomSnackBar.success('Opening $platform support...');
   }
 }

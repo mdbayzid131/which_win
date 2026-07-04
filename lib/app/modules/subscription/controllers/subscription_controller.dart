@@ -32,6 +32,36 @@ class SubscriptionController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    // Default mock plans to match screenshot design
+    plans.assignAll([
+      SubscriptionPlanModel(
+        id: 'weekly',
+        name: '1 Week',
+        description: '',
+        price: 4.99,
+        currency: 'USD',
+        duration: 'WEEKLY',
+        productId: 'com.whichwin.horseracing.weekly',
+      ),
+      SubscriptionPlanModel(
+        id: 'monthly',
+        name: '1 Month',
+        description: '',
+        price: 11.99,
+        currency: 'USD',
+        duration: 'MONTHLY',
+        productId: 'com.whichwin.horseracing.monthly',
+      ),
+      SubscriptionPlanModel(
+        id: 'yearly',
+        name: '1 Year',
+        description: '',
+        price: 59.99,
+        currency: 'USD',
+        duration: 'YEARLY',
+        productId: 'com.whichwin.horseracing.yearly',
+      ),
+    ]);
     _initializeIAP();
     fetchPlans();
   }

@@ -16,7 +16,7 @@ class GiftAFriendView extends GetView<GiftAFriendController> {
           // Background Image with dark gradient overlay
           Positioned.fill(
             child: Image.asset(
-              'assets/images/premium_race_header.png',
+              'assets/images/horse_racing_bg.png',
               fit: BoxFit.cover,
             ),
           ),
