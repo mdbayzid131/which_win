@@ -13,7 +13,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1E1E1E),
+      backgroundColor: const Color(0xFF121212),
       body: Stack(
         children: [
           // Content Scroll
@@ -359,7 +359,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 5.h),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E),
+        color: const Color(0xFF121212),
         borderRadius: BorderRadius.circular(8.r),
       ),
       child: Row(

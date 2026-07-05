@@ -10,7 +10,7 @@ class ContactView extends GetView<ContactController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1E1E1E),
+      backgroundColor: const Color(0xFF121212),
       body: Stack(
         children: [
           // Background Image with dark gradient overlay
@@ -27,9 +27,9 @@ class ContactView extends GetView<ContactController> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    const Color(0xFF1E1E1E).withOpacity(0.3),
-                    const Color(0xFF1E1E1E).withOpacity(0.8),
-                    const Color(0xFF1E1E1E),
+                    const Color(0xFF121212).withOpacity(0.3),
+                    const Color(0xFF121212).withOpacity(0.8),
+                    const Color(0xFF121212),
                   ],
                 ),
               ),

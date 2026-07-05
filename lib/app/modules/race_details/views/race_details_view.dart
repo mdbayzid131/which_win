@@ -10,9 +10,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1E1E1E),
+      backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1E1E1E),
+        backgroundColor: const Color(0xFF121212),
         elevation: 0,
         leadingWidth: 100.w,
         leading: Padding(
@@ -140,7 +140,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                                     const Color(0xFF00695C),
                                   ]
                                 : [
-                                    const Color(0xFF1E1E1E),
+                                    const Color(0xFF121212),
                                     const Color(0xFF2A2A2A),
                                   ],
                           ),

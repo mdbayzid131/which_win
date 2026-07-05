@@ -7,6 +7,8 @@ import 'package:which_win/app/modules/calendar/controllers/calendar_controller.d
 import 'package:which_win/app/modules/rate_us/controllers/rate_us_controller.dart';
 import 'package:which_win/app/routes/app_pages.dart';
 import 'package:which_win/data/models/race_model.dart';
+import 'package:which_win/data/models/meeting_model.dart';
+import 'package:which_win/data/repositories/race_repository.dart';
 import 'package:which_win/core/services/storage_service.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -18,10 +20,10 @@ class HomeView extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1E1E1E),
+      backgroundColor: const Color(0xFF121212),
       drawer: _buildDrawer(context),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1E1E1E),
+        backgroundColor: const Color(0xFF121212),
         elevation: 0,
         leading: Builder(
           builder: (context) => IconButton(
@@ -336,27 +338,10 @@ class HomeView extends GetView<HomeController> {
                   itemCount: meetings.length,
                   itemBuilder: (context, index) {
                     final meeting = meetings[index];
-                    final race = {
-                      'country': meeting.country,
-                      'flag': _getFlagCode(meeting.country),
-                      'race': meeting.location,
-                      'isLive': meeting.isLive,
-                      'racesCount': '${meeting.racesCount} races',
-                    };
-                    final representativeRace = RaceModel(
-                      location: meeting.location,
-                      country: meeting.country,
-                      date: DateFormat(
-                        'yyyy-MM-dd',
-                      ).format(controller.selectedDate),
-                    );
-                    return GestureDetector(
-                      onTap: () => Get.toNamed(
-                        AppRoutes.RACE_BULLETIN,
-                        arguments: representativeRace,
-                      ),
-                      child: _buildRaceCard(race),
-                    );
+                    final dateStr = DateFormat(
+                      'yyyy-MM-dd',
+                    ).format(controller.selectedDate);
+                    return RaceMeetingCard(meeting: meeting, dateStr: dateStr);
                   },
                 );
               }),
@@ -369,7 +354,7 @@ class HomeView extends GetView<HomeController> {
 
   Widget _buildDrawer(BuildContext context) {
     return Drawer(
-      backgroundColor: const Color(0xFF1E1E1E),
+      backgroundColor: const Color(0xFF121212),
       child: Column(
         children: [
           // Drawer Header with Background Image
@@ -467,14 +452,10 @@ class HomeView extends GetView<HomeController> {
                   () => Get.toNamed(AppRoutes.GIFT_A_FRIEND),
                   subtitle: 'gift_a_friend_subtitle'.tr,
                 ),
-                _buildDrawerItem(
-                  Icons.thumb_up_alt_outlined,
-                  'rate_us'.tr,
-                  () {
-                    Get.back();
-                    _showRateUsDialog(context);
-                  },
-                ),
+                _buildDrawerItem(Icons.thumb_up_alt_outlined, 'rate_us'.tr, () {
+                  Get.back();
+                  _showRateUsDialog(context);
+                }),
                 _buildDrawerItem(
                   Icons.translate_outlined,
                   'language'.tr,
@@ -520,7 +501,10 @@ class HomeView extends GetView<HomeController> {
       subtitle: subtitle != null
           ? Text(
               subtitle,
-              style: TextStyle(color: const Color(0xFF4DB6AC).withOpacity(0.7), fontSize: 11.sp),
+              style: TextStyle(
+                color: const Color(0xFF4DB6AC).withOpacity(0.7),
+                fontSize: 11.sp,
+              ),
             )
           : null,
       trailing: const Icon(Icons.keyboard_arrow_right, color: Colors.white38),
@@ -530,10 +514,10 @@ class HomeView extends GetView<HomeController> {
 
   void _showRateUsDialog(BuildContext context) {
     final controller = Get.put(RateUsController());
-    
+
     Get.dialog(
       Dialog(
-        backgroundColor: const Color(0xFF1E1E1E),
+        backgroundColor: const Color(0xFF121212),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.r),
         ),
@@ -552,11 +536,7 @@ class HomeView extends GetView<HomeController> {
                   child: const Icon(Icons.close, color: Colors.white54),
                 ),
               ),
-              Icon(
-                Icons.star_rounded,
-                size: 80.sp,
-                color: Colors.amber,
-              ),
+              Icon(Icons.star_rounded, size: 80.sp, color: Colors.amber),
               SizedBox(height: 16.h),
               Text(
                 'experience_question'.tr,
@@ -571,29 +551,28 @@ class HomeView extends GetView<HomeController> {
               Text(
                 'feedback_improve_hint'.tr,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white38,
-                  fontSize: 14.sp,
-                ),
+                style: TextStyle(color: Colors.white38, fontSize: 14.sp),
               ),
               SizedBox(height: 24.h),
-              Obx(() => Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(5, (index) {
-                  return IconButton(
-                    onPressed: () => controller.setRating(index + 1),
-                    icon: Icon(
-                      index < controller.rating.value
-                          ? Icons.star_rounded
-                          : Icons.star_outline_rounded,
-                      color: index < controller.rating.value
-                          ? Colors.amber
-                          : Colors.white24,
-                      size: 36.sp,
-                    ),
-                  );
-                }),
-              )),
+              Obx(
+                () => Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(5, (index) {
+                    return IconButton(
+                      onPressed: () => controller.setRating(index + 1),
+                      icon: Icon(
+                        index < controller.rating.value
+                            ? Icons.star_rounded
+                            : Icons.star_outline_rounded,
+                        color: index < controller.rating.value
+                            ? Colors.amber
+                            : Colors.white24,
+                        size: 36.sp,
+                      ),
+                    );
+                  }),
+                ),
+              ),
               SizedBox(height: 24.h),
               Obx(() {
                 final isLoading = controller.isLoading.value;
@@ -601,13 +580,17 @@ class HomeView extends GetView<HomeController> {
                   width: double.infinity,
                   height: 48.h,
                   child: ElevatedButton(
-                    onPressed: isLoading ? null : () async {
-                      await controller.submitRating();
-                      Get.delete<RateUsController>();
-                    },
+                    onPressed: isLoading
+                        ? null
+                        : () async {
+                            await controller.submitRating();
+                            Get.delete<RateUsController>();
+                          },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF00CC99),
-                      disabledBackgroundColor: const Color(0xFF00CC99).withOpacity(0.5),
+                      disabledBackgroundColor: const Color(
+                        0xFF00CC99,
+                      ).withOpacity(0.5),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.r),
                       ),
@@ -1503,6 +1486,457 @@ class HomeView extends GetView<HomeController> {
         side: BorderSide(
           color: isSelected ? const Color(0xFF4DB6AC) : Colors.white10,
           width: 1,
+        ),
+      ),
+    );
+  }
+}
+
+class RaceMeetingCard extends StatefulWidget {
+  final MeetingModel meeting;
+  final String dateStr;
+
+  const RaceMeetingCard({
+    super.key,
+    required this.meeting,
+    required this.dateStr,
+  });
+
+  @override
+  State<RaceMeetingCard> createState() => _RaceMeetingCardState();
+}
+
+class _RaceMeetingCardState extends State<RaceMeetingCard> {
+  bool _isExpanded = false;
+  bool _isLoading = false;
+  List<RaceModel> _races = [];
+
+  Future<void> _fetchRaces() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      final response = await Get.find<RaceRepo>().getRaces(
+        date: widget.dateStr,
+        location: widget.meeting.location,
+      );
+      if (response.statusCode == 200) {
+        final raceResponse = RacesResponse.fromJson(response.data);
+        setState(() {
+          _races = raceResponse.data ?? [];
+        });
+      }
+    } catch (e) {
+      debugPrint("Error fetching races for meeting dropdown: $e");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _toggleExpanded() {
+    setState(() {
+      _isExpanded = !_isExpanded;
+    });
+    if (_isExpanded && _races.isEmpty) {
+      _fetchRaces();
+    }
+  }
+
+  String _getFlagCode(String country) {
+    final c = country.toLowerCase();
+    if (c.contains('united kingdom') ||
+        c.contains('uk') ||
+        c.contains('great britain') ||
+        c.contains('gb')) {
+      return 'gb';
+    }
+    if (c.contains('france') || c.contains('fr')) {
+      return 'fr';
+    }
+    if (c.contains('turkey') || c.contains('tr') || c.contains('türkiye')) {
+      return 'tr';
+    }
+    if (c.contains('united states') || c.contains('usa') || c.contains('us')) {
+      return 'us';
+    }
+    if (c.contains('ireland') || c.contains('ie')) {
+      return 'ie';
+    }
+    if (c.contains('australia') || c.contains('au')) {
+      return 'au';
+    }
+    return 'tr';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final flagCode = _getFlagCode(widget.meeting.country ?? '');
+    final isLive = widget.meeting.isLive ?? false;
+
+    return Container(
+      margin: EdgeInsets.only(bottom: 16.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F1419),
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(
+          color: _isExpanded
+              ? const Color(0xFF00CC99).withOpacity(0.5)
+              : Colors.white12,
+          width: _isExpanded ? 1.5 : 1.0,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          // Header Card (Tappable)
+          InkWell(
+            onTap: _toggleExpanded,
+            child: Padding(
+              padding: EdgeInsets.all(16.w),
+              child: Row(
+                children: [
+                  // Flag with premium styling
+                  Container(
+                    width: 50.w,
+                    height: 50.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white24, width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.5),
+                          blurRadius: 10,
+                          spreadRadius: 1,
+                        ),
+                      ],
+                    ),
+                    child: ClipOval(
+                      child: Image.network(
+                        'https://flagcdn.com/w160/$flagCode.png',
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          color: Colors.grey[900],
+                          child: Icon(
+                            Icons.flag,
+                            color: Colors.white24,
+                            size: 20.sp,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16.w),
+                  // Details
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.meeting.country ?? 'Unknown',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 17.sp,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                        SizedBox(height: 4.h),
+                        Text(
+                          widget.meeting.location ?? '',
+                          style: TextStyle(
+                            color: Colors.white38,
+                            fontSize: 14.sp,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Status/Info
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      if (isLive)
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10.w,
+                            vertical: 4.h,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF3D1C00), Color(0xFF2D1400)],
+                            ),
+                            borderRadius: BorderRadius.circular(6.r),
+                            border: Border.all(
+                              color: const Color(0xFFFF6600).withOpacity(0.3),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 6.w,
+                                height: 6.w,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFFFF6600),
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              SizedBox(width: 6.w),
+                              Text(
+                                'LIVE',
+                                style: TextStyle(
+                                  color: const Color(0xFFFF6600),
+                                  fontSize: 11.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      else
+                        SizedBox(height: 22.h),
+                      SizedBox(height: 12.h),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10.w,
+                          vertical: 4.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(6.r),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '${widget.meeting.racesCount} races',
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(width: 6.w),
+                            AnimatedRotation(
+                              turns: _isExpanded ? 0.25 : 0,
+                              duration: const Duration(milliseconds: 200),
+                              child: Icon(
+                                Icons.arrow_forward_ios,
+                                color: const Color(0xFF00CC99),
+                                size: 10.sp,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Expanded Races list
+          if (_isExpanded) ...[
+            const Divider(color: Colors.white12, height: 1),
+            if (_isLoading)
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 20.h),
+                child: const Center(
+                  child: CircularProgressIndicator(color: Color(0xFF00CC99)),
+                ),
+              )
+            else if (_races.isEmpty)
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 16.h),
+                child: Center(
+                  child: Text(
+                    'no_races_meeting'.tr,
+                    style: TextStyle(color: Colors.white38, fontSize: 14.sp),
+                  ),
+                ),
+              )
+            else
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.all(12.w),
+                itemCount: _races.length,
+                separatorBuilder: (context, index) => SizedBox(height: 10.h),
+                itemBuilder: (context, idx) {
+                  final race = _races[idx];
+                  return _buildDropdownRaceItem(race, idx + 1);
+                },
+              ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDropdownRaceItem(RaceModel raceModel, int raceNumber) {
+    final trackType = raceModel.trackType ?? 'Turf';
+    final entriesCount = raceModel.entriesCount ?? 0;
+    String labelText = 'ai_prediction'.tr;
+    String restMessage = '';
+    if (raceModel.predictionMessage != null &&
+        raceModel.predictionMessage!.isNotEmpty) {
+      final msg = raceModel.predictionMessage!;
+      if (msg.toLowerCase().startsWith('who beat whom:')) {
+        labelText = 'who_beat_whom'.tr;
+        restMessage = msg.substring(14).trim();
+      } else {
+        labelText = 'ai_prediction'.tr;
+        restMessage = msg;
+      }
+    }
+
+    return GestureDetector(
+      onTap: () {
+        if (raceModel.status == 'FINISHED') {
+          Get.toNamed(AppRoutes.RACE_ANALYSIS, arguments: raceModel);
+        } else {
+          Get.toNamed(AppRoutes.RACE_DETAILS, arguments: raceModel);
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFF161B22),
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: Colors.white12),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12.r),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.all(12.w),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Race Number Circle
+                    Container(
+                      width: 36.w,
+                      height: 36.w,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF004D40), Color(0xFF00796B)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        '$raceNumber',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 12.w),
+                    // Race Info
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  raceModel.name ?? 'Race $raceNumber',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              SizedBox(width: 8.w),
+                              Text(
+                                raceModel.time ?? '',
+                                style: TextStyle(
+                                  color: Colors.white38,
+                                  fontSize: 12.sp,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            '$trackType · ${raceModel.distance ?? ""} · $entriesCount entries',
+                            style: TextStyle(
+                              color: Colors.white54,
+                              fontSize: 11.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Optional Prediction Preview
+              if (restMessage.isNotEmpty)
+                Container(
+                  width: double.infinity,
+                  color: const Color(0xFF0F1419),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 8.h,
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 6.w,
+                          vertical: 2.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF00CC99).withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(4.r),
+                        ),
+                        child: Text(
+                          labelText,
+                          style: TextStyle(
+                            color: const Color(0xFF00CC99),
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Expanded(
+                        child: Text(
+                          restMessage,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 11.sp,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

@@ -10,9 +10,9 @@ class TermsConditionsView extends GetView<TermsConditionsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1E1E1E),
+      backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF1E1E1E),
+        backgroundColor: const Color(0xFF121212),
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
