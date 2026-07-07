@@ -37,15 +37,8 @@ class SplashScreenController extends GetxController {
           await StorageService.setString(StorageConstants.bearerToken, loginResponse.data!.token!);
           Helpers.info('Device login successful');
 
-          // 3.2 Persist premium status locally for instant UI gating
-          final sub = loginResponse.data!.user?.subscription;
-          bool premiumActive = false;
-          if (sub != null && sub.isActive == true && sub.endDate != null) {
-            try {
-              final expiry = DateTime.parse(sub.endDate!);
-              premiumActive = expiry.isAfter(DateTime.now());
-            } catch (_) {}
-          }
+          // 3.2 Persist premium status locally for instant UI gating (forced to true for design/testing)
+          bool premiumActive = true;
           await StorageService.setBool(StorageConstants.isPremium, premiumActive);
           Helpers.info('Premium status saved: $premiumActive');
           

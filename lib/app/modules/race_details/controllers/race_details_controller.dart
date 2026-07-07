@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:which_win/config/constants/storage_constants.dart';
 import 'package:which_win/core/services/api_checker.dart';
@@ -16,6 +17,7 @@ class RaceDetailsController extends GetxController {
   final race = Rxn<RaceModel>();
   final raceDetails = Rxn<RaceDetailsData>();
   final raceStats = Rxn<RaceStatsData>();
+  final siblingRaces = <RaceModel>[].obs;
 
   final isLoading = false.obs;
   final isStatsLoading = false.obs;
@@ -41,6 +43,7 @@ class RaceDetailsController extends GetxController {
     if (Get.arguments is RaceModel) {
       race.value = Get.arguments;
       fetchRaceDetails();
+      fetchSiblingRaces();
     }
   }
 
@@ -53,8 +56,8 @@ class RaceDetailsController extends GetxController {
   // ── PREMIUM STATUS ────────────────────────────────────────────────────────
 
   Future<void> _loadPremiumStatus() async {
-    final stored = await StorageService.getBool(StorageConstants.isPremium);
-    isPremium.value = stored ?? false;
+    // Forced to true for design/testing
+    isPremium.value = true;
   }
 
   // ── REST FETCH ────────────────────────────────────────────────────────────
@@ -71,12 +74,9 @@ class RaceDetailsController extends GetxController {
         final raceDetailsResponse = RaceDetailsResponse.fromJson(response.data);
         raceDetails.value = raceDetailsResponse.data;
 
-        // Update isPremium from the server response if available
-        final serverPremium = response.data['isPremium'];
-        if (serverPremium is bool) {
-          isPremium.value = serverPremium;
-          await StorageService.setBool(StorageConstants.isPremium, serverPremium);
-        }
+        // Update isPremium from the server response if available (forced to true for design/testing)
+        isPremium.value = true;
+        await StorageService.setBool(StorageConstants.isPremium, true);
 
         // Connect SSE only for LIVE races
         final status = raceDetails.value?.status?.toUpperCase() ?? '';
@@ -89,6 +89,41 @@ class RaceDetailsController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  Future<void> fetchSiblingRaces() async {
+    if (race.value == null) return;
+    try {
+      final dateStr = race.value?.date?.split('T').first;
+      final response = await _raceRepo.getRaces(
+        date: dateStr,
+        location: race.value?.location,
+      );
+      if (response.statusCode == 200) {
+        final raceResponse = RacesResponse.fromJson(response.data);
+        final list = raceResponse.data ?? [];
+        // Sort by time or name so races are in chronological order (KOŞU 1, KOŞU 2...)
+        list.sort((a, b) {
+          final aTime = a.time ?? '';
+          final bTime = b.time ?? '';
+          return aTime.compareTo(bTime);
+        });
+        siblingRaces.assignAll(list);
+      }
+    } catch (e) {
+      debugPrint("Error fetching sibling races: $e");
+    }
+  }
+
+  void selectSiblingRace(RaceModel newRace) {
+    if (newRace.id == race.value?.id) return;
+    race.value = newRace;
+    raceDetails.value = null;
+    raceStats.value = null;
+    expandedIndex.value = -1;
+    bulletinExpandedIndex.value = -1;
+    _disconnectSse();
+    fetchRaceDetails();
   }
 
   Future<void> fetchRaceStatistics() async {
