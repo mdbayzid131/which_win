@@ -27,8 +27,8 @@ class GiftAFriendView extends GetView<GiftAFriendController> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    const Color(0xFF121212).withOpacity(0.4),
-                    const Color(0xFF121212).withOpacity(0.85),
+                    const Color(0xFF121212).withValues(alpha: 0.4),
+                    const Color(0xFF121212).withValues(alpha: 0.85),
                     const Color(0xFF121212),
                   ],
                 ),
@@ -126,7 +126,7 @@ class GiftAFriendView extends GetView<GiftAFriendController> {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Colors.amber.withOpacity(0.18),
+                color: Colors.amber.withValues(alpha: 0.18),
                 blurRadius: 40,
                 spreadRadius: 10,
               ),
@@ -138,10 +138,10 @@ class GiftAFriendView extends GetView<GiftAFriendController> {
           width: 110.w,
           height: 110.w,
           decoration: BoxDecoration(
-            color: Colors.amber.withOpacity(0.12),
+            color: Colors.amber.withValues(alpha: 0.12),
             shape: BoxShape.circle,
             border: Border.all(
-              color: Colors.amber.withOpacity(0.3),
+              color: Colors.amber.withValues(alpha: 0.3),
               width: 1.5,
             ),
           ),
@@ -209,7 +209,7 @@ class GiftAFriendView extends GetView<GiftAFriendController> {
   }
 
   Widget _buildReferralCodeCard() {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: 60.h,
       child: CustomPaint(
@@ -269,7 +269,7 @@ class GiftAFriendView extends GetView<GiftAFriendController> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black.withValues(alpha: 0.5),
             blurRadius: 15,
             offset: const Offset(0, -5),
           ),
@@ -337,12 +337,12 @@ class GiftAFriendView extends GetView<GiftAFriendController> {
           onPressed: isLoading ? null : () => controller.approveCode(),
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF00CC99),
-            disabledBackgroundColor: const Color(0xFF00CC99).withOpacity(0.5),
+            disabledBackgroundColor: const Color(0xFF00CC99).withValues(alpha: 0.5),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16.r),
             ),
             elevation: 8,
-            shadowColor: const Color(0xFF00CC99).withOpacity(0.4),
+            shadowColor: const Color(0xFF00CC99).withValues(alpha: 0.4),
           ),
           child: isLoading
               ? SizedBox(

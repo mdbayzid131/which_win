@@ -141,7 +141,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
         decoration: BoxDecoration(
           border: Border.all(color: Colors.white24, width: 1.2),
           borderRadius: BorderRadius.circular(20.r),
-          color: Colors.black.withOpacity(0.2),
+          color: Colors.black.withValues(alpha: 0.2),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -231,7 +231,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
                             fit: BoxFit.cover,
                           ),
                         ),
-                        Container(color: Colors.black.withOpacity(0.5)),
+                        Container(color: Colors.black.withValues(alpha: 0.5)),
                         Center(
                           child: Icon(
                             Icons.psychology_rounded,
@@ -483,7 +483,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
                 borderRadius: BorderRadius.circular(16.r),
               ),
               elevation: 8,
-              shadowColor: const Color(0xFF00CC99).withOpacity(0.4),
+              shadowColor: const Color(0xFF00CC99).withValues(alpha: 0.4),
             ),
             child: Text(
               'subscribe_now'.tr,

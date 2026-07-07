@@ -145,7 +145,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
         border: Border.all(color: Colors.white12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -174,7 +174,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                       borderRadius: BorderRadius.circular(10.r),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF00796B).withOpacity(0.3),
+                          color: const Color(0xFF00796B).withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),
@@ -293,7 +293,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1E293B).withOpacity(0.25),
+                  color: const Color(0xFF1E293B).withValues(alpha: 0.25),
                   border: const Border(top: BorderSide(color: Colors.white10)),
                 ),
                 child: Row(
@@ -355,7 +355,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
 
     switch (status.toUpperCase()) {
       case 'LIVE':
-        bgColor = const Color(0xFF7F1D1D).withOpacity(0.2);
+        bgColor = const Color(0xFF7F1D1D).withValues(alpha: 0.2);
         textColor = const Color(0xFFFCA5A5);
         icon = Icons.sensors;
         break;
@@ -377,7 +377,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(6.r),
-        border: Border.all(color: textColor.withOpacity(0.2), width: 1),
+        border: Border.all(color: textColor.withValues(alpha: 0.2), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -406,9 +406,9 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(6.r),
-        border: Border.all(color: color.withOpacity(0.2), width: 1),
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

@@ -518,13 +518,13 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
             color: isExpanded
-                ? const Color(0xFF00CC99).withOpacity(0.5)
+                ? const Color(0xFF00CC99).withValues(alpha: 0.5)
                 : Colors.white12,
             width: isExpanded ? 1.5 : 1.0,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 6,
               offset: const Offset(0, 3),
             ),
@@ -548,7 +548,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                           width: 38.w,
                           height: 28.h,
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.08),
+                            color: Colors.white.withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(6.r),
                             border: Border.all(color: Colors.white12),
                           ),
@@ -573,7 +573,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                             ), // Dark green background
                             borderRadius: BorderRadius.circular(6.r),
                             border: Border.all(
-                              color: const Color(0xFF00CC99).withOpacity(0.4),
+                              color: const Color(0xFF00CC99).withValues(alpha: 0.4),
                             ),
                           ),
                           alignment: Alignment.center,
@@ -717,7 +717,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                         Expanded(
                           child: _buildDetailSection('TEAM', [
                             'Owner: ${horse?.owner ?? 'N/A'}',
-                            'Trainer: ${trainerName}',
+                            'Trainer: $trainerName',
                           ]),
                         ),
                       ],
@@ -905,7 +905,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
             color: isExpanded
-                ? const Color(0xFF00CC99).withOpacity(0.5)
+                ? const Color(0xFF00CC99).withValues(alpha: 0.5)
                 : Colors.white12,
             width: isExpanded ? 1.5 : 1.0,
           ),
@@ -1104,9 +1104,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: bgColor.withOpacity(0.3),
+        color: bgColor.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(4.r),
-        border: Border.all(color: bgColor.withOpacity(0.5)),
+        border: Border.all(color: bgColor.withValues(alpha: 0.5)),
       ),
       child: Text(
         text,
@@ -1387,7 +1387,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         SizedBox(
           width: 28.w,
           child: Text(
-            score != null ? '${score.toStringAsFixed(0)}' : 'N/A',
+            score != null ? score.toStringAsFixed(0) : 'N/A',
             style: TextStyle(
               color: score != null ? barColor : Colors.white24,
               fontSize: 11.sp,
@@ -1566,9 +1566,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                       final run = results[idx];
                       final pos = run.position ?? 0;
                       Color badgeColor = Colors.grey;
-                      if (pos == 1)
+                      if (pos == 1) {
                         badgeColor = const Color(0xFF1B5E20);
-                      else if (pos == 2)
+                      } else if (pos == 2)
                         badgeColor = const Color(0xFF2E7D32);
                       else if (pos == 3)
                         badgeColor = Colors.orange;
@@ -1778,10 +1778,10 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             child: Container(
               margin: EdgeInsets.only(bottom: 12.h),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.55),
+                color: Colors.black.withValues(alpha: 0.55),
                 borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(
-                  color: const Color(0xFFFFD700).withOpacity(0.2),
+                  color: const Color(0xFFFFD700).withValues(alpha: 0.2),
                 ),
               ),
               child: Center(
@@ -1819,7 +1819,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         decoration: BoxDecoration(
           color: const Color(0xFF0F1419),
           borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-          border: Border.all(color: const Color(0xFFFFD700).withOpacity(0.2)),
+          border: Border.all(color: const Color(0xFFFFD700).withValues(alpha: 0.2)),
         ),
         child: SafeArea(
           top: false,

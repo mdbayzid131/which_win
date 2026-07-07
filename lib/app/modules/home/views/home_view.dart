@@ -52,18 +52,18 @@ class HomeView extends GetView<HomeController> {
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                 decoration: BoxDecoration(
                   color: isLive
-                      ? Colors.red.withOpacity(0.15)
+                      ? Colors.red.withValues(alpha: 0.15)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(
                     color: isLive
-                        ? Colors.red.withOpacity(0.6)
+                        ? Colors.red.withValues(alpha: 0.6)
                         : Colors.transparent,
                   ),
                   boxShadow: isLive
                       ? [
                           BoxShadow(
-                            color: Colors.red.withOpacity(0.35),
+                            color: Colors.red.withValues(alpha: 0.35),
                             blurRadius: 10,
                             spreadRadius: 1,
                           ),
@@ -123,8 +123,8 @@ class HomeView extends GetView<HomeController> {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Colors.red.withOpacity(0.18),
-                      Colors.red.withOpacity(0.05),
+                      Colors.red.withValues(alpha: 0.18),
+                      Colors.red.withValues(alpha: 0.05),
                     ],
                   ),
                   border: const Border(
@@ -147,7 +147,7 @@ class HomeView extends GetView<HomeController> {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.red.withOpacity(0.7),
+                              color: Colors.red.withValues(alpha: 0.7),
                               blurRadius: 6,
                               spreadRadius: 1,
                             ),
@@ -264,7 +264,7 @@ class HomeView extends GetView<HomeController> {
                         children: [
                           Icon(
                             Icons.settings_input_antenna,
-                            color: Colors.red.withOpacity(0.5),
+                            color: Colors.red.withValues(alpha: 0.5),
                             size: 48.sp,
                           ),
                           SizedBox(height: 16.h),
@@ -502,7 +502,7 @@ class HomeView extends GetView<HomeController> {
           ? Text(
               subtitle,
               style: TextStyle(
-                color: const Color(0xFF4DB6AC).withOpacity(0.7),
+                color: const Color(0xFF4DB6AC).withValues(alpha: 0.7),
                 fontSize: 11.sp,
               ),
             )
@@ -590,7 +590,7 @@ class HomeView extends GetView<HomeController> {
                       backgroundColor: const Color(0xFF00CC99),
                       disabledBackgroundColor: const Color(
                         0xFF00CC99,
-                      ).withOpacity(0.5),
+                      ).withValues(alpha: 0.5),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.r),
                       ),
@@ -642,7 +642,7 @@ class HomeView extends GetView<HomeController> {
         border: Border.all(color: Colors.white12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -658,7 +658,7 @@ class HomeView extends GetView<HomeController> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Colors.white.withOpacity(0.02), Colors.transparent],
+                  colors: [Colors.white.withValues(alpha: 0.02), Colors.transparent],
                 ),
               ),
             ),
@@ -676,7 +676,7 @@ class HomeView extends GetView<HomeController> {
                     border: Border.all(color: Colors.white24, width: 2),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.5),
+                        color: Colors.black.withValues(alpha: 0.5),
                         blurRadius: 10,
                         spreadRadius: 1,
                       ),
@@ -740,7 +740,7 @@ class HomeView extends GetView<HomeController> {
                           ),
                           borderRadius: BorderRadius.circular(6.r),
                           border: Border.all(
-                            color: const Color(0xFFFF6600).withOpacity(0.3),
+                            color: const Color(0xFFFF6600).withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
@@ -775,7 +775,7 @@ class HomeView extends GetView<HomeController> {
                         vertical: 4.h,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.05),
+                        color: Colors.white.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(6.r),
                       ),
                       child: Row(
@@ -792,7 +792,7 @@ class HomeView extends GetView<HomeController> {
                           SizedBox(width: 4.w),
                           Icon(
                             Icons.arrow_forward_ios,
-                            color: Colors.blueAccent.withOpacity(0.7),
+                            color: Colors.blueAccent.withValues(alpha: 0.7),
                             size: 10.sp,
                           ),
                         ],
@@ -823,10 +823,10 @@ class HomeView extends GetView<HomeController> {
       decoration: BoxDecoration(
         color: const Color(0xFF0F1419),
         borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(color: Colors.red.withOpacity(0.3), width: 1.5),
+        border: Border.all(color: Colors.red.withValues(alpha: 0.3), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.red.withOpacity(0.08),
+            color: Colors.red.withValues(alpha: 0.08),
             blurRadius: 15,
             spreadRadius: 2,
             offset: const Offset(0, 8),
@@ -843,7 +843,7 @@ class HomeView extends GetView<HomeController> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Colors.red.withOpacity(0.03), Colors.transparent],
+                  colors: [Colors.red.withValues(alpha: 0.03), Colors.transparent],
                 ),
               ),
             ),
@@ -912,9 +912,9 @@ class HomeView extends GetView<HomeController> {
                         vertical: 4.h,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.15),
+                        color: Colors.red.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(6.r),
-                        border: Border.all(color: Colors.red.withOpacity(0.6)),
+                        border: Border.all(color: Colors.red.withValues(alpha: 0.6)),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -985,7 +985,7 @@ class HomeView extends GetView<HomeController> {
                           borderRadius: BorderRadius.circular(8.r),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFFF8F00).withOpacity(0.3),
+                              color: const Color(0xFFFF8F00).withValues(alpha: 0.3),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -1143,14 +1143,14 @@ class HomeView extends GetView<HomeController> {
                             color: isSelected
                                 ? const Color(0xFF4DB6AC)
                                 : (isToday
-                                      ? Colors.white.withOpacity(0.05)
+                                      ? Colors.white.withValues(alpha: 0.05)
                                       : Colors.transparent),
                             borderRadius: BorderRadius.circular(12.r),
                             border: isToday && !isSelected
                                 ? Border.all(
                                     color: const Color(
                                       0xFF4DB6AC,
-                                    ).withOpacity(0.5),
+                                    ).withValues(alpha: 0.5),
                                   )
                                 : null,
                           ),
@@ -1344,7 +1344,7 @@ class HomeView extends GetView<HomeController> {
                   decoration: BoxDecoration(
                     color: isSelected
                         ? const Color(0xFF4DB6AC)
-                        : Colors.white.withOpacity(0.05),
+                        : Colors.white.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(10.r),
                     border: Border.all(
                       color: isSelected
@@ -1479,7 +1479,7 @@ class HomeView extends GetView<HomeController> {
           ? const Icon(Icons.check_circle, color: Color(0xFF4DB6AC))
           : const Icon(Icons.circle_outlined, color: Colors.white24),
       tileColor: isSelected
-          ? Colors.white.withOpacity(0.05)
+          ? Colors.white.withValues(alpha: 0.05)
           : Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.r),
@@ -1582,13 +1582,13 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
           color: _isExpanded
-              ? const Color(0xFF00CC99).withOpacity(0.5)
+              ? const Color(0xFF00CC99).withValues(alpha: 0.5)
               : Colors.white12,
           width: _isExpanded ? 1.5 : 1.0,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -1613,7 +1613,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                       border: Border.all(color: Colors.white24, width: 2),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.5),
+                          color: Colors.black.withValues(alpha: 0.5),
                           blurRadius: 10,
                           spreadRadius: 1,
                         ),
@@ -1677,7 +1677,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                             ),
                             borderRadius: BorderRadius.circular(6.r),
                             border: Border.all(
-                              color: const Color(0xFFFF6600).withOpacity(0.3),
+                              color: const Color(0xFFFF6600).withValues(alpha: 0.3),
                             ),
                           ),
                           child: Row(
@@ -1712,7 +1712,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                           vertical: 4.h,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.05),
+                          color: Colors.white.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(6.r),
                         ),
                         child: Row(
@@ -1908,7 +1908,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                           vertical: 2.h,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF00CC99).withOpacity(0.15),
+                          color: const Color(0xFF00CC99).withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(4.r),
                         ),
                         child: Text(

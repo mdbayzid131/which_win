@@ -27,8 +27,8 @@ class ContactView extends GetView<ContactController> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    const Color(0xFF121212).withOpacity(0.3),
-                    const Color(0xFF121212).withOpacity(0.8),
+                    const Color(0xFF121212).withValues(alpha: 0.3),
+                    const Color(0xFF121212).withValues(alpha: 0.8),
                     const Color(0xFF121212),
                   ],
                 ),
@@ -99,7 +99,7 @@ class ContactView extends GetView<ContactController> {
         decoration: BoxDecoration(
           border: Border.all(color: Colors.white24, width: 1.2),
           borderRadius: BorderRadius.circular(20.r),
-          color: Colors.black.withOpacity(0.2),
+          color: Colors.black.withValues(alpha: 0.2),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -131,7 +131,7 @@ class ContactView extends GetView<ContactController> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black.withValues(alpha: 0.5),
             blurRadius: 15,
             offset: const Offset(0, -5),
           ),
@@ -251,12 +251,12 @@ class ContactView extends GetView<ContactController> {
                 },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF00CC99),
-            disabledBackgroundColor: const Color(0xFF00CC99).withOpacity(0.5),
+            disabledBackgroundColor: const Color(0xFF00CC99).withValues(alpha: 0.5),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16.r),
             ),
             elevation: 8,
-            shadowColor: const Color(0xFF00CC99).withOpacity(0.4),
+            shadowColor: const Color(0xFF00CC99).withValues(alpha: 0.4),
           ),
           child: isLoading
               ? SizedBox(

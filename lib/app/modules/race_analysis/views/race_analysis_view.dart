@@ -93,8 +93,8 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            Colors.black.withOpacity(0.3),
-                            Colors.black.withOpacity(0.9),
+                            Colors.black.withValues(alpha: 0.3),
+                            Colors.black.withValues(alpha: 0.9),
                           ],
                         ),
                       ),
@@ -170,7 +170,7 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
                               vertical: 4.h,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF1B5E20).withOpacity(0.8),
+                              color: const Color(0xFF1B5E20).withValues(alpha: 0.8),
                               borderRadius: BorderRadius.circular(20.r),
                             ),
                             child: Text(
@@ -254,7 +254,7 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
                               color: const Color(0xFF310000),
                               borderRadius: BorderRadius.circular(12.r),
                               border: Border.all(
-                                color: Colors.red.withOpacity(0.3),
+                                color: Colors.red.withValues(alpha: 0.3),
                               ),
                             ),
                             child: Column(
@@ -453,7 +453,7 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
           value,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: isSmallText ? Colors.orange.withOpacity(0.7) : Colors.white,
+            color: isSmallText ? Colors.orange.withValues(alpha: 0.7) : Colors.white,
             fontSize: isSmallText ? 11.sp : 22.sp,
             fontWeight: FontWeight.bold,
           ),
