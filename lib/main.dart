@@ -27,4 +27,3 @@ void main() async {
   
   runApp(WhichWinApp(initialLocale: Locale(langCode)));
 }
-
