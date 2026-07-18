@@ -1,10 +1,9 @@
+// ignore_for_file: unused_element, unused_local_variable
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:which_win/data/models/race_details_model.dart';
 import 'package:which_win/data/models/race_model.dart';
-import 'package:which_win/app/routes/app_pages.dart';
 import '../controllers/race_details_controller.dart';
 
 class RaceDetailsView extends GetView<RaceDetailsController> {
@@ -13,7 +12,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: const Color(0xFF0C1F1F),
       body: SafeArea(
         child: Obx(() {
           final details = controller.raceDetails.value;
@@ -26,7 +25,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           if (controller.isLoading.value && details == null) {
             return const Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00CC99)),
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE6A817)),
               ),
             );
           }
@@ -57,72 +56,57 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     );
   }
 
-  // ── APP BAR ──────────────────────────────────────────────────────────────
+  // ── APP BAR (exact match to reference) ─────────────────────────────────
   Widget _buildAppBar(
     BuildContext context,
     String locationName,
     String dayStr,
   ) {
     return Container(
-      color: const Color(0xFF121212),
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.h),
+      color: const Color(0xFF0C1F1F),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
       child: Row(
         children: [
-          IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white, size: 24.sp),
-            onPressed: () => Get.back(),
+          // Back arrow
+          GestureDetector(
+            onTap: () => Get.back(),
+            child: Icon(Icons.arrow_back, color: Colors.white, size: 24.sp),
           ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  locationName,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                SizedBox(height: 2.h),
-                Text(
-                  '$locationName Hipodromu',
-                  style: TextStyle(color: Colors.white54, fontSize: 12.sp),
-                ),
-              ],
+          SizedBox(width: 16.w),
+
+          // City name (bold, large)
+          Text(
+            locationName,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 22.sp,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          // Action icons row from the reference screen
-          Row(
-            children: [
-              // Emblem/Logo decorative icon
-              Container(
-                width: 32.w,
-                height: 32.w,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF1A1A1A),
-                  shape: BoxShape.circle,
-                ),
-                alignment: Alignment.center,
-                child: Icon(
-                  Icons.lens_blur_sharp,
-                  color: const Color(0xFF00CC99),
-                  size: 18.sp,
-                ),
-              ),
-              SizedBox(width: 8.w),
-              // L box
-              _buildAppBarBadge('L'),
-              SizedBox(width: 8.w),
-              // Date day box
-              _buildAppBarBadge(dayStr),
-              SizedBox(width: 8.w),
-              // TR box
-              _buildAppBarBadge('TR'),
-              SizedBox(width: 4.w),
-            ],
+
+          const Spacer(),
+
+          // Swirl logo icon
+          ClipOval(
+            child: Image.asset(
+              'assets/images/swirl_logo.png',
+              width: 36.w,
+              height: 36.w,
+              fit: BoxFit.cover,
+            ),
           ),
+          SizedBox(width: 10.w),
+
+          // L badge
+          _buildAppBarBadge('L'),
+          SizedBox(width: 6.w),
+
+          // Day number badge
+          _buildAppBarBadge(dayStr),
+          SizedBox(width: 6.w),
+
+          // TR badge
+          _buildAppBarBadge('TR'),
         ],
       ),
     );
@@ -132,7 +116,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: const Color(0xFF121212),
+        color: const Color(0xFF0C1F1F),
         borderRadius: BorderRadius.circular(4.r),
         border: Border.all(color: Colors.white24, width: 1.5),
       ),
@@ -147,9 +131,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     );
   }
 
-  // ── WEATHER & TRACK INFO BANNER ──────────────────────────────────────────
+  // ── WEATHER & TRACK INFO BANNER (matching reference) ────────────────────
   Widget _buildWeatherBanner(RaceDetailsData? details) {
-    // Reference details: Sunny: 26°C | Humidity: 39% | Dirt: Normal | Turf: Normal
+    final locationName = details?.location ?? 'Ankara';
     final trackType = details?.trackType ?? 'Turf';
     final isTurf =
         trackType.toLowerCase().contains('turf') ||
@@ -157,17 +141,29 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
 
     return Container(
       width: double.infinity,
-      color: const Color(0xFF1A1A1A),
+      color: const Color(0xFF132E2E),
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-      child: Text(
-        'Sunny: 26°C  Humidity: 39%  Dirt: Normal  Turf: ${isTurf ? "Normal" : "Good"}',
-        style: TextStyle(
-          color: const Color(0xFF00CC99),
-          fontSize: 12.sp,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 0.5,
-        ),
-        textAlign: TextAlign.center,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '$locationName 75. Yıl Hipodromu',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 13.sp,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 2.h),
+          Text(
+            'Açık: 26°  Nem: %39  Kum: Normal  Çim: ${isTurf ? "Normal" : "İyi"}',
+            style: TextStyle(
+              color: const Color(0xFF2D9B83),
+              fontSize: 12.sp,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -176,10 +172,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
   Widget _buildHorizontalRaceSelector() {
     final races = controller.siblingRaces;
     if (races.isEmpty) {
-      // Fallback fallback list of demo races if sibling races not loaded
       return Container(
         height: 60.h,
-        color: const Color(0xFF121212),
+        color: const Color(0xFF0C1F1F),
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
@@ -188,7 +183,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             final isSelected = index == 0;
             return _buildRaceSelectorTab(
               isSelected: isSelected,
-              title: 'RACE ${index + 1}',
+              title: '${index + 1}.\nKOŞU',
               time:
                   '14:${(30 + index * 30) % 60 == 0 ? "00" : (30 + index * 30) % 60}',
               onTap: () {},
@@ -200,7 +195,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
 
     return Container(
       height: 62.h,
-      color: const Color(0xFF121212),
+      color: const Color(0xFF0C1F1F),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
@@ -212,7 +207,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
 
           return _buildRaceSelectorTab(
             isSelected: isSelected,
-            title: 'RACE ${index + 1}',
+            title: '${index + 1}.\nKOŞU',
             time: timeStr,
             onTap: () => controller.selectSiblingRace(sibling),
           );
@@ -230,36 +225,25 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 75.w,
-        margin: EdgeInsets.symmetric(horizontal: 4.w),
+        width: 70.w,
+        margin: EdgeInsets.symmetric(horizontal: 3.w),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF00CC99) : const Color(0xFF1E1E1E),
+          color: isSelected ? const Color(0xFF2D9B83) : const Color(0xFF132E2E),
           borderRadius: BorderRadius.circular(8.r),
           border: Border.all(
-            color: isSelected ? const Color(0xFF00CC99) : Colors.white12,
+            color: isSelected ? const Color(0xFF2D9B83) : Colors.white12,
           ),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                color: isSelected ? Colors.black : Colors.white70,
-                fontSize: 12.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 2.h),
-            Text(
-              time,
-              style: TextStyle(
-                color: isSelected ? Colors.black87 : Colors.white38,
-                fontSize: 10.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+        alignment: Alignment.center,
+        child: Text(
+          title,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: isSelected ? Colors.white : Colors.white70,
+            fontSize: 12.sp,
+            fontWeight: FontWeight.bold,
+            height: 1.3,
+          ),
         ),
       ),
     );
@@ -272,24 +256,22 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
   ) {
     final timeVal = details?.time ?? currentRace?.time ?? '14:30';
     final distanceVal = details?.distance ?? currentRace?.distance ?? '1900m';
-    final trackType = details?.trackType ?? currentRace?.trackType ?? 'Turf';
-    final conditionsText =
-        '3yo+ Thoroughbreds / CONDITION 3/Y1 / Track Record: 1.53.13';
+    final trackType = details?.trackType ?? currentRace?.trackType ?? 'Çim';
+    final isTurf =
+        trackType.toLowerCase().contains('turf') ||
+        trackType.toLowerCase().contains('çim');
+    final surfaceStr = isTurf ? 'Çim' : 'Kum';
+    final conditionsText = '3 ve Yukarı İngilizler / ŞARTLI 3/Y1 / EİD:1.53.13';
 
-    // Prize money format
-    final prizeText = details?.prize ?? '800,000 ₺';
-    // Format prize values
-    final basePrize = 800000;
     final prizeBreakdown =
-        '1.) 800,000 ₺   2.) 400,000 ₺   3.) 200,000 ₺   4.) 100,000 ₺   5.) 50,000 ₺';
+        '1.)800.000   2.)400.000   3.)200.000   4.)100.000   5.)50.000';
 
     return Column(
       children: [
-        // Sub-details line
         Container(
           width: double.infinity,
           decoration: const BoxDecoration(
-            color: Color(0xFF0F1419),
+            color: Color(0xFF112828),
             border: Border(
               top: BorderSide(color: Colors.white10),
               bottom: BorderSide(color: Colors.white10),
@@ -297,7 +279,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           ),
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
           child: Text(
-            '$timeVal  $distanceVal $trackType / $conditionsText',
+            '$timeVal  $distanceVal $surfaceStr / $conditionsText',
             style: TextStyle(
               color: Colors.white70,
               fontSize: 11.sp,
@@ -308,18 +290,17 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        // Prize details line
         Container(
           width: double.infinity,
           decoration: const BoxDecoration(
-            color: Color(0xFF0F1419),
+            color: Color(0xFF112828),
             border: Border(bottom: BorderSide(color: Colors.white10)),
           ),
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
           child: Text(
             prizeBreakdown,
             style: TextStyle(
-              color: const Color(0xFF00CC99),
+              color: const Color(0xFFE6A817),
               fontSize: 11.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -330,20 +311,20 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     );
   }
 
-  // ── SUB-TAB BAR ──────────────────────────────────────────────────────────
+  // ── SUB-TAB BAR (OUTER) ───────────────────────────────────────────────────
   Widget _buildSubTabBar() {
     return Container(
-      color: const Color(0xFF121212),
+      color: const Color(0xFF0C1F1F),
       padding: EdgeInsets.symmetric(vertical: 8.h),
       child: Obx(() {
         final currentTab = controller.selectedTab.value;
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildSubTabItem('STATISTICS', 0, currentTab),
+            _buildSubTabItem('İSTATİSTİK', 0, currentTab),
             _buildSubTabItem('ANALYSIS', 1, currentTab),
-            _buildSubTabItem('PREDICTIONS', 2, currentTab),
-            _buildSubTabItem('RESULTS', 3, currentTab),
+            _buildSubTabItem('PREDICTION', 2, currentTab),
+            _buildSubTabItem('RESULT', 3, currentTab),
           ],
         );
       }),
@@ -359,7 +340,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
-              color: isSelected ? const Color(0xFF00CC99) : Colors.transparent,
+              color: isSelected ? const Color(0xFFE6A817) : Colors.transparent,
               width: 2.0,
             ),
           ),
@@ -367,7 +348,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? const Color(0xFF00CC99) : Colors.white54,
+            color: isSelected ? const Color(0xFFE6A817) : Colors.white54,
             fontSize: 13.sp,
             fontWeight: FontWeight.bold,
             letterSpacing: 0.5,
@@ -377,7 +358,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     );
   }
 
-  // ── TAB CONTENT ROUTER ───────────────────────────────────────────────────
+  // ── OUTER TAB CONTENT ROUTER ──────────────────────────────────────────────
   Widget _buildTabContent(BuildContext context, RaceDetailsData? details) {
     if (details == null) {
       return const Center(
@@ -388,51 +369,12 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       );
     }
 
-    final isPremium = controller.isPremium.value;
-
     switch (controller.selectedTab.value) {
       case 0:
-        // STATISTICS - Redesigned horse list sorted by prediction rank/score
-        final entries = details.entries ?? [];
-        if (entries.isEmpty) {
-          return Center(
-            child: Text(
-              'No horses registered',
-              style: const TextStyle(color: Colors.white38),
-            ),
-          );
-        }
-        return ListView.builder(
-          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-          itemCount: entries.length,
-          itemBuilder: (context, index) {
-            final entry = entries[index];
-            final score = entry.normalizedScore?.toInt() ?? 0;
-
-            Color scoreColor = Colors.orange;
-            if (score >= 70) {
-              scoreColor = const Color(0xFF2E7D32);
-            } else if (score < 50) {
-              scoreColor = Colors.red;
-            }
-
-            final card = _buildTurkeyStyleHorseCard(
-              context,
-              index,
-              entry,
-              scoreColor,
-            );
-
-            // Hide details from free users for index > 0
-            if (!isPremium && index > 0) {
-              return _buildLockedCard(context, card);
-            }
-            return card;
-          },
-        );
-
+        return _buildStatisticsTabContent(context, details);
       case 1:
         // ANALYSIS - AI win analysis probability progress bars
+        final isPremium = controller.isPremium.value;
         if (!isPremium) {
           return _buildPremiumLock(
             context,
@@ -443,9 +385,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           );
         }
         return _buildAnalysisTab();
-
       case 2:
         // PREDICTIONS - Stats breakdown grid (Earnings, Origin, Distance...)
+        final isPremium = controller.isPremium.value;
         if (!isPremium) {
           return _buildPremiumLock(
             context,
@@ -456,16 +398,1811 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           );
         }
         return _buildStatisticsTab();
-
       case 3:
         // RESULTS - Bulletin list ordered by starting post/draw
         return _buildBulletinTab(details);
-
       default:
         return const Center(
           child: Text('Coming Soon', style: TextStyle(color: Colors.white38)),
         );
     }
+  }
+
+  // ── NESTED STATISTICS TAB VIEW ────────────────────────────────────────────
+  Widget _buildStatisticsTabContent(
+    BuildContext context,
+    RaceDetailsData details,
+  ) {
+    return _buildOriginalHorseListView(context, details);
+  }
+
+  Widget _buildInnerMainTabBar() {
+    return Container(
+      color: const Color(0xFF0A2626),
+      child: Obx(() {
+        final currentMainTab = controller.selectedMainTab.value;
+        return Row(
+          children: [
+            _buildInnerMainTabItem('Koşu Analizi', 0, currentMainTab),
+            _buildInnerMainTabItem('Atlar', 1, currentMainTab),
+            _buildInnerMainTabItem('Jokeyler', 2, currentMainTab),
+          ],
+        );
+      }),
+    );
+  }
+
+  Widget _buildInnerMainTabItem(String label, int index, int selectedIndex) {
+    final isSelected = index == selectedIndex;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          controller.selectedMainTab.value = index;
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 10.h),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: isSelected
+                    ? const Color(0xFFE6A817)
+                    : Colors.transparent,
+                width: 3.w,
+              ),
+            ),
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? const Color(0xFFE6A817) : Colors.white60,
+              fontSize: 13.sp,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildKosuAnaliziInnerSubTabBar() {
+    final subTabs = [
+      'Atlar Listesi',
+      'Galoplar & Sprintler',
+      'En İyi Derece',
+      'Son Koşular',
+      'Birincilikler',
+      'Kim Kiminle Koştu',
+      'Kim Kimi Geçti',
+    ];
+    return Container(
+      height: 38.h,
+      color: const Color(0xFF0A2626),
+      child: Obx(() {
+        final currentSubTab = controller.selectedKosuAnaliziSubTab.value;
+        return ListView.builder(
+          scrollDirection: Axis.horizontal,
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
+          itemCount: subTabs.length,
+          itemBuilder: (context, index) {
+            final isSelected = index == currentSubTab;
+            return GestureDetector(
+              onTap: () => controller.selectedKosuAnaliziSubTab.value = index,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: isSelected
+                          ? const Color(0xFFE6A817)
+                          : Colors.transparent,
+                      width: 2.w,
+                    ),
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  subTabs[index],
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : Colors.white60,
+                    fontSize: 11.sp,
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      }),
+    );
+  }
+
+  Widget _buildAtlarInnerSubTabBar() {
+    final subTabs = ['Atlar', 'Kısraklar', 'Aygırlar', 'Kısrak Babaları'];
+    return Container(
+      height: 38.h,
+      color: const Color(0xFF0A2626),
+      child: Obx(() {
+        final currentSubTab = controller.selectedAtlarSubTab.value;
+        return Row(
+          children: List.generate(subTabs.length, (index) {
+            final isSelected = index == currentSubTab;
+            return Expanded(
+              child: GestureDetector(
+                onTap: () => controller.selectedAtlarSubTab.value = index,
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: isSelected
+                            ? const Color(0xFFE6A817)
+                            : Colors.transparent,
+                        width: 2.w,
+                      ),
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    subTabs[index],
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : Colors.white60,
+                      fontSize: 11.sp,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }),
+        );
+      }),
+    );
+  }
+
+  Widget _buildJokeylerInnerSubTabBar() {
+    final subTabs = ['Jokeyler', 'Aprantiler'];
+    return Container(
+      height: 38.h,
+      color: const Color(0xFF0A2626),
+      child: Obx(() {
+        final currentSubTab = controller.selectedJokeylerSubTab.value;
+        return Row(
+          children: List.generate(subTabs.length, (index) {
+            final isSelected = index == currentSubTab;
+            return Expanded(
+              child: GestureDetector(
+                onTap: () => controller.selectedJokeylerSubTab.value = index,
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: isSelected
+                            ? const Color(0xFFE6A817)
+                            : Colors.transparent,
+                        width: 2.w,
+                      ),
+                    ),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    subTabs[index],
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : Colors.white60,
+                      fontSize: 11.sp,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }),
+        );
+      }),
+    );
+  }
+
+  Widget _buildOriginalHorseListView(
+    BuildContext context,
+    RaceDetailsData details,
+  ) {
+    final entries = details.entries ?? [];
+    if (entries.isEmpty) {
+      return const Center(
+        child: Text(
+          'No horses registered',
+          style: TextStyle(color: Colors.white38),
+        ),
+      );
+    }
+    final isPremium = controller.isPremium.value;
+    return ListView.builder(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+      itemCount: entries.length,
+      itemBuilder: (context, index) {
+        final entry = entries[index];
+        final score = entry.normalizedScore?.toInt() ?? 0;
+
+        Color scoreColor = Colors.orange;
+        if (score >= 70) {
+          scoreColor = const Color(0xFF268060);
+        } else if (score < 50) {
+          scoreColor = Colors.red;
+        }
+
+        final card = _buildTurkeyStyleHorseCard(
+          context,
+          index,
+          entry,
+          scoreColor,
+        );
+
+        if (!isPremium && index > 0) {
+          return _buildLockedCard(context, card);
+        }
+        return card;
+      },
+    );
+  }
+
+  // ── TAB CONTENT ROUTERS & SUB-VIEWS ───────────────────────────────────────
+  Widget _buildMainContentArea(BuildContext context, RaceDetailsData? details) {
+    final mainTab = controller.selectedMainTab.value;
+    switch (mainTab) {
+      case 0:
+        return _buildKosuAnaliziContent(context, details);
+      case 1:
+        return _buildAtlarContent(context, details);
+      case 2:
+        return _buildJokeylerContent(context, details);
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  Widget _buildKosuAnaliziContent(
+    BuildContext context,
+    RaceDetailsData? details,
+  ) {
+    final subTab = controller.selectedTab.value;
+    switch (subTab) {
+      case 0: // Galoplar & Sprintler
+      case 1: // En İyi Derece
+        return _buildEnIyiDereceTab();
+      case 2: // Son Koşular
+        return _buildSonKosularTab();
+      case 3: // Birincilikler
+        return _buildBirinciliklerTab();
+      case 4: // Kim Kiminle Koştu
+        return _buildKimKiminleKostuTab();
+      case 5: // Kim Kimi Geçti
+        return _buildKimKimiGectiTab();
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  // ── 1. EN İYİ DERECE & GALOPLAR VIEW ──────────────────────────────────────
+  Widget _buildEnIyiDereceTab() {
+    final list = [
+      {
+        'horse': 'QUEEN OF HAPPINESS',
+        'date': '14.07.2024 / İzmir',
+        'condition': '3i Handikap-15 / Kum:Normal',
+        'jockey': 'N. AVCİ',
+        'weight': '56 kg',
+        'hp': '46',
+        'duration': '1.17.71',
+        'position': '11 / 15',
+        'odds': 'G:7.60',
+      },
+      {
+        'horse': 'HELLBOY',
+        'date': '18.03.2024 / Bursa',
+        'condition': '3i Maiden / Kum:Normal',
+        'jockey': 'S. İPEK',
+        'weight': '58 kg',
+        'hp': '33',
+        'duration': '1.15.17',
+        'position': '4 / 12',
+        'odds': 'G:3.00',
+      },
+      {
+        'horse': 'ESİN GÜZELİ',
+        'date': '03.07.2025 / Kocaeli',
+        'condition': '3i Handikap-14 / Kum:Normal',
+        'jockey': 'O. ATMACA',
+        'weight': '53.5 kg',
+        'hp': '47',
+        'duration': '1.14.93',
+        'position': '3 / 10',
+        'odds': 'G:3.85',
+      },
+      {
+        'horse': 'VICENTE CALDERON',
+        'date': '18.11.2025 / Adana',
+        'condition': '3+i Handikap-14 / Kum:Normal',
+        'jockey': 'M.G.ARSLAN',
+        'weight': '55.5 kg',
+        'hp': '38',
+        'duration': '1.16.03',
+        'position': '3 / 16',
+        'odds': 'G:11.35',
+      },
+      {
+        'horse': 'TILO GIRL',
+        'date': '27.08.2024 / Kocaeli',
+        'condition': '3i Maiden / Kum:Normal',
+        'jockey': 'O. ÖZTÜRK',
+        'weight': '57 kg',
+        'hp': '20',
+        'duration': '1.16.64',
+        'position': '2 / 11',
+        'odds': 'G:41.50',
+      },
+      {
+        'horse': 'KUMRALIM',
+        'date': '07.03.2024 / Bursa',
+        'condition': '3i Maiden / Kum:Normal',
+        'jockey': 'T. YILDIZ',
+        'weight': '57 kg',
+        'hp': '20',
+        'duration': '1.15.37',
+        'position': '2 / 16',
+        'odds': 'G:7.10',
+      },
+      {
+        'horse': 'TRUE ANGEL',
+        'date': '26.09.2025 / İzmir',
+        'condition': '2i Maiden / Çim:Normal',
+        'jockey': 'Y. GÖKÇE',
+        'weight': '57.5 kg',
+        'hp': '22',
+        'duration': '1.16.39',
+        'position': '2 / 16',
+        'odds': 'G:14.05',
+      },
+    ];
+
+    return Column(
+      children: [
+        Container(
+          color: const Color(0xFF132E2E),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 4,
+                child: Text(
+                  'AT / TARİH / ŞART / PİST',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Text(
+                  'JOKEY',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Text(
+                  'SÜRE / SIRA / G',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.end,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView.separated(
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+            itemCount: list.length,
+            separatorBuilder: (context, index) =>
+                const Divider(color: Colors.white12, height: 1),
+            itemBuilder: (context, index) {
+              final item = list[index];
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.h),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item['horse']!,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 2.h),
+                          Text(
+                            item['date']!,
+                            style: TextStyle(
+                              color: Colors.white38,
+                              fontSize: 10.sp,
+                            ),
+                          ),
+                          SizedBox(height: 2.h),
+                          Text(
+                            item['condition']!,
+                            style: TextStyle(
+                              color: Colors.white54,
+                              fontSize: 10.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item['jockey']!,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 2.h),
+                          Text(
+                            '${item['weight']!} / HP: ${item['hp']!}',
+                            style: TextStyle(
+                              color: Colors.white54,
+                              fontSize: 10.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Icon(
+                                Icons.play_circle_fill,
+                                color: const Color(0xFFE6A817),
+                                size: 14.sp,
+                              ),
+                              SizedBox(width: 4.w),
+                              Text(
+                                item['duration']!,
+                                style: TextStyle(
+                                  color: const Color(0xFFE6A817),
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 2.h),
+                          Text(
+                            item['position']!,
+                            style: TextStyle(
+                              color: Colors.white54,
+                              fontSize: 10.sp,
+                            ),
+                          ),
+                          SizedBox(height: 2.h),
+                          Text(
+                            item['odds']!,
+                            style: TextStyle(
+                              color: Colors.orange,
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ── 2. SON KOŞULAR VIEW ────────────────────────────────────────────────────
+  Widget _buildSonKosularTab() {
+    final list = [
+      {
+        'num': '1',
+        'horse': 'QUEEN OF HAPPINESS',
+        'jockeyLabel': 'E. AKDUMAN AP',
+        'st': '10',
+        'equipment': 'DB DS SK SKG',
+        'weight': '60 kg',
+        'lastRunDate': '14.07.2024 / İzmir',
+        'lastRunInfo': '3i Handikap-15 DB SK SKG / 1200m Kum: Normal',
+        'lastRunJockey': 'N. AVCİ / 56 kg / HP: 46',
+        'duration': '1.17.71',
+        'pos': '11/15',
+        'gny': 'GNY: 7.60',
+        'rate': '5-%10.44',
+      },
+      {
+        'num': '2',
+        'horse': 'HELLBOY',
+        'jockeyLabel': 'Y. T.AKKAYA AP',
+        'st': '9',
+        'equipment': 'KG SK',
+        'weight': '59.5 kg',
+        'lastRunDate': '18.03.2024 / Bursa',
+        'lastRunInfo': '3i Maiden KG SK / 1200m Kum: Normal',
+        'lastRunJockey': 'S. İPEK / 58 kg / HP: 33',
+        'duration': '1.15.17',
+        'pos': '4/12',
+        'gny': 'GNY: 3.00',
+        'rate': '2-%20.60',
+      },
+      {
+        'num': '3',
+        'horse': 'ESİN GÜZELİ',
+        'jockeyLabel': 'Y. T.AKKAYA AP',
+        'st': '7',
+        'equipment': 'DB K KG',
+        'weight': '57.5 kg',
+        'lastRunDate': '17.12.2023 / İzmir',
+        'lastRunInfo': '2i Maiden KG SK / 1200m Kum: Nemli',
+        'lastRunJockey': 'GÖKH. GÖKÇE / 57 kg / HP: 0',
+        'duration': '1.15.64',
+        'pos': '5/9',
+        'gny': 'GNY: 19.95',
+        'rate': '6-%5.07',
+      },
+    ];
+
+    return Column(
+      children: [
+        Container(
+          color: const Color(0xFF0A2626),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+          child: Row(
+            children: [
+              _buildFilterDropdown('Tüm Atlar'),
+              SizedBox(width: 8.w),
+              _buildFilterDropdown('Tüm Atlar'),
+              const Spacer(),
+              Container(
+                padding: EdgeInsets.all(6.w),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF132E2E),
+                  borderRadius: BorderRadius.circular(4.r),
+                  border: Border.all(color: Colors.white12),
+                ),
+                child: Icon(
+                  Icons.filter_list,
+                  color: Colors.white,
+                  size: 18.sp,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            padding: EdgeInsets.all(12.w),
+            itemCount: list.length,
+            itemBuilder: (context, index) {
+              final item = list[index];
+              return Container(
+                margin: EdgeInsets.only(bottom: 12.h),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0A2626),
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(color: Colors.white12),
+                ),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(12.w),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 8.w,
+                              vertical: 4.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF132E2E),
+                              borderRadius: BorderRadius.circular(4.r),
+                            ),
+                            child: Text(
+                              item['num']!,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${item['horse']!} ${item['jockeyLabel']!}',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 13.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 4.h),
+                                Text(
+                                  'St: ${item['st']!} | ${item['equipment']!} | ${item['weight']!}',
+                                  style: TextStyle(
+                                    color: Colors.white38,
+                                    fontSize: 11.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Icon(
+                            Icons.keyboard_arrow_right,
+                            color: Colors.white30,
+                            size: 20.sp,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(color: Colors.white12, height: 1),
+                    Container(
+                      color: Colors.black.withValues(alpha: 0.15),
+                      padding: EdgeInsets.all(12.w),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 6,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item['lastRunDate']!,
+                                  style: TextStyle(
+                                    color: const Color(0xFFE6A817),
+                                    fontSize: 11.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 4.h),
+                                Text(
+                                  item['lastRunInfo']!,
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 10.sp,
+                                  ),
+                                ),
+                                SizedBox(height: 2.h),
+                                Text(
+                                  'Jokey: ${item['lastRunJockey']!}',
+                                  style: TextStyle(
+                                    color: Colors.white38,
+                                    fontSize: 10.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            flex: 4,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  item['duration']!,
+                                  style: TextStyle(
+                                    color: const Color(0xFFE6A817),
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 4.h),
+                                Text(
+                                  item['pos']!,
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 11.sp,
+                                  ),
+                                ),
+                                SizedBox(height: 2.h),
+                                Text(
+                                  '${item['gny']!} / ${item['rate']!}',
+                                  style: TextStyle(
+                                    color: Colors.orange,
+                                    fontSize: 10.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFilterDropdown(String label) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFF132E2E),
+        borderRadius: BorderRadius.circular(4.r),
+        border: Border.all(color: Colors.white12),
+      ),
+      child: Row(
+        children: [
+          Text(
+            label,
+            style: TextStyle(color: Colors.white, fontSize: 12.sp),
+          ),
+          SizedBox(width: 4.w),
+          Icon(Icons.keyboard_arrow_down, color: Colors.white70, size: 14.sp),
+        ],
+      ),
+    );
+  }
+
+  // ── 3. BİRİNCİLİKLER VIEW ──────────────────────────────────────────────────
+  Widget _buildBirinciliklerTab() {
+    final list = [
+      {
+        'num': '1',
+        'horse': 'QUEEN OF HAPPINESS',
+        'info': 'St: 10 DB DS SK SKG / 60 kg',
+        'jockey': 'E. AKDUMAN AP / 59.5 kg',
+        'races': '39 Koşu',
+        'wins': '1 Birincilik',
+      },
+      {
+        'num': '2',
+        'horse': 'HELLBOY',
+        'info': 'St: 9 KG SK / 59.5 kg',
+        'jockey': 'Y. T.AKKAYA AP / 59.5 kg',
+        'races': '22 Koşu',
+        'wins': '1 Birincilik',
+      },
+      {
+        'num': '3',
+        'horse': 'ESİN GÜZELİ',
+        'info': 'St: 7 DB K KG / 57.5 kg',
+        'jockey': 'T. YILDIZ / 62.5 kg',
+        'races': '19 Koşu',
+        'wins': '1 Birincilik',
+      },
+      {
+        'num': '4',
+        'horse': 'VICENTE CALDERON',
+        'info': 'St: 2 DB K KG ÖG / 57 kg',
+        'jockey': 'ER. CANKILIÇ AP / 59.5 kg',
+        'races': '17 Koşu',
+        'wins': '2 Birincilik',
+      },
+      {
+        'num': '5',
+        'horse': 'TILO GIRL',
+        'info': 'St: 8 K KG / 59 kg',
+        'jockey': 'A. MEH.ALTIN AP / 59 kg',
+        'races': '22 Koşu',
+        'wins': '3 Birincilik',
+      },
+      {
+        'num': '6',
+        'horse': 'KUMRALIM',
+        'info': 'St: 4 DB SKG SK / 56.5 kg',
+        'jockey': 'E. AKDUMAN AP / 59.5 kg',
+        'races': '18 Koşu',
+        'wins': '1 Birincilik',
+      },
+    ];
+
+    return Column(
+      children: [
+        Container(
+          color: const Color(0xFF132E2E),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 6,
+                child: Text(
+                  'AT',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 4,
+                child: Text(
+                  'SIRA NO / BİRİNCİLİK',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.end,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView.separated(
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+            itemCount: list.length,
+            separatorBuilder: (context, index) =>
+                const Divider(color: Colors.white12, height: 1),
+            itemBuilder: (context, index) {
+              final item = list[index];
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.h),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 6,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${item['num']!}- ${item['horse']!}',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 2.h),
+                          Text(
+                            item['info']!,
+                            style: TextStyle(
+                              color: Colors.white38,
+                              fontSize: 10.sp,
+                            ),
+                          ),
+                          SizedBox(height: 2.h),
+                          Text(
+                            'Jokey: ${item['jockey']!}',
+                            style: TextStyle(
+                              color: Colors.white54,
+                              fontSize: 10.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            item['races']!,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            item['wins']!,
+                            style: TextStyle(
+                              color: const Color(0xFFE6A817),
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ── 4. KİM KİMİNLE KOŞTU VIEW ──────────────────────────────────────────────
+  Widget _buildKimKiminleKostuTab() {
+    final list = [
+      {
+        'date': '18.06.2026 / Kocaeli',
+        'dist': '1200m Kum: Normal',
+        'horses': '2- ESİN GÜZELİ (3), 4- KATANA BOY (12)',
+        'meta': '21:30 / 1200 Kum / 3 ve Yukarı İngilizler / HAND-14',
+        'runners': [
+          {
+            'sira': '1',
+            'name': '5- EL QUIMICO',
+            'age': '3y de',
+            'st': 'St: 8 129716 HP: 42',
+            'jockey': 'N. AVCİ',
+            'weight': '53 kg (+1,80)',
+            'subjockey': '2.5B',
+            'gny': 'G: 4.30',
+            'agf': '3. %13.61',
+            'drc': 'Drc: 1.16.02',
+          },
+          {
+            'sira': '2',
+            'name': '3- ESİN GÜZELİ',
+            'age': '4y ak DB K KG',
+            'st': 'St: 9 252472 HP: 46',
+            'jockey': 'T. YILDIZ',
+            'weight': '61 kg',
+            'subjockey': 'YB',
+            'gny': 'G: 14.05',
+            'agf': '11. %2.53',
+            'drc': 'Drc: 1.16.39',
+          },
+          {
+            'sira': '3',
+            'name': '13- FEMALE WARRIOR',
+            'age': '3y ad DB SK',
+            'st': 'St: 6 180073 HP: 35',
+            'jockey': 'M. A.SOLMAZ',
+            'weight': '52 kg',
+            'subjockey': '1B',
+            'gny': 'G: 13.30',
+            'agf': '5. %6.53',
+            'drc': 'Drc: 1.16.47',
+          },
+          {
+            'sira': '4',
+            'name': '12- KATANA BOY',
+            'age': '4y ae DB KG SK',
+            'st': 'St: 3 765774 HP: 34',
+            'jockey': 'O. ATMACA',
+            'weight': '55 kg',
+            'subjockey': 'BR',
+            'gny': 'G: 11.50',
+            'agf': '7. %5.11',
+            'drc': 'Drc: 1.16.59',
+          },
+          {
+            'sira': '5',
+            'name': '2- KUPA AVICISI',
+            'age': '4y de BB DB K KG',
+            'st': 'St: 5 002245 HP: 48',
+            'jockey': 'F. R.BEBEK',
+            'weight': '62 kg',
+            'subjockey': '-',
+            'gny': 'G: 4.50',
+            'agf': '2. %17.12',
+            'drc': 'Drc: 1.16.60',
+          },
+        ],
+      },
+    ];
+
+    return Column(
+      children: [
+        Container(
+          color: const Color(0xFF0A2626),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+          child: Row(
+            children: [
+              _buildFilterDropdown('Tüm Atlar'),
+              SizedBox(width: 8.w),
+              _buildFilterDropdown('Tüm Atlar'),
+              const Spacer(),
+              Container(
+                padding: EdgeInsets.all(6.w),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF132E2E),
+                  borderRadius: BorderRadius.circular(4.r),
+                  border: Border.all(color: Colors.white12),
+                ),
+                child: Icon(
+                  Icons.filter_list,
+                  color: Colors.white,
+                  size: 18.sp,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            padding: EdgeInsets.all(12.w),
+            itemCount: list.length,
+            itemBuilder: (context, idx) {
+              final group = list[idx];
+              final runners = group['runners'] as List<Map<String, String>>;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    color: const Color(0xFFFFF3D6).withValues(alpha: 0.95),
+                    padding: EdgeInsets.all(12.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              group['date'] as String,
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Icon(
+                              Icons.keyboard_arrow_up,
+                              color: Colors.black54,
+                              size: 18.sp,
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 2.h),
+                        Text(
+                          group['dist'] as String,
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: 11.sp,
+                          ),
+                        ),
+                        SizedBox(height: 4.h),
+                        Text(
+                          group['horses'] as String,
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(height: 4.h),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.camera_alt,
+                              color: Colors.black54,
+                              size: 14.sp,
+                            ),
+                            SizedBox(width: 4.w),
+                            Icon(
+                              Icons.play_arrow,
+                              color: Colors.black54,
+                              size: 16.sp,
+                            ),
+                            SizedBox(width: 8.w),
+                            Text(
+                              group['meta'] as String,
+                              style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 10.sp,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    color: const Color(0xFF132E2E),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 6.h,
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 20.w,
+                          child: Text(
+                            'SIRA',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 9.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 10.w),
+                        Expanded(
+                          flex: 4,
+                          child: Text(
+                            'NO / AT',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 9.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Text(
+                            'JOKEY',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 9.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Text(
+                            'GNY / AGF / DRC',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 9.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.end,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  ...runners.map((runner) {
+                    return Container(
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF0A2626),
+                        border: Border(
+                          bottom: BorderSide(color: Colors.white10),
+                        ),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 8.h,
+                      ),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 20.w,
+                            child: Text(
+                              runner['sira']!,
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 10.w),
+                          Expanded(
+                            flex: 4,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  runner['name']!,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 2.h),
+                                Text(
+                                  runner['age']!,
+                                  style: TextStyle(
+                                    color: Colors.white38,
+                                    fontSize: 10.sp,
+                                  ),
+                                ),
+                                Text(
+                                  runner['st']!,
+                                  style: TextStyle(
+                                    color: Colors.white38,
+                                    fontSize: 10.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            flex: 3,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  runner['jockey']!,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 2.h),
+                                Text(
+                                  runner['weight']!,
+                                  style: TextStyle(
+                                    color: Colors.white54,
+                                    fontSize: 10.sp,
+                                  ),
+                                ),
+                                Text(
+                                  runner['subjockey']!,
+                                  style: TextStyle(
+                                    color: Colors.white38,
+                                    fontSize: 10.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            flex: 3,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  runner['gny']!,
+                                  style: TextStyle(
+                                    color: Colors.orange,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 2.h),
+                                Text(
+                                  runner['agf']!,
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 10.sp,
+                                  ),
+                                ),
+                                Text(
+                                  runner['drc']!,
+                                  style: TextStyle(
+                                    color: const Color(0xFFE6A817),
+                                    fontSize: 10.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                  SizedBox(height: 20.h),
+                ],
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ── 5. KİM KİMİ GEÇTİ VIEW ─────────────────────────────────────────────────
+  Widget _buildKimKimiGectiTab() {
+    final list = [
+      {'horse': '1- ALMUTANABİY', 'raced': 'GENÇYÜREK', 'beat': '1 (1)'},
+      {'horse': '2- GENÇYÜREK', 'raced': 'İLKUTHAN', 'beat': '1 (1)'},
+      {'horse': '3- İLKUTHAN', 'raced': 'HIZLI BERATIM', 'beat': '1 (1)'},
+      {'horse': '4- TARLABAŞI', 'raced': 'ALPAYMAN', 'beat': '2 (2)'},
+      {'horse': '5- YETİM AMCA', 'raced': 'CABİRE SULTAN', 'beat': '1 (2)'},
+      {'horse': '6- HIZLI BERATIM', 'raced': 'BABA TUNA', 'beat': '1 (1)'},
+      {'horse': '7- TUNA ADAM', 'raced': 'ZAMAN HARİKA', 'beat': '0 (1)'},
+      {'horse': '8- ALPAYMAN', 'raced': 'THOTH', 'beat': '0 (1)'},
+    ];
+
+    return Column(
+      children: [
+        Container(
+          color: const Color(0xFF132E2E),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 4,
+                child: Text(
+                  'AT',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 4,
+                child: Text(
+                  'YARIŞTIĞI AT',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Text(
+                  'GEÇTİ (KOŞU)',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.end,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView.separated(
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+            itemCount: list.length,
+            separatorBuilder: (context, index) =>
+                const Divider(color: Colors.white12, height: 1),
+            itemBuilder: (context, index) {
+              final item = list[index];
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.h),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: Text(
+                        item['horse']!,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Text(
+                        item['raced']!,
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12.sp,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        item['beat']!,
+                        style: TextStyle(
+                          color: const Color(0xFFE6A817),
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.end,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ── 6. ATLAR TAB VIEW ──────────────────────────────────────────────────────
+  Widget _buildAtlarContent(BuildContext context, RaceDetailsData? details) {
+    final list = [
+      {
+        'rank': '1',
+        'name': 'LOCO SUGAR',
+        'info': 'İngiliz HP: 94 / 4 Birincilik',
+        'owner': 'KEMAL KURT',
+        'earnings': '₺36.900.000',
+      },
+      {
+        'rank': '2',
+        'name': 'UPAMECANO',
+        'info': 'İngiliz HP: 45 / 2 Birincilik',
+        'owner': 'MURAT YILDIRIM, TALİP ÖZTÜRK, UMUT HEPSAĞ',
+        'earnings': '₺11.220.000',
+      },
+      {
+        'rank': '3',
+        'name': 'SPECIAL MAN',
+        'info': 'İngiliz HP: 0 / 3 Birincilik',
+        'owner': 'MELİH TEMEL',
+        'earnings': '₺10.663.200',
+      },
+      {
+        'rank': '4',
+        'name': 'NEURO MATH',
+        'info': 'İngiliz HP: 0 / 2 Birincilik',
+        'owner': 'YENER GİRİŞKEN, AREK GÖVER',
+        'earnings': '₺9.898.200',
+      },
+      {
+        'rank': '5',
+        'name': 'THE PROTECTER',
+        'info': 'İngiliz HP: 0 / 4 Birincilik',
+        'owner': 'NİMET ARİF KURTEL',
+        'earnings': '₺9.642.000',
+      },
+      {
+        'rank': '6',
+        'name': 'BAY NALÇAKAN',
+        'info': 'İngiliz HP: 0 / 4 Birincilik',
+        'owner': 'EMRAH NALÇAKAN',
+        'earnings': '₺9.444.000',
+      },
+      {
+        'rank': '7',
+        'name': 'WARDENCLYFFE',
+        'info': 'İngiliz HP: 73 / 5 Birincilik',
+        'owner': 'ÖZGÜR DEMİR',
+        'earnings': '₺9.380.400',
+      },
+    ];
+
+    return Column(
+      children: [
+        Container(
+          color: const Color(0xFF132E2E),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 24.w,
+                child: Text(
+                  '#',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 4,
+                child: Text(
+                  'AT',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Text(
+                  'SAHİP',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Text(
+                  'SEZON KAZANCI',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.end,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView.separated(
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+            itemCount: list.length,
+            separatorBuilder: (context, index) =>
+                const Divider(color: Colors.white12, height: 1),
+            itemBuilder: (context, index) {
+              final item = list[index];
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.h),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 24.w,
+                      child: Text(
+                        item['rank']!,
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item['name']!,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 2.h),
+                          Text(
+                            item['info']!,
+                            style: TextStyle(
+                              color: Colors.white38,
+                              fontSize: 10.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        item['owner']!,
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 11.sp,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        item['earnings']!,
+                        style: TextStyle(
+                          color: const Color(0xFFE6A817),
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.end,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ── 7. JOKEYLER TAB VIEW ───────────────────────────────────────────────────
+  Widget _buildJokeylerContent(BuildContext context, RaceDetailsData? details) {
+    final list = [
+      {
+        'rank': '1',
+        'name': 'N. AVCİ',
+        'info': 'HP Score: 92 / 45 Wins',
+        'rides': '320 biniş',
+        'earnings': '₺12.400.000',
+      },
+      {
+        'rank': '2',
+        'name': 'T. YILDIZ',
+        'info': 'HP Score: 88 / 38 Wins',
+        'rides': '280 biniş',
+        'earnings': '₺9.800.000',
+      },
+      {
+        'rank': '3',
+        'name': 'O. ATMACA',
+        'info': 'HP Score: 81 / 29 Wins',
+        'rides': '240 biniş',
+        'earnings': '₺7.500.000',
+      },
+      {
+        'rank': '4',
+        'name': 'E. AKDUMAN',
+        'info': 'HP Score: 79 / 25 Wins',
+        'rides': '210 biniş',
+        'earnings': '₺6.900.000',
+      },
+      {
+        'rank': '5',
+        'name': 'M.G.ARSLAN',
+        'info': 'HP Score: 75 / 22 Wins',
+        'rides': '190 biniş',
+        'earnings': '₺5.400.000',
+      },
+      {
+        'rank': '6',
+        'name': 'Y. GÖKÇE',
+        'info': 'HP Score: 72 / 18 Wins',
+        'rides': '170 biniş',
+        'earnings': '₺4.800.000',
+      },
+    ];
+
+    return Column(
+      children: [
+        Container(
+          color: const Color(0xFF132E2E),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 24.w,
+                child: Text(
+                  '#',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 4,
+                child: Text(
+                  'JOKEY',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Text(
+                  'TOPLAM BİNİŞ',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Text(
+                  'SEZON KAZANCI',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.end,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView.separated(
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+            itemCount: list.length,
+            separatorBuilder: (context, index) =>
+                const Divider(color: Colors.white12, height: 1),
+            itemBuilder: (context, index) {
+              final item = list[index];
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.h),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 24.w,
+                      child: Text(
+                        item['rank']!,
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item['name']!,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 2.h),
+                          Text(
+                            item['info']!,
+                            style: TextStyle(
+                              color: Colors.white38,
+                              fontSize: 10.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        item['rides']!,
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 11.sp,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        item['earnings']!,
+                        style: TextStyle(
+                          color: const Color(0xFFE6A817),
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.end,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
   }
 
   // ── TURKEY REFERENCE STYLE HORSE CARD (İSTATİSTİK LIST ITEM) ────────────
@@ -514,11 +2251,11 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       return Container(
         margin: EdgeInsets.only(bottom: 12.h),
         decoration: BoxDecoration(
-          color: const Color(0xFF0F1419),
+          color: const Color(0xFF112828),
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
             color: isExpanded
-                ? const Color(0xFF00CC99).withValues(alpha: 0.5)
+                ? const Color(0xFFE6A817).withValues(alpha: 0.5)
                 : Colors.white12,
             width: isExpanded ? 1.5 : 1.0,
           ),
@@ -573,7 +2310,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                             ), // Dark green background
                             borderRadius: BorderRadius.circular(6.r),
                             border: Border.all(
-                              color: const Color(0xFF00CC99).withValues(alpha: 0.4),
+                              color: const Color(
+                                0xFFD4AF37,
+                              ).withValues(alpha: 0.4),
                             ),
                           ),
                           alignment: Alignment.center,
@@ -619,7 +2358,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                           Text(
                             earningsText,
                             style: TextStyle(
-                              color: const Color(0xFF00CC99),
+                              color: const Color(0xFF2D9B83),
                               fontSize: 12.sp,
                               fontWeight: FontWeight.bold,
                             ),
@@ -686,12 +2425,27 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                     ),
 
                     // Navigation arrow
-                    Icon(
-                      isExpanded
-                          ? Icons.keyboard_arrow_up
-                          : Icons.keyboard_arrow_right,
-                      color: Colors.white24,
-                      size: 20.sp,
+                    GestureDetector(
+                      onTap: () {
+                        controller.selectedKosuAnaliziSubTab.value = 1;
+                        Get.to(() => const HorseAnalysisView());
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10.w,
+                          vertical: 16.h,
+                        ),
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            left: BorderSide(color: Colors.white10),
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.keyboard_arrow_right,
+                          color: const Color(0xFFE6A817),
+                          size: 24.sp,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -759,7 +2513,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                               vertical: 8.h,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF1E293B),
+                              color: const Color(0xFF132E2E),
                               borderRadius: BorderRadius.circular(8.r),
                             ),
                             child: Text(
@@ -901,11 +2655,11 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       return Container(
         margin: EdgeInsets.only(bottom: 12.h),
         decoration: BoxDecoration(
-          color: const Color(0xFF0F1419),
+          color: const Color(0xFF112828),
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
             color: isExpanded
-                ? const Color(0xFF00CC99).withValues(alpha: 0.5)
+                ? const Color(0xFFE6A817).withValues(alpha: 0.5)
                 : Colors.white12,
             width: isExpanded ? 1.5 : 1.0,
           ),
@@ -923,7 +2677,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                       width: 44.w,
                       height: 44.w,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF1E1E1E),
+                        color: const Color(0xFF132E2E),
                         borderRadius: BorderRadius.circular(8.r),
                         border: Border.all(color: Colors.white12),
                       ),
@@ -931,7 +2685,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                       child: Text(
                         '$horseNumber',
                         style: TextStyle(
-                          color: const Color(0xFF00CC99),
+                          color: const Color(0xFFE6A817),
                           fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
                         ),
@@ -1018,7 +2772,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             width: double.infinity,
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
-              color: const Color(0xFF0F1419),
+              color: const Color(0xFF112828),
               borderRadius: BorderRadius.circular(12.r),
               border: Border.all(color: Colors.white12),
             ),
@@ -1036,18 +2790,18 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                   children: [
                     _buildAnalysisTag(
                       'Track Bias: $trackType',
-                      const Color(0xFF1B5E20),
-                      const Color(0xFF81C784),
+                      const Color(0xFF1A4D40),
+                      const Color(0xFF5FBFAA),
                     ),
                     _buildAnalysisTag(
                       'Distance: $distance',
-                      const Color(0xFF0D47A1),
-                      const Color(0xFF64B5F6),
+                      const Color(0xFF1A5276),
+                      const Color(0xFF7FBFCF),
                     ),
                     _buildAnalysisTag(
                       'Field: $runnersCount runners',
-                      const Color(0xFF4A148C),
-                      const Color(0xFFBA68C8),
+                      const Color(0xFF3D2066),
+                      const Color(0xFFA070B0),
                     ),
                   ],
                 ),
@@ -1062,17 +2816,17 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             final score = entry.normalizedScore?.toInt() ?? 75;
 
             final rankColors = [
-              const Color(0xFFE53935),
-              const Color(0xFF1E88E5),
-              const Color(0xFF43A047),
-              const Color(0xFF8E24AA),
-              const Color(0xFFFB8C00),
+              const Color(0xFFD94E4E),
+              const Color(0xFF3498B8),
+              const Color(0xFF2D9B83),
+              const Color(0xFF7B3F96),
+              const Color(0xFFCC8800),
             ];
             final rankColor = rankColors[(rank - 1) % rankColors.length];
 
             Color barColor = Colors.orange;
             if (score >= 70) {
-              barColor = const Color(0xFF00CC99);
+              barColor = const Color(0xFFE6A817);
             } else if (score < 50) {
               barColor = Colors.redAccent;
             }
@@ -1130,7 +2884,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F1419),
+        color: const Color(0xFF112828),
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: Colors.white12),
       ),
@@ -1199,7 +2953,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     if (controller.isStatsLoading.value && stats == null) {
       return const Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00CC99)),
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE6A817)),
         ),
       );
     }
@@ -1272,7 +3026,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F1419),
+        color: const Color(0xFF112828),
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: Colors.white12),
       ),
@@ -1282,7 +3036,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           Text(
             title,
             style: TextStyle(
-              color: const Color(0xFF00CC99),
+              color: const Color(0xFFE6A817),
               fontSize: 12.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -1310,7 +3064,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                         value: items[index].value,
                         backgroundColor: Colors.white12,
                         valueColor: const AlwaysStoppedAnimation<Color>(
-                          Color(0xFF00796B),
+                          Color(0xFF2D9B83),
                         ),
                         minHeight: 4.h,
                       ),
@@ -1368,9 +3122,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     final val = score ?? 0.0;
     Color barColor = Colors.orange;
     if (val >= 70) {
-      barColor = const Color(0xFF00CC99);
+      barColor = const Color(0xFFE6A817);
     } else if (val < 50) {
-      barColor = const Color(0xFFE57373);
+      barColor = const Color(0xFFE08080);
     }
     return Row(
       children: [
@@ -1408,13 +3162,13 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           return Container(
             height: Get.height * 0.85,
             decoration: BoxDecoration(
-              color: const Color(0xFF121212),
+              color: const Color(0xFF0C1F1F),
               borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
               border: Border.all(color: Colors.white12),
             ),
             child: const Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00CC99)),
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE6A817)),
               ),
             ),
           );
@@ -1425,7 +3179,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           return Container(
             height: Get.height * 0.85,
             decoration: BoxDecoration(
-              color: const Color(0xFF121212),
+              color: const Color(0xFF0C1F1F),
               borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
               border: Border.all(color: Colors.white12),
             ),
@@ -1463,7 +3217,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         return Container(
           height: Get.height * 0.85,
           decoration: BoxDecoration(
-            color: const Color(0xFF121212),
+            color: const Color(0xFF0C1F1F),
             borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
             border: Border.all(color: Colors.white12),
           ),
@@ -1514,15 +3268,15 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                   width: double.infinity,
                   padding: EdgeInsets.symmetric(vertical: 12.h),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF00241F),
+                    color: const Color(0xFF0A2626),
                     borderRadius: BorderRadius.circular(8.r),
-                    border: Border.all(color: const Color(0xFF004D40)),
+                    border: Border.all(color: const Color(0xFF132E2E)),
                   ),
                   child: Center(
                     child: Text(
                       'Stats: $winRate% Win | $top3Rate% Top 3 | Last 6: $last6Form',
                       style: TextStyle(
-                        color: const Color(0xFF00CC99),
+                        color: const Color(0xFFE6A817),
                         fontSize: 15.sp,
                         fontWeight: FontWeight.bold,
                       ),
@@ -1567,11 +3321,12 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                       final pos = run.position ?? 0;
                       Color badgeColor = Colors.grey;
                       if (pos == 1) {
-                        badgeColor = const Color(0xFF1B5E20);
-                      } else if (pos == 2)
-                        badgeColor = const Color(0xFF2E7D32);
-                      else if (pos == 3)
+                        badgeColor = const Color(0xFF1A4D40);
+                      } else if (pos == 2) {
+                        badgeColor = const Color(0xFF268060);
+                      } else if (pos == 3) {
                         badgeColor = Colors.orange;
+                      }
 
                       return _buildHistoryItem(
                         '$pos',
@@ -1596,7 +3351,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F1419),
+        color: const Color(0xFF112828),
         borderRadius: BorderRadius.circular(8.r),
       ),
       child: Column(
@@ -1711,7 +3466,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               height: 64.w,
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xFFFFD700), Color(0xFFFFA000)],
+                  colors: [Color(0xFFE6A817), Color(0xFFCC8800)],
                 ),
                 shape: BoxShape.circle,
               ),
@@ -1748,7 +3503,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                 padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFFFFD700), Color(0xFFFFA000)],
+                    colors: [Color(0xFFE6A817), Color(0xFFCC8800)],
                   ),
                   borderRadius: BorderRadius.circular(10.r),
                 ),
@@ -1781,7 +3536,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                 color: Colors.black.withValues(alpha: 0.55),
                 borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(
-                  color: const Color(0xFFFFD700).withValues(alpha: 0.2),
+                  color: const Color(0xFFE6A817).withValues(alpha: 0.2),
                 ),
               ),
               child: Center(
@@ -1790,14 +3545,14 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                   children: [
                     Icon(
                       Icons.lock_outline,
-                      color: const Color(0xFFFFD700),
+                      color: const Color(0xFFE6A817),
                       size: 16.sp,
                     ),
                     SizedBox(width: 6.w),
                     Text(
                       'PREMIUM ONLY',
                       style: TextStyle(
-                        color: const Color(0xFFFFD700),
+                        color: const Color(0xFFE6A817),
                         fontSize: 12.sp,
                         fontWeight: FontWeight.bold,
                       ),
@@ -1817,9 +3572,11 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       Container(
         padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
         decoration: BoxDecoration(
-          color: const Color(0xFF0F1419),
+          color: const Color(0xFF112828),
           borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-          border: Border.all(color: const Color(0xFFFFD700).withValues(alpha: 0.2)),
+          border: Border.all(
+            color: const Color(0xFFE6A817).withValues(alpha: 0.2),
+          ),
         ),
         child: SafeArea(
           top: false,
@@ -1837,7 +3594,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               SizedBox(height: 20.h),
               Icon(
                 Icons.workspace_premium_rounded,
-                color: const Color(0xFFFFD700),
+                color: const Color(0xFFE6A817),
                 size: 44.sp,
               ),
               SizedBox(height: 12.h),
@@ -1870,7 +3627,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                   padding: EdgeInsets.symmetric(vertical: 14.h),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFFFFD700), Color(0xFFFFA000)],
+                      colors: [Color(0xFFE6A817), Color(0xFFCC8800)],
                     ),
                     borderRadius: BorderRadius.circular(12.r),
                   ),
@@ -2000,4 +3757,344 @@ class _StatItem {
   final String label;
   final double value;
   _StatItem(this.label, this.value);
+}
+
+// ── HORSE ANALYSIS VIEW (atyarisi.com style screen) ─────────────────────────
+class HorseAnalysisView extends GetView<RaceDetailsController> {
+  const HorseAnalysisView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    const mainView = RaceDetailsView();
+
+    return Scaffold(
+      backgroundColor: const Color(0xFF0C1F1F),
+      body: SafeArea(
+        child: Obx(() {
+          final details = controller.raceDetails.value;
+          final currentRace = controller.race.value;
+          final locationName =
+              details?.location ?? currentRace?.location ?? 'Ankara';
+          final mainTab = controller.selectedMainTab.value;
+
+          return Column(
+            children: [
+              // Clean Integrated Header
+              _buildHeader(context, locationName),
+
+              // Segmented Tab Bar for Main Tabs
+              _buildSegmentedTabBar(),
+
+              // Race Selector pills
+              _buildRaceSelectorPills(),
+
+              // Selected Race Details Info Banner
+              _buildSelectedRaceDetailsInfo(details, currentRace),
+
+              SizedBox(height: 8.h),
+
+              // Sub-Tabs Section depending on active Main Tab (styled as clean pills)
+              if (mainTab == 0) _buildSubTabPills(),
+              if (mainTab == 1) mainView._buildAtlarInnerSubTabBar(),
+              if (mainTab == 2) mainView._buildJokeylerInnerSubTabBar(),
+
+              // Content Area depending on active Main Tab
+              Expanded(
+                child: _buildAnalysisContentArea(context, details, mainView),
+              ),
+            ],
+          );
+        }),
+      ),
+    );
+  }
+
+  // Unified clean header
+  Widget _buildHeader(BuildContext context, String locationName) {
+    return Container(
+      color: const Color(0xFF0A2626),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              GestureDetector(
+                onTap: () => Get.back(),
+                child: Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20.sp),
+              ),
+              SizedBox(width: 12.w),
+              Text(
+                'Detaylı Analiz',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF132E2E),
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(color: const Color(0xFF2D9B83).withValues(alpha: 0.3)),
+                ),
+                child: Text(
+                  locationName.toUpperCase(),
+                  style: TextStyle(
+                    color: const Color(0xFFE6A817),
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8.h),
+          Row(
+            children: [
+              Icon(Icons.calendar_today_outlined, color: Colors.white60, size: 12.sp),
+              SizedBox(width: 4.w),
+              Text(
+                'Bugün',
+                style: TextStyle(color: Colors.white60, fontSize: 12.sp),
+              ),
+              SizedBox(width: 12.w),
+              Icon(Icons.thermostat_outlined, color: const Color(0xFF2D9B83), size: 12.sp),
+              SizedBox(width: 4.w),
+              Text(
+                'Nem: %39 · Açık',
+                style: TextStyle(color: Colors.white60, fontSize: 12.sp),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Segmented Main Tab Bar
+  Widget _buildSegmentedTabBar() {
+    final currentMainTab = controller.selectedMainTab.value;
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      padding: EdgeInsets.all(4.w),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0A2626),
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Row(
+        children: [
+          _buildSegmentItem('Koşu Analizi', 0, currentMainTab == 0),
+          _buildSegmentItem('Atlar', 1, currentMainTab == 1),
+          _buildSegmentItem('Jokeyler', 2, currentMainTab == 2),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSegmentItem(String label, int index, bool isSelected) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => controller.selectedMainTab.value = index,
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 10.h),
+          decoration: BoxDecoration(
+            color: isSelected ? const Color(0xFF2D9B83) : Colors.transparent,
+            borderRadius: BorderRadius.circular(8.r),
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? Colors.white : Colors.white60,
+              fontSize: 12.sp,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Race Selector pills
+  Widget _buildRaceSelectorPills() {
+    final races = controller.siblingRaces;
+    return Container(
+      height: 38.h,
+      margin: EdgeInsets.only(bottom: 8.h),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        itemCount: races.isEmpty ? 8 : races.length,
+        itemBuilder: (context, index) {
+          final isSelected = races.isEmpty ? (index == 0) : (races[index].id == controller.race.value?.id);
+          final title = '${index + 1}. Koşu';
+
+          return GestureDetector(
+            onTap: () {
+              if (races.isNotEmpty) {
+                controller.selectSiblingRace(races[index]);
+              }
+            },
+            child: Container(
+              margin: EdgeInsets.only(right: 8.w),
+              padding: EdgeInsets.symmetric(horizontal: 14.w),
+              decoration: BoxDecoration(
+                color: isSelected ? const Color(0xFF2D9B83) : const Color(0xFF132E2E),
+                borderRadius: BorderRadius.circular(19.r),
+                border: Border.all(
+                  color: isSelected ? Colors.transparent : Colors.white10,
+                ),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                title,
+                style: TextStyle(
+                  color: isSelected ? Colors.white : Colors.white60,
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // Slim selected race details banner
+  Widget _buildSelectedRaceDetailsInfo(
+    RaceDetailsData? details,
+    RaceModel? currentRace,
+  ) {
+    final timeVal = details?.time ?? currentRace?.time ?? '13:30';
+    final distanceVal = details?.distance ?? currentRace?.distance ?? '1200m';
+    final trackType = details?.trackType ?? currentRace?.trackType ?? 'Kum';
+    final isTurf =
+        trackType.toLowerCase().contains('turf') ||
+        trackType.toLowerCase().contains('çim');
+    final surfaceStr = isTurf ? 'Çim' : 'Kum';
+    final conditionStr = '3 ve Yukarı İngilizler / Handikap-14';
+
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16.w),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFF132E2E),
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(color: Colors.white10),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.sports_score_outlined, color: const Color(0xFFE6A817), size: 14.sp),
+          SizedBox(width: 6.w),
+          Expanded(
+            child: Text(
+              '$timeVal · $distanceVal $surfaceStr · $conditionStr',
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 11.sp,
+                fontWeight: FontWeight.w500,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Scrollable sub-tab pills
+  Widget _buildSubTabPills() {
+    final subTabs = [
+      'Atlar Listesi',
+      'Galoplar & Sprintler',
+      'En İyi Derece',
+      'Son Koşular',
+      'Birincilikler',
+      'Kim Kiminle Koştu',
+      'Kim Kimi Geçti',
+    ];
+    final currentSubTab = controller.selectedKosuAnaliziSubTab.value;
+    return Container(
+      height: 34.h,
+      margin: EdgeInsets.only(bottom: 8.h),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        itemCount: subTabs.length,
+        itemBuilder: (context, index) {
+          final isSelected = index == currentSubTab;
+          return GestureDetector(
+            onTap: () => controller.selectedKosuAnaliziSubTab.value = index,
+            child: Container(
+              margin: EdgeInsets.only(right: 8.w),
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              decoration: BoxDecoration(
+                color: isSelected ? const Color(0xFFE6A817).withValues(alpha: 0.15) : Colors.transparent,
+                borderRadius: BorderRadius.circular(8.r),
+                border: Border.all(
+                  color: isSelected ? const Color(0xFFE6A817) : Colors.white10,
+                ),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                subTabs[index],
+                style: TextStyle(
+                  color: isSelected ? const Color(0xFFE6A817) : Colors.white60,
+                  fontSize: 11.sp,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildAnalysisContentArea(
+    BuildContext context,
+    RaceDetailsData? details,
+    RaceDetailsView mainView,
+  ) {
+    final mainTab = controller.selectedMainTab.value;
+    switch (mainTab) {
+      case 0:
+        return _buildKosuAnaliziContent(context, details, mainView);
+      case 1:
+        return mainView._buildAtlarContent(context, details);
+      case 2:
+        return mainView._buildJokeylerContent(context, details);
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  Widget _buildKosuAnaliziContent(
+    BuildContext context,
+    RaceDetailsData? details,
+    RaceDetailsView mainView,
+  ) {
+    final subTab = controller.selectedKosuAnaliziSubTab.value;
+    switch (subTab) {
+      case 0:
+        return mainView._buildOriginalHorseListView(context, details!);
+      case 1:
+      case 2:
+        return mainView._buildEnIyiDereceTab();
+      case 3:
+        return mainView._buildSonKosularTab();
+      case 4:
+        return mainView._buildBirinciliklerTab();
+      case 5:
+        return mainView._buildKimKiminleKostuTab();
+      case 6:
+        return mainView._buildKimKimiGectiTab();
+      default:
+        return const SizedBox.shrink();
+    }
+  }
 }

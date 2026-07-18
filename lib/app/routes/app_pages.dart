@@ -73,7 +73,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.RACE_DETAILS,
-      page: () => const RaceDetailsView(),
+      page: () =>  RaceDetailsView(),
       binding: RaceDetailsBinding(),
       transition: transition,
     ),

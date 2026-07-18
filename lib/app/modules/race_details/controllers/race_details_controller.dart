@@ -21,7 +21,14 @@ class RaceDetailsController extends GetxController {
 
   final isLoading = false.obs;
   final isStatsLoading = false.obs;
-  final selectedTab = 0.obs;
+  
+  // Tab Navigation State
+  final selectedTab = 0.obs; // Outer tab: 0: STATISTICS, 1: ANALYSIS, 2: PREDICTIONS, 3: RESULTS
+  final selectedMainTab = 0.obs; // Inside STATISTICS: 0: Koşu Analizi, 1: Atlar, 2: Jokeyler
+  final selectedKosuAnaliziSubTab = 0.obs; // Sub-tab for Koşu Analizi: 0: Atlar Listesi, 1: Galoplar & Sprintler, 2: En İyi Derece, 3: Son Koşular, 4: Birincilikler, 5: Kim Kiminle Koştu, 6: Kim Kimi Geçti
+  final selectedAtlarSubTab = 0.obs; // Sub-tab for Atlar (Atlar, Kısraklar, Aygırlar, Kısrak Babaları)
+  final selectedJokeylerSubTab = 0.obs; // Sub-tab for Jokeyler (Jokeyler, Aprantiler)
+  
   final expandedIndex = (-1).obs;
   final bulletinExpandedIndex = (-1).obs;
 
