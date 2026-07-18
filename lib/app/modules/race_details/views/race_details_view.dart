@@ -2585,7 +2585,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     );
   }
 
-  // ── BULLETIN TAB ─────────────────────────────────────────────────────────
+  // ── BULLETIN TAB (Redesigned Results) ────────────────────────────────────
   Widget _buildBulletinTab(RaceDetailsData details) {
     final entries = [...(details.entries ?? [])];
     if (entries.isEmpty) {
@@ -2645,23 +2645,18 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         ? ((wins + seconds + thirds) / totalRaces * 100).toStringAsFixed(1)
         : '0';
 
-    final rating = entry.normalizedScore?.toInt() ?? 75;
-
     return Obx(() {
       final isExpanded =
           controller.bulletinExpandedIndex.value == fallbackIndex;
-      final isPremium = controller.isPremium.value;
 
       return Container(
         margin: EdgeInsets.only(bottom: 12.h),
         decoration: BoxDecoration(
-          color: const Color(0xFF112828),
+          color: const Color(0xFF132E2E),
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color: isExpanded
-                ? const Color(0xFFE6A817).withValues(alpha: 0.5)
-                : Colors.white12,
-            width: isExpanded ? 1.5 : 1.0,
+            color: isExpanded ? const Color(0xFFE6A817) : Colors.white10,
+            width: isExpanded ? 1.2 : 1.0,
           ),
         ),
         child: Column(
@@ -2670,23 +2665,25 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               onTap: () => controller.toggleBulletinExpand(fallbackIndex),
               behavior: HitTestBehavior.opaque,
               child: Padding(
-                padding: EdgeInsets.all(12.w),
+                padding: EdgeInsets.all(16.w),
                 child: Row(
                   children: [
                     Container(
-                      width: 44.w,
-                      height: 44.w,
+                      width: 36.w,
+                      height: 36.w,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF132E2E),
+                        color: const Color(0xFF0A2626),
                         borderRadius: BorderRadius.circular(8.r),
-                        border: Border.all(color: Colors.white12),
+                        border: Border.all(
+                          color: const Color(0xFF2D9B83).withValues(alpha: 0.3),
+                        ),
                       ),
                       alignment: Alignment.center,
                       child: Text(
                         '$horseNumber',
                         style: TextStyle(
                           color: const Color(0xFFE6A817),
-                          fontSize: 18.sp,
+                          fontSize: 16.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -2708,7 +2705,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                           Text(
                             '$age $color $sex · $weightText · Jockey: $jockeyName',
                             style: TextStyle(
-                              color: Colors.white38,
+                              color: Colors.white60,
                               fontSize: 11.sp,
                             ),
                           ),
@@ -2719,7 +2716,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                       isExpanded
                           ? Icons.keyboard_arrow_up
                           : Icons.keyboard_arrow_down,
-                      color: Colors.white24,
+                      color: Colors.white60,
                       size: 20.sp,
                     ),
                   ],
@@ -2727,24 +2724,105 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               ),
             ),
             if (isExpanded) ...[
-              const Divider(color: Colors.white12, height: 1),
+              const Divider(color: Colors.white10, height: 1),
               Padding(
-                padding: EdgeInsets.all(14.w),
+                padding: EdgeInsets.all(16.w),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildDetailSection('PEDIGREE & TEAM', [
-                      'Sire: ${horse?.sireName ?? "N/A"}',
-                      'Dam: ${horse?.damName ?? "N/A"}',
-                      'Trainer: $trainerName',
-                      'Owner: ${horse?.owner ?? "N/A"}',
-                    ]),
-                    SizedBox(height: 12.h),
-                    _buildDetailSection('CAREER HISTORY', [
-                      'Starts: $totalRaces  Wins: $wins  Places: ${wins + seconds + thirds}',
-                      'Win Rate: $winRate%  Place Rate: $placeRate%',
-                      'Form: $wins-$seconds-$thirds-$fourths',
-                    ]),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          color: const Color(0xFF2D9B83),
+                          size: 14.sp,
+                        ),
+                        SizedBox(width: 6.w),
+                        Text(
+                          'SOYSOY & EKİP',
+                          style: TextStyle(
+                            color: const Color(0xFFE6A817),
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8.h),
+                    Padding(
+                      padding: EdgeInsets.only(left: 20.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Baba: ${horse?.sireName ?? "N/A"} · Anne: ${horse?.damName ?? "N/A"}',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 11.sp,
+                            ),
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            'Antrenör: $trainerName · Sahip: ${horse?.owner ?? "N/A"}',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 11.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.history,
+                          color: const Color(0xFF2D9B83),
+                          size: 14.sp,
+                        ),
+                        SizedBox(width: 6.w),
+                        Text(
+                          'KARİYER GEÇMİŞİ',
+                          style: TextStyle(
+                            color: const Color(0xFFE6A817),
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8.h),
+                    Padding(
+                      padding: EdgeInsets.only(left: 20.w),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Koşu: $totalRaces  · Birincilik: $wins  · Dereceler: ${wins + seconds + thirds}',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 11.sp,
+                            ),
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            'Kazanma Oranı: $winRate% · Tabela Oranı: $placeRate%',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 11.sp,
+                            ),
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            'Form Durumu: $wins-$seconds-$thirds-$fourths',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 11.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -2755,7 +2833,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     });
   }
 
-  // ── AI WIN PROBABILITY ANALYSIS TAB ──────────────────────────────────────
+  // ── AI WIN PROBABILITY ANALYSIS TAB (Redesigned Analysis) ───────────────
   Widget _buildAnalysisTab() {
     final details = controller.raceDetails.value;
     final entries = details?.entries ?? [];
@@ -2772,16 +2850,38 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             width: double.infinity,
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
-              color: const Color(0xFF112828),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF132E2E), Color(0xFF0A2626)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: Colors.white12),
+              border: Border.all(
+                color: const Color(0xFF2D9B83).withValues(alpha: 0.2),
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Algorithm-based win probability analysis',
-                  style: TextStyle(color: Colors.white38, fontSize: 13.sp),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.insights,
+                      color: const Color(0xFFE6A817),
+                      size: 18.sp,
+                    ),
+                    SizedBox(width: 8.w),
+                    Expanded(
+                      child: Text(
+                        'Yapay Zeka Kazanma Olasılıkları',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 12.h),
                 Wrap(
@@ -2789,17 +2889,17 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                   runSpacing: 8.h,
                   children: [
                     _buildAnalysisTag(
-                      'Track Bias: $trackType',
+                      'Pist Eğilimi: $trackType',
                       const Color(0xFF1A4D40),
                       const Color(0xFF5FBFAA),
                     ),
                     _buildAnalysisTag(
-                      'Distance: $distance',
+                      'Mesafe: $distance',
                       const Color(0xFF1A5276),
                       const Color(0xFF7FBFCF),
                     ),
                     _buildAnalysisTag(
-                      'Field: $runnersCount runners',
+                      'Koşan: $runnersCount at',
                       const Color(0xFF3D2066),
                       const Color(0xFFA070B0),
                     ),
@@ -2815,33 +2915,56 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             final name = entry.horse?.name ?? 'Unknown';
             final score = entry.normalizedScore?.toInt() ?? 75;
 
-            final rankColors = [
-              const Color(0xFFD94E4E),
-              const Color(0xFF3498B8),
-              const Color(0xFF2D9B83),
-              const Color(0xFF7B3F96),
-              const Color(0xFFCC8800),
-            ];
-            final rankColor = rankColors[(rank - 1) % rankColors.length];
+            // Premium rank badges
+            Color rankBgColor;
+            Color rankTextColor = Colors.white;
+            bool isCustomBadge = true;
 
-            Color barColor = Colors.orange;
+            if (rank == 1) {
+              rankBgColor = const Color(0xFFE6A817); // Gold
+              rankTextColor = const Color(0xFF0C1F1F);
+            } else if (rank == 2) {
+              rankBgColor = const Color(0xFF94A3B8); // Silver
+              rankTextColor = const Color(0xFF0C1F1F);
+            } else if (rank == 3) {
+              rankBgColor = const Color(0xFFCD7F32); // Bronze
+            } else {
+              rankBgColor = Colors.transparent;
+              isCustomBadge = false;
+            }
+
+            // Probability-based bar gradients
+            List<Color> barColors;
             if (score >= 70) {
-              barColor = const Color(0xFFE6A817);
-            } else if (score < 50) {
-              barColor = Colors.redAccent;
+              barColors = [
+                const Color(0xFF2D9B83),
+                const Color(0xFF20C997),
+              ]; // Teal to Emerald
+            } else if (score >= 50) {
+              barColors = [
+                const Color(0xFFE6A817),
+                const Color(0xFFFFC107),
+              ]; // Amber to Yellow
+            } else {
+              barColors = [
+                const Color(0xFFD94E4E),
+                const Color(0xFFFF6B6B),
+              ]; // Soft Coral
             }
 
             return _buildAnalysisItem(
               '$rank',
               name,
               score / 100.0,
-              rankColor,
-              barColor,
+              rankBgColor,
+              rankTextColor,
+              isCustomBadge,
+              barColors,
             );
           }),
           SizedBox(height: 16.h),
           Text(
-            '* Probabilities computed from HP, earnings, track suitability, jockey records & co-race history.',
+            '* Olasılıklar; HP, kazanç, pist uyumu, jokey geçmişi ve ortak koşu geçmişinden hesaplanmıştır.',
             style: TextStyle(
               color: Colors.white24,
               fontSize: 11.sp,
@@ -2858,9 +2981,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: bgColor.withValues(alpha: 0.3),
+        color: bgColor.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(4.r),
-        border: Border.all(color: bgColor.withValues(alpha: 0.5)),
+        border: Border.all(color: bgColor.withValues(alpha: 0.4)),
       ),
       child: Text(
         text,
@@ -2877,33 +3000,38 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     String rank,
     String name,
     double probability,
-    Color rankColor,
-    Color barColor,
+    Color rankBgColor,
+    Color rankTextColor,
+    bool isCustomBadge,
+    List<Color> barColors,
   ) {
     return Container(
       margin: EdgeInsets.only(bottom: 12.h),
-      padding: EdgeInsets.all(12.w),
+      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: const Color(0xFF112828),
+        color: const Color(0xFF132E2E),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.white12),
+        border: Border.all(color: Colors.white10),
       ),
       child: Column(
         children: [
           Row(
             children: [
               Container(
-                width: 28.w,
-                height: 28.w,
+                width: 26.w,
+                height: 26.w,
                 decoration: BoxDecoration(
-                  color: rankColor,
+                  color: rankBgColor,
                   shape: BoxShape.circle,
+                  border: isCustomBadge
+                      ? null
+                      : Border.all(color: Colors.white30),
                 ),
                 alignment: Alignment.center,
                 child: Text(
                   rank,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: rankTextColor,
                     fontSize: 12.sp,
                     fontWeight: FontWeight.bold,
                   ),
@@ -2925,7 +3053,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               Text(
                 '${(probability * 100).toInt()}%',
                 style: TextStyle(
-                  color: barColor,
+                  color: barColors.last,
                   fontSize: 14.sp,
                   fontWeight: FontWeight.bold,
                 ),
@@ -2933,21 +3061,37 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             ],
           ),
           SizedBox(height: 12.h),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4.r),
-            child: LinearProgressIndicator(
-              value: probability,
-              backgroundColor: Colors.white12,
-              valueColor: AlwaysStoppedAnimation<Color>(barColor),
-              minHeight: 8.h,
-            ),
+          // Custom Gradient Progress Bar
+          Stack(
+            children: [
+              Container(
+                height: 6.h,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white10,
+                  borderRadius: BorderRadius.circular(3.r),
+                ),
+              ),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  return Container(
+                    height: 6.h,
+                    width: constraints.maxWidth * probability,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(colors: barColors),
+                      borderRadius: BorderRadius.circular(3.r),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  // ── STATISTICS GRID TAB ──────────────────────────────────────────────────
+  // ── STATISTICS GRID TAB (Redesigned Predictions) ─────────────────────────
   Widget _buildStatisticsTab() {
     final stats = controller.raceStats.value;
     if (controller.isStatsLoading.value && stats == null) {
@@ -2972,10 +3116,11 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       padding: EdgeInsets.all(12.w),
       mainAxisSpacing: 12.h,
       crossAxisSpacing: 12.w,
-      childAspectRatio: 1.1,
+      childAspectRatio: 1.05,
       children: [
         _buildStatCard(
-          'EARNINGS',
+          'KAZANÇLAR',
+          Icons.payments_outlined,
           (stats.earnings ?? [])
               .map(
                 (e) => _StatItem(
@@ -2986,7 +3131,8 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               .toList(),
         ),
         _buildStatCard(
-          'ORIGIN',
+          'KÖKEN',
+          Icons.public_outlined,
           (stats.origin ?? [])
               .map(
                 (e) => _StatItem(
@@ -2997,7 +3143,8 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               .toList(),
         ),
         _buildStatCard(
-          'DISTANCE',
+          'MESAFE',
+          Icons.straighten_outlined,
           (stats.distance ?? [])
               .map(
                 (e) => _StatItem(
@@ -3008,7 +3155,8 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               .toList(),
         ),
         _buildStatCard(
-          'TRACK',
+          'PİST',
+          Icons.layers_outlined,
           (stats.track ?? [])
               .map(
                 (e) => _StatItem(
@@ -3022,46 +3170,74 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     );
   }
 
-  Widget _buildStatCard(String title, List<_StatItem> items) {
+  Widget _buildStatCard(String title, IconData icon, List<_StatItem> items) {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: const Color(0xFF112828),
+        color: const Color(0xFF132E2E),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.white12),
+        border: Border.all(color: Colors.white10),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: TextStyle(
-              color: const Color(0xFFE6A817),
-              fontSize: 12.sp,
-              fontWeight: FontWeight.bold,
-            ),
+          Row(
+            children: [
+              Icon(icon, color: const Color(0xFFE6A817), size: 14.sp),
+              SizedBox(width: 6.w),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ),
-          SizedBox(height: 12.h),
+          SizedBox(height: 10.h),
           Expanded(
             child: ListView.separated(
               physics: const NeverScrollableScrollPhysics(),
               itemCount: items.length,
               separatorBuilder: (context, index) => SizedBox(height: 8.h),
               itemBuilder: (context, index) {
+                final item = items[index];
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      items[index].label,
-                      style: TextStyle(color: Colors.white, fontSize: 11.sp),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item.label,
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 10.sp,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        SizedBox(width: 4.w),
+                        Text(
+                          '${(item.value * 100).toInt()}%',
+                          style: TextStyle(
+                            color: const Color(0xFF2D9B83),
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(height: 4.h),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(2.r),
                       child: LinearProgressIndicator(
-                        value: items[index].value,
+                        value: item.value,
                         backgroundColor: Colors.white12,
                         valueColor: const AlwaysStoppedAnimation<Color>(
                           Color(0xFF2D9B83),
@@ -3821,7 +3997,11 @@ class HorseAnalysisView extends GetView<RaceDetailsController> {
             children: [
               GestureDetector(
                 onTap: () => Get.back(),
-                child: Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20.sp),
+                child: Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Colors.white,
+                  size: 20.sp,
+                ),
               ),
               SizedBox(width: 12.w),
               Text(
@@ -3838,7 +4018,9 @@ class HorseAnalysisView extends GetView<RaceDetailsController> {
                 decoration: BoxDecoration(
                   color: const Color(0xFF132E2E),
                   borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(color: const Color(0xFF2D9B83).withValues(alpha: 0.3)),
+                  border: Border.all(
+                    color: const Color(0xFF2D9B83).withValues(alpha: 0.3),
+                  ),
                 ),
                 child: Text(
                   locationName.toUpperCase(),
@@ -3854,14 +4036,22 @@ class HorseAnalysisView extends GetView<RaceDetailsController> {
           SizedBox(height: 8.h),
           Row(
             children: [
-              Icon(Icons.calendar_today_outlined, color: Colors.white60, size: 12.sp),
+              Icon(
+                Icons.calendar_today_outlined,
+                color: Colors.white60,
+                size: 12.sp,
+              ),
               SizedBox(width: 4.w),
               Text(
                 'Bugün',
                 style: TextStyle(color: Colors.white60, fontSize: 12.sp),
               ),
               SizedBox(width: 12.w),
-              Icon(Icons.thermostat_outlined, color: const Color(0xFF2D9B83), size: 12.sp),
+              Icon(
+                Icons.thermostat_outlined,
+                color: const Color(0xFF2D9B83),
+                size: 12.sp,
+              ),
               SizedBox(width: 4.w),
               Text(
                 'Nem: %39 · Açık',
@@ -3929,7 +4119,9 @@ class HorseAnalysisView extends GetView<RaceDetailsController> {
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         itemCount: races.isEmpty ? 8 : races.length,
         itemBuilder: (context, index) {
-          final isSelected = races.isEmpty ? (index == 0) : (races[index].id == controller.race.value?.id);
+          final isSelected = races.isEmpty
+              ? (index == 0)
+              : (races[index].id == controller.race.value?.id);
           final title = '${index + 1}. Koşu';
 
           return GestureDetector(
@@ -3942,7 +4134,9 @@ class HorseAnalysisView extends GetView<RaceDetailsController> {
               margin: EdgeInsets.only(right: 8.w),
               padding: EdgeInsets.symmetric(horizontal: 14.w),
               decoration: BoxDecoration(
-                color: isSelected ? const Color(0xFF2D9B83) : const Color(0xFF132E2E),
+                color: isSelected
+                    ? const Color(0xFF2D9B83)
+                    : const Color(0xFF132E2E),
                 borderRadius: BorderRadius.circular(19.r),
                 border: Border.all(
                   color: isSelected ? Colors.transparent : Colors.white10,
@@ -3988,7 +4182,11 @@ class HorseAnalysisView extends GetView<RaceDetailsController> {
       ),
       child: Row(
         children: [
-          Icon(Icons.sports_score_outlined, color: const Color(0xFFE6A817), size: 14.sp),
+          Icon(
+            Icons.sports_score_outlined,
+            color: const Color(0xFFE6A817),
+            size: 14.sp,
+          ),
           SizedBox(width: 6.w),
           Expanded(
             child: Text(
@@ -4033,7 +4231,9 @@ class HorseAnalysisView extends GetView<RaceDetailsController> {
               margin: EdgeInsets.only(right: 8.w),
               padding: EdgeInsets.symmetric(horizontal: 12.w),
               decoration: BoxDecoration(
-                color: isSelected ? const Color(0xFFE6A817).withValues(alpha: 0.15) : Colors.transparent,
+                color: isSelected
+                    ? const Color(0xFFE6A817).withValues(alpha: 0.15)
+                    : Colors.transparent,
                 borderRadius: BorderRadius.circular(8.r),
                 border: Border.all(
                   color: isSelected ? const Color(0xFFE6A817) : Colors.white10,
