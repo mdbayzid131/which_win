@@ -7,6 +7,8 @@ class RaceModel {
   final String? location;
   final String? country;
   final String? trackType;
+  final String? surface;         // more reliable than trackType (Turf/Sand)
+  final String? raceType;        // Flat/Jump
   final String? distance;
   final String? prize;
   final String? status;
@@ -14,6 +16,8 @@ class RaceModel {
   final String? predictionMessage;
   final int? riskRate;
   final int? entriesCount;
+  final int? fieldSize;          // total horses in field
+  final bool? hasPredictions;    // true when AI scores are ready
 
   RaceModel({
     this.id,
@@ -24,6 +28,8 @@ class RaceModel {
     this.location,
     this.country,
     this.trackType,
+    this.surface,
+    this.raceType,
     this.distance,
     this.prize,
     this.status,
@@ -31,7 +37,12 @@ class RaceModel {
     this.predictionMessage,
     this.riskRate,
     this.entriesCount,
+    this.fieldSize,
+    this.hasPredictions,
   });
+
+  /// Returns the best available surface label: prefer trackType, fall back to surface.
+  String get surfaceLabel => trackType ?? surface ?? 'N/A';
 
   factory RaceModel.fromJson(Map<String, dynamic> json) {
     return RaceModel(
@@ -43,6 +54,8 @@ class RaceModel {
       location: json['location'],
       country: json['country'],
       trackType: json['trackType'],
+      surface: json['surface'],
+      raceType: json['raceType'],
       distance: json['distance'],
       prize: json['prize'],
       status: json['status'],
@@ -50,6 +63,8 @@ class RaceModel {
       predictionMessage: json['predictionMessage'],
       riskRate: json['riskRate'],
       entriesCount: json['_count']?['entries'],
+      fieldSize: json['fieldSize'],
+      hasPredictions: json['hasPredictions'],
     );
   }
 
@@ -63,6 +78,8 @@ class RaceModel {
       'location': location,
       'country': country,
       'trackType': trackType,
+      'surface': surface,
+      'raceType': raceType,
       'distance': distance,
       'prize': prize,
       'status': status,
@@ -70,6 +87,8 @@ class RaceModel {
       'predictionMessage': predictionMessage,
       'riskRate': riskRate,
       '_count': {'entries': entriesCount},
+      'fieldSize': fieldSize,
+      'hasPredictions': hasPredictions,
     };
   }
 }

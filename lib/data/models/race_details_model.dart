@@ -23,12 +23,16 @@ class RaceDetailsData {
   final String? location;
   final String? country;
   final String? trackType;
+  final String? surface;        // more reliable than trackType (Turf/Sand)
+  final String? raceType;       // Flat/Jump
   final String? distance;
   final String? prize;
   final String? status;
   final String? tahmin1X;
   final String? predictionMessage;
   final int? riskRate;
+  final int? fieldSize;
+  final bool? hasPredictions;
   final List<RaceEntry>? entries;
   final List<RaceResult>? results;
 
@@ -41,15 +45,22 @@ class RaceDetailsData {
     this.location,
     this.country,
     this.trackType,
+    this.surface,
+    this.raceType,
     this.distance,
     this.prize,
     this.status,
     this.tahmin1X,
     this.predictionMessage,
     this.riskRate,
+    this.fieldSize,
+    this.hasPredictions,
     this.entries,
     this.results,
   });
+
+  /// Returns the best available surface label: prefer trackType, fall back to surface.
+  String get surfaceLabel => trackType ?? surface ?? 'N/A';
 
   factory RaceDetailsData.fromJson(Map<String, dynamic> json) {
     return RaceDetailsData(
@@ -61,12 +72,16 @@ class RaceDetailsData {
       location: json['location'],
       country: json['country'],
       trackType: json['trackType'],
+      surface: json['surface'],
+      raceType: json['raceType'],
       distance: json['distance'],
       prize: json['prize'],
       status: json['status'],
       tahmin1X: json['tahmin1X'],
       predictionMessage: json['predictionMessage'],
       riskRate: json['riskRate'],
+      fieldSize: json['fieldSize'],
+      hasPredictions: json['hasPredictions'],
       entries: json['entries'] != null
           ? List<RaceEntry>.from(json['entries'].map((x) => RaceEntry.fromJson(x)))
           : null,
@@ -84,23 +99,40 @@ class RaceEntry {
   final String? jockeyId;
   final String? jockeyName;
   final double? weight;
+  final String? weightStr;
   final int? draw;
+  final int? number;
   final int? horsePower;
   final int? jockeyPower;
   final double? normalizedScore;
   final int? rank;
   final String? category;
+  // Core win probability fields
   final double? winProb;
   final double? winOddsFair;
   final double? placeProb;
+  final double? eachWayProb;         // premium
+  // Suitability scores
   final double? goingSuitabilityScore;
   final double? distanceSuitabilityScore;
+  final double? courseSpecialistScore; // premium
+  final double? drawBiasScore;         // premium
   final double? jockeyFormScore;
   final double? trainerFormScore;
+  // AI fields
   final int? aiSelectionRank;
   final String? aiConfidence;
   final double? aiConfidenceScore;
   final String? aiAnalysis;
+  // Value edge
+  final bool? hasValueEdge;            // premium
+  final double? valueEdgePercent;      // premium
+  // Display helpers
+  final String? form;
+  final String? colour;
+  final String? silkUrl;
+  final String? ownerName;
+  final String? trainerName;
   final HorseModel? horse;
 
   RaceEntry({
@@ -110,7 +142,9 @@ class RaceEntry {
     this.jockeyId,
     this.jockeyName,
     this.weight,
+    this.weightStr,
     this.draw,
+    this.number,
     this.horsePower,
     this.jockeyPower,
     this.normalizedScore,
@@ -119,14 +153,24 @@ class RaceEntry {
     this.winProb,
     this.winOddsFair,
     this.placeProb,
+    this.eachWayProb,
     this.goingSuitabilityScore,
     this.distanceSuitabilityScore,
+    this.courseSpecialistScore,
+    this.drawBiasScore,
     this.jockeyFormScore,
     this.trainerFormScore,
     this.aiSelectionRank,
     this.aiConfidence,
     this.aiConfidenceScore,
     this.aiAnalysis,
+    this.hasValueEdge,
+    this.valueEdgePercent,
+    this.form,
+    this.colour,
+    this.silkUrl,
+    this.ownerName,
+    this.trainerName,
     this.horse,
   });
 
@@ -138,7 +182,9 @@ class RaceEntry {
       jockeyId: json['jockeyId'],
       jockeyName: json['jockeyName'],
       weight: (json['weight'] as num?)?.toDouble(),
+      weightStr: json['weightStr']?.toString(),
       draw: json['draw'],
+      number: json['number'],
       horsePower: json['horsePower'],
       jockeyPower: json['jockeyPower'],
       normalizedScore: (json['normalizedScore'] as num?)?.toDouble(),
@@ -147,14 +193,24 @@ class RaceEntry {
       winProb: (json['winProb'] as num?)?.toDouble(),
       winOddsFair: (json['winOddsFair'] as num?)?.toDouble(),
       placeProb: (json['placeProb'] as num?)?.toDouble(),
+      eachWayProb: (json['eachWayProb'] as num?)?.toDouble(),
       goingSuitabilityScore: (json['goingSuitabilityScore'] as num?)?.toDouble(),
       distanceSuitabilityScore: (json['distanceSuitabilityScore'] as num?)?.toDouble(),
+      courseSpecialistScore: (json['courseSpecialistScore'] as num?)?.toDouble(),
+      drawBiasScore: (json['drawBiasScore'] as num?)?.toDouble(),
       jockeyFormScore: (json['jockeyFormScore'] as num?)?.toDouble(),
       trainerFormScore: (json['trainerFormScore'] as num?)?.toDouble(),
       aiSelectionRank: json['aiSelectionRank'],
       aiConfidence: json['aiConfidence'],
       aiConfidenceScore: (json['aiConfidenceScore'] as num?)?.toDouble(),
       aiAnalysis: json['aiAnalysis'],
+      hasValueEdge: json['hasValueEdge'],
+      valueEdgePercent: (json['valueEdgePercent'] as num?)?.toDouble(),
+      form: json['form'],
+      colour: json['colour'],
+      silkUrl: json['silkUrl'],
+      ownerName: json['ownerName'],
+      trainerName: json['trainerName'],
       horse: json['horse'] != null ? HorseModel.fromJson(json['horse']) : null,
     );
   }

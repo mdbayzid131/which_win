@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:which_win/app/routes/app_pages.dart';
+import 'package:which_win/data/models/race_details_model.dart';
 import '../controllers/race_bulletin_controller.dart';
 
 class RaceBulletinView extends GetView<RaceBulletinController> {
@@ -18,41 +19,77 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Get.back(),
         ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Race Bulletin',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
+        title: Obx(() {
+          final race = controller.race.value;
+          final details = controller.raceDetails.value;
+          final count = details?.entries?.length ?? race?.entriesCount ?? 0;
+          final date = race?.date ?? '';
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                race?.name ?? 'Race Bulletin',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-            Text(
-              '5 races · 2025-05-05',
-              style: TextStyle(
-                color: Colors.white38,
-                fontSize: 12.sp,
+              Text(
+                '$count entries · $date',
+                style: TextStyle(color: Colors.white38, fontSize: 12.sp),
               ),
-            ),
-          ],
-        ),
-      ),
-      body: ListView.builder(
-        padding: EdgeInsets.all(16.w),
-        itemCount: 5,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () => Get.toNamed(AppRoutes.RACE_ANALYSIS),
-            child: _buildRaceItem(index + 1),
+            ],
           );
-        },
+        }),
       ),
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(
+            child: CircularProgressIndicator(color: Color(0xFF4DB6AC)),
+          );
+        }
+
+        final entries = controller.raceDetails.value?.entries ?? [];
+        final race = controller.race.value;
+
+        if (entries.isEmpty) {
+          return Center(
+            child: Text(
+              'No entries available',
+              style: TextStyle(color: Colors.white38, fontSize: 16.sp),
+            ),
+          );
+        }
+
+        return ListView.builder(
+          padding: EdgeInsets.all(16.w),
+          itemCount: entries.length,
+          itemBuilder: (context, index) {
+            final entry = entries[index];
+            return GestureDetector(
+              onTap: () => Get.toNamed(AppRoutes.RACE_ANALYSIS),
+              child: _buildRaceItem(index + 1, entry, race),
+            );
+          },
+        );
+      }),
     );
   }
 
-  Widget _buildRaceItem(int raceNumber) {
+  Widget _buildRaceItem(int raceNumber, RaceEntry entry, dynamic race) {
+    final horseName = entry.horse?.name ?? 'N/A';
+    final draw = entry.draw?.toString() ?? 'N/A';
+    final weight = entry.weightStr ?? entry.weight?.toStringAsFixed(0) ?? 'N/A';
+    final distance = (race?.distance as String?) ?? 'N/A';
+    final surfaceLabel = (race?.surfaceLabel as String?) ?? 'N/A';
+    final winProb = entry.winProb != null
+        ? '${(entry.winProb! * 100).toInt()}% win'
+        : 'N/A';
+    final jockeyName = entry.jockeyName ?? 'N/A';
+    final trainerName = entry.trainerName ?? entry.horse?.trainer ?? 'N/A';
+
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
@@ -68,7 +105,6 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Race Number Circle
                 Container(
                   width: 40.w,
                   height: 40.w,
@@ -87,24 +123,26 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                   ),
                 ),
                 SizedBox(width: 12.w),
-                // Race Info
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          Text(
-                            'Race $raceNumber',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.bold,
+                          Expanded(
+                            child: Text(
+                              horseName,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           SizedBox(width: 8.w),
                           Text(
-                            '13:45',
+                            'Draw: $draw',
                             style: TextStyle(
                               color: Colors.white38,
                               fontSize: 14.sp,
@@ -115,13 +153,19 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                       SizedBox(height: 8.h),
                       Row(
                         children: [
-                          _buildTag('Handicap', const Color(0xFF1E293B)),
-                          SizedBox(width: 4.w),
-                          _buildTag('Turf', const Color(0xFF003D33),
+                          _buildTag(surfaceLabel, const Color(0xFF003D33),
                               textColor: const Color(0xFF4DB6AC)),
                           SizedBox(width: 8.w),
                           Text(
-                            '1200m',
+                            distance,
+                            style: TextStyle(
+                              color: Colors.white38,
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          Text(
+                            '${weight}kg',
                             style: TextStyle(
                               color: Colors.white38,
                               fontSize: 12.sp,
@@ -132,20 +176,19 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                     ],
                   ),
                 ),
-                // Price and Horses
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '₺850,000',
+                      winProb,
                       style: TextStyle(
                         color: const Color(0xFF4DB6AC),
-                        fontSize: 16.sp,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      '8 horses',
+                      '${entry.draw != null ? entry.draw! : "N/A"}',
                       style: TextStyle(
                         color: Colors.white38,
                         fontSize: 12.sp,
@@ -157,21 +200,21 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
             ),
           ),
           const Divider(color: Colors.white12, height: 1),
-          // Footer Text
           Padding(
             padding: EdgeInsets.all(12.w),
             child: RichText(
               text: TextSpan(
                 style: TextStyle(color: Colors.white38, fontSize: 13.sp),
                 children: [
-                  const TextSpan(text: 'Who beat whom: '),
+                  const TextSpan(text: 'Jockey: '),
                   TextSpan(
-                    text: 'AKSI SEDA 3-2 VENOMAKSI SEDA 3-1 ',
+                    text: jockeyName,
                     style: TextStyle(color: Colors.orange.withOpacity(0.8)),
                   ),
-                  const TextSpan(
-                    text: 'GOLDEN ARROW',
-                    style: TextStyle(color: Colors.orange),
+                  const TextSpan(text: '  |  Trainer: '),
+                  TextSpan(
+                    text: trainerName,
+                    style: const TextStyle(color: Colors.orange),
                   ),
                 ],
               ),
@@ -182,7 +225,8 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
     );
   }
 
-  Widget _buildTag(String text, Color bgColor, {Color textColor = Colors.white70}) {
+  Widget _buildTag(String text, Color bgColor,
+      {Color textColor = Colors.white70}) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
       decoration: BoxDecoration(
