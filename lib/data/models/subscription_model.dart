@@ -19,13 +19,13 @@ class SubscriptionPlanModel {
 
   factory SubscriptionPlanModel.fromJson(Map<String, dynamic> json) {
     return SubscriptionPlanModel(
-      id: json['id'],
-      name: json['name'],
-      description: json['description'],
-      price: (json['price'] as num?)?.toDouble(),
-      currency: json['currency'],
-      duration: json['duration'],
-      productId: json['productId'],
+      id: json['id']?.toString(),
+      name: json['name']?.toString() ?? 'N/A',
+      description: json['description']?.toString() ?? '',
+      price: (json['price'] as num?)?.toDouble() ?? 0.0,
+      currency: json['currency']?.toString() ?? 'USD',
+      duration: json['duration']?.toString() ?? 'N/A',
+      productId: json['productId']?.toString() ?? 'N/A',
     );
   }
 }

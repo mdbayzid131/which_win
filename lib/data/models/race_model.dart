@@ -7,6 +7,8 @@ class RaceModel {
   final String? location;
   final String? country;
   final String? trackType;
+  final String? surface;
+  final String? raceType;
   final String? distance;
   final String? prize;
   final String? status;
@@ -14,6 +16,8 @@ class RaceModel {
   final String? predictionMessage;
   final int? riskRate;
   final int? entriesCount;
+  final int? fieldSize;
+  final bool? hasPredictions;
 
   RaceModel({
     this.id,
@@ -24,6 +28,8 @@ class RaceModel {
     this.location,
     this.country,
     this.trackType,
+    this.surface,
+    this.raceType,
     this.distance,
     this.prize,
     this.status,
@@ -31,29 +37,43 @@ class RaceModel {
     this.predictionMessage,
     this.riskRate,
     this.entriesCount,
+    this.fieldSize,
+    this.hasPredictions,
   });
 
   factory RaceModel.fromJson(Map<String, dynamic> json) {
     return RaceModel(
       id: json['id']?.toString(),
       externalId: json['externalId']?.toString(),
-      name: json['name']?.toString(),
+      name: json['name']?.toString() ?? 'N/A',
       date: json['date']?.toString(),
-      time: json['time']?.toString(),
-      location: json['location']?.toString(),
-      country: json['country']?.toString(),
-      trackType: json['trackType']?.toString(),
-      distance: json['distance']?.toString(),
-      prize: json['prize']?.toString(),
-      status: json['status']?.toString(),
-      tahmin1X: json['tahmin1X']?.toString(),
+      time: json['time']?.toString() ?? 'N/A',
+      location: json['location']?.toString() ?? 'N/A',
+      country: json['country']?.toString() ?? 'N/A',
+      trackType: json['trackType']?.toString() ?? json['surface']?.toString() ?? 'N/A',
+      surface: json['surface']?.toString() ?? json['trackType']?.toString() ?? 'N/A',
+      raceType: json['raceType']?.toString() ?? 'N/A',
+      distance: json['distance']?.toString() ?? 'N/A',
+      prize: json['prize']?.toString() ?? 'N/A',
+      status: json['status']?.toString() ?? 'N/A',
+      tahmin1X: json['tahmin1X']?.toString() ?? 'N/A',
       predictionMessage: json['predictionMessage']?.toString(),
       riskRate: json['riskRate'] != null
           ? int.tryParse(json['riskRate'].toString())
           : null,
-      entriesCount: json['_count'] != null && json['_count']['entries'] != null
-          ? int.tryParse(json['_count']['entries'].toString())
-          : null,
+      entriesCount: json['entriesCount'] != null
+          ? int.tryParse(json['entriesCount'].toString())
+          : (json['_count'] != null && json['_count']['entries'] != null
+              ? int.tryParse(json['_count']['entries'].toString())
+              : (json['fieldSize'] != null
+                  ? int.tryParse(json['fieldSize'].toString())
+                  : null)),
+      fieldSize: json['fieldSize'] != null
+          ? int.tryParse(json['fieldSize'].toString())
+          : (json['_count'] != null && json['_count']['entries'] != null
+              ? int.tryParse(json['_count']['entries'].toString())
+              : null),
+      hasPredictions: json['hasPredictions'] as bool?,
     );
   }
 
@@ -67,6 +87,8 @@ class RaceModel {
       'location': location,
       'country': country,
       'trackType': trackType,
+      'surface': surface,
+      'raceType': raceType,
       'distance': distance,
       'prize': prize,
       'status': status,
@@ -74,6 +96,8 @@ class RaceModel {
       'predictionMessage': predictionMessage,
       'riskRate': riskRate,
       '_count': {'entries': entriesCount},
+      'fieldSize': fieldSize,
+      'hasPredictions': hasPredictions,
     };
   }
 }

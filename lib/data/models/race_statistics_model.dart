@@ -74,9 +74,9 @@ class EarningStat {
 
   factory EarningStat.fromJson(Map<String, dynamic> json) {
     return EarningStat(
-      horseName: json['horseName'],
-      amount: json['amount'],
-      percentage: json['percentage'],
+      horseName: json['horseName']?.toString() ?? 'N/A',
+      amount: json['amount']?.toString() ?? 'N/A',
+      percentage: (json['percentage'] as num?)?.toInt() ?? 0,
     );
   }
 }
@@ -89,8 +89,8 @@ class OriginStat {
 
   factory OriginStat.fromJson(Map<String, dynamic> json) {
     return OriginStat(
-      country: json['country'],
-      percentage: json['percentage'],
+      country: json['country']?.toString() ?? 'N/A',
+      percentage: (json['percentage'] as num?)?.toInt() ?? 0,
     );
   }
 }
@@ -104,9 +104,9 @@ class DistanceStat {
 
   factory DistanceStat.fromJson(Map<String, dynamic> json) {
     return DistanceStat(
-      label: json['label'],
-      detail: json['detail'],
-      percentage: json['percentage'],
+      label: json['label']?.toString() ?? 'N/A',
+      detail: json['detail']?.toString() ?? 'N/A',
+      percentage: (json['percentage'] as num?)?.toInt() ?? 0,
     );
   }
 }
@@ -120,9 +120,9 @@ class TrackStat {
 
   factory TrackStat.fromJson(Map<String, dynamic> json) {
     return TrackStat(
-      surface: json['surface'],
-      detail: json['detail'],
-      percentage: json['percentage'],
+      surface: json['surface']?.toString() ?? 'N/A',
+      detail: json['detail']?.toString() ?? 'N/A',
+      percentage: (json['percentage'] as num?)?.toInt() ?? 0,
     );
   }
 }
@@ -135,8 +135,8 @@ class CityStat {
 
   factory CityStat.fromJson(Map<String, dynamic> json) {
     return CityStat(
-      name: json['name'],
-      percentage: json['percentage'],
+      name: json['name']?.toString() ?? 'N/A',
+      percentage: (json['percentage'] as num?)?.toInt() ?? 0,
     );
   }
 }
@@ -149,8 +149,8 @@ class JockeyStat {
 
   factory JockeyStat.fromJson(Map<String, dynamic> json) {
     return JockeyStat(
-      name: json['name'],
-      percentage: json['percentage'],
+      name: json['name']?.toString() ?? 'N/A',
+      percentage: (json['percentage'] as num?)?.toInt() ?? 0,
     );
   }
 }
@@ -164,9 +164,9 @@ class CoRaceStat {
 
   factory CoRaceStat.fromJson(Map<String, dynamic> json) {
     return CoRaceStat(
-      horseName: json['horseName'],
-      score: json['score'],
-      percentage: json['percentage'],
+      horseName: json['horseName']?.toString() ?? 'N/A',
+      score: json['score']?.toString() ?? 'N/A',
+      percentage: (json['percentage'] as num?)?.toInt() ?? 0,
     );
   }
 }
@@ -180,9 +180,9 @@ class BestTimeStat {
 
   factory BestTimeStat.fromJson(Map<String, dynamic> json) {
     return BestTimeStat(
-      horseName: json['horseName'],
-      time: json['time'],
-      percentage: json['percentage'],
+      horseName: json['horseName']?.toString() ?? 'N/A',
+      time: json['time']?.toString() ?? 'N/A',
+      percentage: (json['percentage'] as num?)?.toInt() ?? 0,
     );
   }
 }

@@ -2242,7 +2242,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
 
     // EİD: Expected time and ID
     final expectedTime = '1.55.${(20 + index * 4).toString().padLeft(2, '0')}';
-    final horseIdStr = horse?.id?.substring(0, 6) ?? '304621';
+    final horseIdStr = (horse?.id != null && horse!.id!.length >= 6)
+        ? horse.id!.substring(0, 6)
+        : (horse?.id ?? 'N/A');
 
     return Obx(() {
       final isExpanded = controller.expandedIndex.value == index;

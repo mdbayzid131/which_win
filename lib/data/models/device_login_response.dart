@@ -45,10 +45,10 @@ class UserDevice {
 
   factory UserDevice.fromJson(Map<String, dynamic> json) {
     return UserDevice(
-      id: json['id'],
-      deviceId: json['deviceId'],
-      role: json['role'],
-      language: json['language'],
+      id: json['id']?.toString(),
+      deviceId: json['deviceId']?.toString(),
+      role: json['role']?.toString(),
+      language: json['language']?.toString(),
       subscription: json['subscription'] != null
           ? SubscriptionDevice.fromJson(json['subscription'])
           : null,
@@ -66,10 +66,10 @@ class SubscriptionDevice {
 
   factory SubscriptionDevice.fromJson(Map<String, dynamic> json) {
     return SubscriptionDevice(
-      id: json['id'],
-      plan: json['plan'],
-      isActive: json['isActive'],
-      endDate: json['endDate'],
+      id: json['id']?.toString(),
+      plan: json['plan']?.toString(),
+      isActive: json['isActive'] as bool?,
+      endDate: json['endDate']?.toString(),
     );
   }
 }

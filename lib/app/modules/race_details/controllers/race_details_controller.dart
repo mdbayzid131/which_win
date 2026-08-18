@@ -246,7 +246,7 @@ class RaceDetailsController extends GetxController {
 
   void setTab(int index) {
     selectedTab.value = index;
-    if (index == 1) {
+    if (index == 1 || index == 2) {
       fetchRaceStatistics();
     }
   }

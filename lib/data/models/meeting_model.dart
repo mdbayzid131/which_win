@@ -13,10 +13,10 @@ class MeetingModel {
 
   factory MeetingModel.fromJson(Map<String, dynamic> json) {
     return MeetingModel(
-      country: json['country'] ?? 'Unknown',
-      location: json['location'] ?? 'Unknown',
-      racesCount: json['racesCount'] ?? 0,
-      isLive: json['isLive'] ?? false,
+      country: json['country']?.toString() ?? 'N/A',
+      location: json['location']?.toString() ?? 'N/A',
+      racesCount: (json['racesCount'] as num?)?.toInt() ?? (int.tryParse(json['racesCount']?.toString() ?? '') ?? 0),
+      isLive: json['isLive'] as bool? ?? false,
     );
   }
 }

@@ -1,7 +1,7 @@
 class ApiConstants {
   // Base URLs - Always end with a trailing slash
-  static const String baseUrl = 'https://goldentak-server.onrender.com/api/v1/';
-  // static const String baseUrl = 'http://10.10.7.111:5000/api/v1/';
+  static const String baseUrl = 'http://10.10.26.200:5000/api/v1/';
+  // static const String baseUrl = 'https://goldentak-server.onrender.com/api/v1/';
 
   // Auth Endpoints
   static const String deviceLogin = 'auth/device-login';
