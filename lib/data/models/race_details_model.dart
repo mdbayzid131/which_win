@@ -265,10 +265,17 @@ class RaceResult {
       position: json['position'] != null ? int.tryParse(json['position'].toString()) : null,
       time: json['time']?.toString() ?? 'N/A',
       earnings: (json['earnings'] as num?)?.toDouble(),
-      horse: json['horse'] != null ? HorseModel.fromJson(json['horse']) : null,
+      horse: (json['horse'] != null && json['horse'] is Map<String, dynamic>)
+          ? _parseHorseWithoutResults(Map<String, dynamic>.from(json['horse']))
+          : null,
       jockey: json['jockey'] != null ? JockeyModel.fromJson(json['jockey']) : null,
       race: json['race'] != null ? RaceModel.fromJson(json['race']) : null,
     );
+  }
+
+  static HorseModel? _parseHorseWithoutResults(Map<String, dynamic> jsonMap) {
+    jsonMap.remove('results');
+    return HorseModel.fromJson(jsonMap);
   }
 }
 

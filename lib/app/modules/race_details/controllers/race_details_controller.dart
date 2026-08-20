@@ -168,7 +168,7 @@ class RaceDetailsController extends GetxController {
   void _disconnectSse() {
     _sseSub?.cancel();
     _sseSub = null;
-    _sseService.dispose();
+    _sseService.close();
     isLive.value = false;
   }
 
@@ -271,18 +271,20 @@ class RaceDetailsController extends GetxController {
   final isHorseLoading = false.obs;
 
   Future<void> fetchHorseProfile(String id) async {
+    if (id.trim().isEmpty) return;
+
     isHorseLoading.value = true;
     horseDetails.value = null;
     try {
       final response = await _raceRepo.getHorseProfile(id);
       ApiChecker.checkGetApi(response);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 && response.data != null) {
         final horseDetailsResponse = HorseDetailsResponse.fromJson(response.data);
         horseDetails.value = horseDetailsResponse.data;
       }
     } catch (e) {
-      // Handled
+      Helpers.error('[RaceDetailsController] Error fetching horse profile: $e');
     } finally {
       isHorseLoading.value = false;
     }

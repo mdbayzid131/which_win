@@ -27,7 +27,8 @@ class SseService {
   bool _closed = false;
 
   // Internal broadcast stream controller
-  final _controller = StreamController<Map<String, dynamic>>.broadcast();
+  StreamController<Map<String, dynamic>> _controller =
+      StreamController<Map<String, dynamic>>.broadcast();
 
   /// Expose events as a broadcast stream.
   Stream<Map<String, dynamic>> get stream => _controller.stream;
@@ -39,6 +40,9 @@ class SseService {
   // ──────────────────────────────────────────────────────────────────────────
   Future<void> connect(String raceId) async {
     _closed = false;
+    if (_controller.isClosed) {
+      _controller = StreamController<Map<String, dynamic>>.broadcast();
+    }
 
     try {
       final token = await StorageService.getString(StorageConstants.bearerToken);

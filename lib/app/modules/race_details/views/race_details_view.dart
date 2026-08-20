@@ -2429,8 +2429,16 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                     // Navigation arrow
                     GestureDetector(
                       onTap: () {
-                        controller.selectedKosuAnaliziSubTab.value = 1;
-                        Get.to(() => const HorseAnalysisView());
+                        final hId = horse?.id ?? entry.horseId;
+                        if (hId != null && hId.isNotEmpty) {
+                          controller.fetchHorseProfile(hId);
+                          _showHorseDetails(context, horseName, hpVal);
+                        } else {
+                          controller.selectedKosuAnaliziSubTab.value = 1;
+                          if (Get.currentRoute != '/HorseAnalysisView') {
+                            Get.to(() => const HorseAnalysisView());
+                          }
+                        }
                       },
                       child: Container(
                         padding: EdgeInsets.symmetric(
@@ -2503,8 +2511,8 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            final hId = horse?.id;
-                            if (hId != null) {
+                            final hId = horse?.id ?? entry.horseId;
+                            if (hId != null && hId.isNotEmpty) {
                               controller.fetchHorseProfile(hId);
                               _showHorseDetails(context, horseName, hpVal);
                             }

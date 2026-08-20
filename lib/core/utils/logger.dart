@@ -65,13 +65,20 @@ class AppLogger {
   static String _prettyJson(dynamic data) {
     if (data == null) return 'null';
     try {
+      String jsonStr;
       if (data is String) {
         final decoded = json.decode(data);
-        return const JsonEncoder.withIndent('  ').convert(decoded);
+        jsonStr = const JsonEncoder.withIndent('  ').convert(decoded);
       } else if (data is Map || data is List) {
-        return const JsonEncoder.withIndent('  ').convert(data);
+        jsonStr = const JsonEncoder.withIndent('  ').convert(data);
+      } else {
+        jsonStr = data.toString();
       }
-      return data.toString();
+
+      if (jsonStr.length > 2000) {
+        return '${jsonStr.substring(0, 2000)}\n... [truncated ${jsonStr.length - 2000} chars]';
+      }
+      return jsonStr;
     } catch (_) {
       return data.toString();
     }
