@@ -16,15 +16,9 @@ class TermsConditionsView extends GetView<TermsConditionsController> {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Row(
-            children: [
-              Icon(Icons.arrow_back_ios, color: Colors.white, size: 16.sp),
-              Text('back'.tr, style: TextStyle(color: Colors.white, fontSize: 14.sp)),
-            ],
-          ),
+          icon: Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20.sp),
           onPressed: () => Get.back(),
         ),
-        leadingWidth: 80.w,
         title: Text(
           'terms_conditions'.tr,
           style: TextStyle(
@@ -45,7 +39,7 @@ class TermsConditionsView extends GetView<TermsConditionsController> {
         if (controller.isLoading.value) {
           return const Center(
             child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4DB6AC)),
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2DD4BF)),
             ),
           );
         }
@@ -65,7 +59,7 @@ class TermsConditionsView extends GetView<TermsConditionsController> {
                 ElevatedButton(
                   onPressed: () => controller.fetchTerms(),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4DB6AC),
+                    backgroundColor: const Color(0xFF2DD4BF),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.r),
                     ),

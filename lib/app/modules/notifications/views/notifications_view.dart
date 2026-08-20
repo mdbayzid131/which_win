@@ -17,15 +17,9 @@ class NotificationsView extends GetView<NotificationsController> {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Row(
-            children: [
-              Icon(Icons.arrow_back_ios, color: Colors.white, size: 16.sp),
-              Text('back'.tr, style: TextStyle(color: Colors.white, fontSize: 14.sp)),
-            ],
-          ),
+          icon: Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20.sp),
           onPressed: () => Get.back(),
         ),
-        leadingWidth: 80.w,
         title: Text(
           'notifications'.tr,
           style: TextStyle(
@@ -42,7 +36,7 @@ class NotificationsView extends GetView<NotificationsController> {
                 child: Text(
                   'mark_all_read'.tr,
                   style: TextStyle(
-                    color: const Color(0xFF4DB6AC),
+                    color: const Color(0xFF2DD4BF),
                     fontSize: 14.sp,
                     fontWeight: FontWeight.bold,
                   ),
@@ -64,7 +58,7 @@ class NotificationsView extends GetView<NotificationsController> {
         if (controller.isLoading.value && controller.notificationList.isEmpty) {
           return const Center(
             child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4DB6AC)),
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2DD4BF)),
             ),
           );
         }
@@ -72,7 +66,7 @@ class NotificationsView extends GetView<NotificationsController> {
         if (controller.notificationList.isEmpty) {
           return RefreshIndicator(
             onRefresh: () => controller.fetchNotifications(isRefresh: true),
-            color: const Color(0xFF4DB6AC),
+            color: const Color(0xFF2DD4BF),
             backgroundColor: const Color(0xFF0F1419),
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -98,7 +92,7 @@ class NotificationsView extends GetView<NotificationsController> {
 
         return RefreshIndicator(
           onRefresh: () => controller.fetchNotifications(isRefresh: false),
-          color: const Color(0xFF4DB6AC),
+          color: const Color(0xFF2DD4BF),
           backgroundColor: const Color(0xFF0F1419),
           child: ListView.builder(
             padding: EdgeInsets.all(16.w),
@@ -140,7 +134,7 @@ class NotificationsView extends GetView<NotificationsController> {
           color: isRead ? const Color(0xFF0F1419) : const Color(0xFF161E26),
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color: isRead ? Colors.white12 : const Color(0xFF4DB6AC).withValues(alpha: 0.3),
+            color: isRead ? Colors.white12 : const Color(0xFF2DD4BF).withValues(alpha: 0.3),
             width: isRead ? 1.0 : 1.5,
           ),
           boxShadow: [
@@ -168,8 +162,8 @@ class NotificationsView extends GetView<NotificationsController> {
                             Colors.white10,
                           ]
                         : [
-                            const Color(0xFF4DB6AC),
-                            const Color(0xFF4DB6AC).withValues(alpha: 0.5),
+                            const Color(0xFF2DD4BF),
+                            const Color(0xFF2DD4BF).withValues(alpha: 0.5),
                           ],
                   ),
                 ),

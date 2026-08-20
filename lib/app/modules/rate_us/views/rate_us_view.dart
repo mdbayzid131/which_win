@@ -15,15 +15,9 @@ class RateUsView extends GetView<RateUsController> {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Row(
-            children: [
-              Icon(Icons.arrow_back_ios, color: Colors.white, size: 16.sp),
-              Text('back'.tr, style: TextStyle(color: Colors.white, fontSize: 14.sp)),
-            ],
-          ),
+          icon: Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20.sp),
           onPressed: () => Get.back(),
         ),
-        leadingWidth: 80.w,
         title: Text(
           'rate_us'.tr,
           style: TextStyle(

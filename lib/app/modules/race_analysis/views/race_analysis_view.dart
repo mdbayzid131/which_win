@@ -18,7 +18,7 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
         if (controller.isLoading.value) {
           return const Center(
             child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4DB6AC)),
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2DD4BF)),
             ),
           );
         }
@@ -108,9 +108,10 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
                           Row(
                             children: [
                               IconButton(
-                                icon: const Icon(
-                                  Icons.arrow_back,
+                                icon: Icon(
+                                  Icons.arrow_back_ios_new,
                                   color: Colors.white,
+                                  size: 20.sp,
                                 ),
                                 onPressed: () => Get.back(),
                               ),
@@ -418,7 +419,7 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
           Text(
             percent,
             style: TextStyle(
-              color: const Color(0xFF4DB6AC),
+              color: const Color(0xFF2DD4BF),
               fontSize: 14.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -479,8 +480,8 @@ class RaceAnalysisView extends GetView<RaceAnalysisController> {
               text,
               style: TextStyle(
                 color: isSelected
-                    ? const Color(0xFF4DB6AC)
-                    : const Color(0xFF4DB6AC),
+                    ? const Color(0xFF2DD4BF)
+                    : const Color(0xFF2DD4BF),
                 fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
               ),

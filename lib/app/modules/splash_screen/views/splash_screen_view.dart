@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
@@ -30,7 +30,7 @@ class SplashScreenView extends GetView<SplashScreenController> {
                 borderRadius: BorderRadius.circular(10),
                 child: const LinearProgressIndicator(
                   backgroundColor: Color(0xFF2C2C2C),
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00FFCC)),
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2DD4BF)),
                   minHeight: 6,
                 ),
               ),

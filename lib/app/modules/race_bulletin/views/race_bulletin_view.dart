@@ -11,12 +11,12 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: const Color(0xFF0D1117),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF121212),
+        backgroundColor: const Color(0xFF0D1117),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20.sp),
           onPressed: () => Get.back(),
         ),
         title: Row(
@@ -31,14 +31,14 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                 margin: EdgeInsets.only(right: 8.w),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white24, width: 1.5),
+                  border: Border.all(color: Colors.white38, width: 1.5),
                 ),
                 child: ClipOval(
                   child: Image.network(
                     'https://flagcdn.com/w160/$flagCode.png',
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) =>
-                        const Icon(Icons.flag, color: Colors.white24, size: 14),
+                        const Icon(Icons.flag, color: Colors.white38, size: 14),
                   ),
                 ),
               );
@@ -60,7 +60,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                   Obx(
                     () => Text(
                       '${controller.raceList.length} ${'races'.tr} · ${controller.race.value?.date?.split('T').first ?? ''}',
-                      style: TextStyle(color: Colors.white38, fontSize: 12.sp),
+                      style: TextStyle(color: Colors.white70, fontSize: 12.sp),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -78,7 +78,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
           if (controller.isLoading.value) {
             return const Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4DB6AC)),
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2DD4BF)),
               ),
             );
           }
@@ -87,14 +87,14 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
             return Center(
               child: Text(
                 'no_races_meeting'.tr,
-                style: TextStyle(color: Colors.white38, fontSize: 16.sp),
+                style: TextStyle(color: Colors.white70, fontSize: 16.sp),
               ),
             );
           }
 
           return RefreshIndicator(
-            color: const Color(0xFF4DB6AC),
-            backgroundColor: const Color(0xFF0F1419),
+            color: const Color(0xFF2DD4BF),
+            backgroundColor: const Color(0xFF161B22),
             onRefresh: () => controller.fetchRaces(),
             child: ListView.builder(
               padding: EdgeInsets.all(16.w),
@@ -140,9 +140,9 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F1419),
+        color: const Color(0xFF1C2230),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.white12),
+        border: Border.all(color: Colors.white24),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.2),
@@ -167,14 +167,14 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                     height: 44.w,
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Color(0xFF004D40), Color(0xFF00796B)],
+                        colors: [Color(0xFF0D9488), Color(0xFF14B8A6)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                       borderRadius: BorderRadius.circular(10.r),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF00796B).withValues(alpha: 0.3),
+                          color: const Color(0xFF0D9488).withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),
@@ -214,8 +214,9 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                             Text(
                               raceModel.time ?? '',
                               style: TextStyle(
-                                color: Colors.white38,
+                                color: Colors.white70,
                                 fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ],
@@ -230,14 +231,14 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                             _buildInfoTag(
                               trackType,
                               _getTrackIcon(trackType),
-                              const Color(0xFF4DB6AC),
+                              const Color(0xFF2DD4BF),
                             ),
                             if (raceModel.distance != null &&
                                 raceModel.distance!.isNotEmpty)
                               _buildInfoTag(
                                 raceModel.distance!,
                                 Icons.straighten,
-                                Colors.amber[600]!,
+                                const Color(0xFFFBBF24),
                               ),
                           ],
                         ),
@@ -252,16 +253,16 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                       vertical: 6.h,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1E293B),
+                      color: const Color(0xFF1C2230),
                       borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(color: Colors.white10),
+                      border: Border.all(color: Colors.white24),
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
                           Icons.groups_rounded,
-                          color: const Color(0xFF4DB6AC),
+                          color: const Color(0xFF2DD4BF),
                           size: 16.sp,
                         ),
                         SizedBox(height: 2.h),
@@ -276,7 +277,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                         Text(
                           'runners_label'.tr,
                           style: TextStyle(
-                            color: Colors.white38,
+                            color: Colors.white70,
                             fontSize: 8.sp,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.5,
@@ -292,9 +293,9 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1E293B).withValues(alpha: 0.25),
-                  border: const Border(top: BorderSide(color: Colors.white10)),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF1C2230),
+                  border: Border(top: BorderSide(color: Colors.white24)),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -304,8 +305,8 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                           ? Icons.auto_awesome
                           : Icons.compare_arrows_rounded,
                       color: labelText.contains('Prediction')
-                          ? const Color(0xFF4DB6AC)
-                          : Colors.orangeAccent,
+                          ? const Color(0xFF2DD4BF)
+                          : const Color(0xFFFBBF24),
                       size: 16.sp,
                     ),
                     SizedBox(width: 8.w),
@@ -313,7 +314,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                       child: RichText(
                         text: TextSpan(
                           style: TextStyle(
-                            color: Colors.white70,
+                            color: Colors.white,
                             fontSize: 12.sp,
                             height: 1.3,
                           ),
@@ -322,16 +323,16 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                               text: labelText,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white54,
+                                color: Colors.white70,
                               ),
                             ),
                             TextSpan(
                               text: restMessage,
                               style: TextStyle(
                                 color: labelText.contains('Prediction')
-                                    ? const Color(0xFF4DB6AC)
-                                    : Colors.orangeAccent,
-                                fontWeight: FontWeight.w500,
+                                    ? const Color(0xFF2DD4BF)
+                                    : const Color(0xFFFBBF24),
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ],
@@ -360,7 +361,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
         icon = Icons.sensors;
         break;
       case 'FINISHED':
-        bgColor = const Color(0xFF1E293B);
+        bgColor = const Color(0xFF1C2230);
         textColor = const Color(0xFF94A3B8);
         icon = Icons.check_circle_outline;
         break;

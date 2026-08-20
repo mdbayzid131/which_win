@@ -16,15 +16,9 @@ class PrivacyPolicyView extends GetView<PrivacyPolicyController> {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: Row(
-            children: [
-              Icon(Icons.arrow_back_ios, color: Colors.white, size: 16.sp),
-              Text('back'.tr, style: TextStyle(color: Colors.white, fontSize: 14.sp)),
-            ],
-          ),
+          icon: Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20.sp),
           onPressed: () => Get.back(),
         ),
-        leadingWidth: 80.w,
         title: Text(
           'privacy_policy'.tr,
           style: TextStyle(
@@ -45,7 +39,7 @@ class PrivacyPolicyView extends GetView<PrivacyPolicyController> {
         if (controller.isLoading.value) {
           return const Center(
             child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4DB6AC)),
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2DD4BF)),
             ),
           );
         }
@@ -65,7 +59,7 @@ class PrivacyPolicyView extends GetView<PrivacyPolicyController> {
                 ElevatedButton(
                   onPressed: () => controller.fetchPrivacyPolicy(),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF4DB6AC),
+                    backgroundColor: const Color(0xFF2DD4BF),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.r),
                     ),

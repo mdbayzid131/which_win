@@ -95,27 +95,13 @@ class ContactView extends GetView<ContactController> {
     return GestureDetector(
       onTap: () => Get.back(),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
+        padding: EdgeInsets.all(8.w),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.white24, width: 1.2),
-          borderRadius: BorderRadius.circular(20.r),
+          shape: BoxShape.circle,
           color: Colors.black.withValues(alpha: 0.2),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 12.sp),
-            SizedBox(width: 6.w),
-            Text(
-              'back'.tr,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 13.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
+        child: Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 18.sp),
       ),
     );
   }

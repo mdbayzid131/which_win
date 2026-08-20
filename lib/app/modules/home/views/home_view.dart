@@ -224,7 +224,7 @@ class HomeView extends GetView<HomeController> {
                         padding: EdgeInsets.symmetric(horizontal: 16.w),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? const Color(0xFFFF6600)
+                              ? const Color(0xFF2DD4BF)
                               : const Color(0xFF1A1A1A),
                           borderRadius: BorderRadius.circular(20.r),
                           border: Border.all(
@@ -237,7 +237,7 @@ class HomeView extends GetView<HomeController> {
                         child: Text(
                           category == 'All' ? 'all'.tr : category,
                           style: TextStyle(
-                            color: Colors.white,
+                            color: isSelected ? Colors.black : Colors.white,
                             fontSize: 14.sp,
                             fontWeight: isSelected
                                 ? FontWeight.bold
@@ -262,7 +262,7 @@ class HomeView extends GetView<HomeController> {
                     child: CircularProgressIndicator(
                       color: isLiveFilter
                           ? Colors.red
-                          : const Color(0xFFFF6600),
+                          : const Color(0xFF2DD4BF),
                     ),
                   );
                 }
@@ -404,7 +404,7 @@ class HomeView extends GetView<HomeController> {
                       // decoration: BoxDecoration(
                       //   boxShadow: [
                       //     BoxShadow(
-                      //       color: const Color(0xFF4DB6AC).withOpacity(0.1),
+                      //       color: const Color(0xFF2DD4BF).withOpacity(0.1),
                       //       blurRadius: 30,
                       //       spreadRadius: 10,
                       //     ),
@@ -550,7 +550,7 @@ class HomeView extends GetView<HomeController> {
                 ),
                 child: Icon(
                   Icons.sports_soccer,
-                  color: const Color(0xFF4DB6AC),
+                  color: const Color(0xFF2DD4BF),
                   size: 24.sp,
                 ),
               ),
@@ -573,7 +573,7 @@ class HomeView extends GetView<HomeController> {
                     Text(
                       'whichwin.com',
                       style: TextStyle(
-                        color: const Color(0xFF4DB6AC),
+                        color: const Color(0xFF2DD4BF),
                         fontSize: 12.sp,
                       ),
                     ),
@@ -589,7 +589,7 @@ class HomeView extends GetView<HomeController> {
                 ),
                 child: Icon(
                   Icons.open_in_new_rounded,
-                  color: const Color(0xFF4DB6AC),
+                  color: const Color(0xFF2DD4BF),
                   size: 18.sp,
                 ),
               ),
@@ -607,7 +607,7 @@ class HomeView extends GetView<HomeController> {
     String? subtitle,
   }) {
     return ListTile(
-      leading: Icon(icon, color: const Color(0xFF4DB6AC)),
+      leading: Icon(icon, color: const Color(0xFF2DD4BF)),
       title: Text(
         title,
         style: TextStyle(color: Colors.white, fontSize: 16.sp),
@@ -616,7 +616,7 @@ class HomeView extends GetView<HomeController> {
           ? Text(
               subtitle,
               style: TextStyle(
-                color: const Color(0xFF4DB6AC).withValues(alpha: 0.7),
+                color: const Color(0xFF2DD4BF).withValues(alpha: 0.7),
                 fontSize: 11.sp,
               ),
             )
@@ -701,9 +701,9 @@ class HomeView extends GetView<HomeController> {
                             Get.delete<RateUsController>();
                           },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF00CC99),
+                      backgroundColor: const Color(0xFF2DD4BF),
                       disabledBackgroundColor: const Color(
-                        0xFF00CC99,
+                        0xFF2DD4BF,
                       ).withValues(alpha: 0.5),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.r),
@@ -854,7 +854,7 @@ class HomeView extends GetView<HomeController> {
                           ),
                           borderRadius: BorderRadius.circular(6.r),
                           border: Border.all(
-                            color: const Color(0xFFFF6600).withValues(alpha: 0.3),
+                            color: const Color(0xFF2DD4BF).withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
@@ -864,7 +864,7 @@ class HomeView extends GetView<HomeController> {
                               width: 6.w,
                               height: 6.w,
                               decoration: const BoxDecoration(
-                                color: Color(0xFFFF6600),
+                                color: Color(0xFF2DD4BF),
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -872,7 +872,7 @@ class HomeView extends GetView<HomeController> {
                             Text(
                               'LIVE',
                               style: TextStyle(
-                                color: const Color(0xFFFF6600),
+                                color: const Color(0xFF2DD4BF),
                                 fontSize: 11.sp,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -1255,7 +1255,7 @@ class HomeView extends GetView<HomeController> {
                         child: Container(
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? const Color(0xFF4DB6AC)
+                                ? const Color(0xFF2DD4BF)
                                 : (isToday
                                       ? Colors.white.withValues(alpha: 0.05)
                                       : Colors.transparent),
@@ -1263,7 +1263,7 @@ class HomeView extends GetView<HomeController> {
                             border: isToday && !isSelected
                                 ? Border.all(
                                     color: const Color(
-                                      0xFF4DB6AC,
+                                      0xFF2DD4BF,
                                     ).withValues(alpha: 0.5),
                                   )
                                 : null,
@@ -1457,12 +1457,12 @@ class HomeView extends GetView<HomeController> {
                   ),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? const Color(0xFF4DB6AC)
+                        ? const Color(0xFF2DD4BF)
                         : Colors.white.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(10.r),
                     border: Border.all(
                       color: isSelected
-                          ? const Color(0xFF4DB6AC)
+                          ? const Color(0xFF2DD4BF)
                           : Colors.white10,
                     ),
                   ),
@@ -1583,7 +1583,7 @@ class HomeView extends GetView<HomeController> {
         ),
       ),
       trailing: isSelected
-          ? const Icon(Icons.check_circle, color: Color(0xFF4DB6AC))
+          ? const Icon(Icons.check_circle, color: Color(0xFF2DD4BF))
           : const Icon(Icons.circle_outlined, color: Colors.white24),
       tileColor: isSelected
           ? Colors.white.withValues(alpha: 0.05)
@@ -1591,7 +1591,7 @@ class HomeView extends GetView<HomeController> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.r),
         side: BorderSide(
-          color: isSelected ? const Color(0xFF4DB6AC) : Colors.white10,
+          color: isSelected ? const Color(0xFF2DD4BF) : Colors.white10,
           width: 1,
         ),
       ),
@@ -1682,7 +1682,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
           color: _isExpanded
-              ? const Color(0xFF00CC99).withValues(alpha: 0.5)
+              ? const Color(0xFF2DD4BF).withValues(alpha: 0.5)
               : Colors.white12,
           width: _isExpanded ? 1.5 : 1.0,
         ),
@@ -1777,7 +1777,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                             ),
                             borderRadius: BorderRadius.circular(6.r),
                             border: Border.all(
-                              color: const Color(0xFFFF6600).withValues(alpha: 0.3),
+                              color: const Color(0xFF2DD4BF).withValues(alpha: 0.3),
                             ),
                           ),
                           child: Row(
@@ -1787,7 +1787,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                                 width: 6.w,
                                 height: 6.w,
                                 decoration: const BoxDecoration(
-                                  color: Color(0xFFFF6600),
+                                  color: Color(0xFF2DD4BF),
                                   shape: BoxShape.circle,
                                 ),
                               ),
@@ -1795,7 +1795,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                               Text(
                                 'LIVE',
                                 style: TextStyle(
-                                  color: const Color(0xFFFF6600),
+                                  color: const Color(0xFF2DD4BF),
                                   fontSize: 11.sp,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -1832,7 +1832,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                               duration: const Duration(milliseconds: 200),
                               child: Icon(
                                 Icons.arrow_forward_ios,
-                                color: const Color(0xFF00CC99),
+                                color: const Color(0xFF2DD4BF),
                                 size: 10.sp,
                               ),
                             ),
@@ -1853,7 +1853,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 20.h),
                 child: const Center(
-                  child: CircularProgressIndicator(color: Color(0xFF00CC99)),
+                  child: CircularProgressIndicator(color: Color(0xFF2DD4BF)),
                 ),
               )
             else if (_races.isEmpty)
@@ -2008,13 +2008,13 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                           vertical: 2.h,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF00CC99).withValues(alpha: 0.15),
+                          color: const Color(0xFF2DD4BF).withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(4.r),
                         ),
                         child: Text(
                           labelText,
                           style: TextStyle(
-                            color: const Color(0xFF00CC99),
+                            color: const Color(0xFF2DD4BF),
                             fontSize: 10.sp,
                             fontWeight: FontWeight.bold,
                           ),

@@ -12,7 +12,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0C1F1F),
+      backgroundColor: const Color(0xFF0D1117),
       body: SafeArea(
         child: Obx(() {
           final details = controller.raceDetails.value;
@@ -25,7 +25,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           if (controller.isLoading.value && details == null) {
             return const Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE6A817)),
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2DD4BF)),
               ),
             );
           }
@@ -60,7 +60,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     String dayStr,
   ) {
     return Container(
-      color: const Color(0xFF0C1F1F),
+      color: const Color(0xFF0D1117),
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -68,7 +68,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           // Back arrow
           GestureDetector(
             onTap: () => Get.back(),
-            child: Icon(Icons.arrow_back, color: Colors.white, size: 24.sp),
+            child: Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20.sp),
           ),
           SizedBox(width: 16.w),
 
@@ -100,10 +100,10 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       decoration: BoxDecoration(
         color: isLive
             ? Colors.red.withValues(alpha: 0.15)
-            : const Color(0xFF0C1F1F),
+            : const Color(0xFF0D1117),
         borderRadius: BorderRadius.circular(4.r),
         border: Border.all(
-          color: isLive ? Colors.red.withValues(alpha: 0.7) : Colors.white24,
+          color: isLive ? Colors.red.withValues(alpha: 0.7) : Colors.white38,
           width: 1.5,
         ),
       ),
@@ -140,7 +140,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     if (races.isEmpty) {
       return Container(
         height: 60.h,
-        color: const Color(0xFF0C1F1F),
+        color: const Color(0xFF0D1117),
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
@@ -161,7 +161,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
 
     return Container(
       height: 62.h,
-      color: const Color(0xFF0C1F1F),
+      color: const Color(0xFF0D1117),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
@@ -194,10 +194,10 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         width: 70.w,
         margin: EdgeInsets.symmetric(horizontal: 3.w),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF2D9B83) : const Color(0xFF132E2E),
+          color: isSelected ? const Color(0xFF2D9B83) : const Color(0xFF161B22),
           borderRadius: BorderRadius.circular(8.r),
           border: Border.all(
-            color: isSelected ? const Color(0xFF2D9B83) : Colors.white12,
+            color: isSelected ? const Color(0xFF2D9B83) : Colors.white24,
           ),
         ),
         alignment: Alignment.center,
@@ -205,7 +205,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           title,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: isSelected ? Colors.white : Colors.white70,
+            color: isSelected ? Colors.black : Colors.white70,
             fontSize: 12.sp,
             fontWeight: FontWeight.bold,
             height: 1.3,
@@ -241,10 +241,10 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
-        color: Color(0xFF132E2E),
+        color: Color(0xFF1C2230),
         border: Border(
-          top: BorderSide(color: Colors.white10),
-          bottom: BorderSide(color: Colors.white10),
+          top: BorderSide(color: Colors.white24),
+          bottom: BorderSide(color: Colors.white24),
         ),
       ),
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
@@ -274,24 +274,24 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                 _buildInfoChip(
                   icon: Icons.access_time_rounded,
                   label: timeVal,
-                  iconColor: const Color(0xFF4DB6AC),
+                  iconColor: const Color(0xFF2DD4BF),
                 ),
               if (distanceVal.isNotEmpty)
                 _buildInfoChip(
                   icon: Icons.straighten_rounded,
                   label: distanceVal,
-                  iconColor: const Color(0xFF4DB6AC),
+                  iconColor: const Color(0xFF2DD4BF),
                 ),
               _buildInfoChip(
                 icon: isTurf ? Icons.grass_rounded : Icons.landscape_rounded,
                 label: surfaceStr,
-                iconColor: isTurf ? Colors.lightGreenAccent : Colors.orangeAccent,
+                iconColor: isTurf ? const Color(0xFF4ADE80) : const Color(0xFFFBBF24),
               ),
               if (fieldSize != null && fieldSize > 0)
                 _buildInfoChip(
                   icon: Icons.groups_rounded,
                   label: '$fieldSize Runners',
-                  iconColor: const Color(0xFF4DB6AC),
+                  iconColor: const Color(0xFF2DD4BF),
                 ),
               if (hasPrize)
                 _buildInfoChip(
@@ -306,17 +306,17 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                 _buildInfoChip(
                   icon: Icons.sports_score_rounded,
                   label: raceType,
-                  iconColor: Colors.white70,
+                  iconColor: Colors.white.withValues(alpha: 0.9),
                   bgColor: Colors.white.withValues(alpha: 0.08),
-                  textColor: Colors.white70,
+                  textColor: Colors.white,
                 ),
               if (ageBand != null && ageBand.isNotEmpty)
                 _buildInfoChip(
                   icon: Icons.info_outline_rounded,
                   label: ageBand,
-                  iconColor: Colors.white70,
+                  iconColor: Colors.white.withValues(alpha: 0.9),
                   bgColor: Colors.white.withValues(alpha: 0.08),
-                  textColor: Colors.white70,
+                  textColor: Colors.white,
                 ),
             ],
           ),
@@ -328,8 +328,8 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
   Widget _buildInfoChip({
     required IconData icon,
     required String label,
-    Color iconColor = const Color(0xFF4DB6AC),
-    Color bgColor = const Color(0xFF1A3D3D),
+    Color iconColor = const Color(0xFF2DD4BF),
+    Color bgColor = const Color(0xFF1C2230),
     Color textColor = Colors.white,
     Color? borderColor,
   }) {
@@ -339,7 +339,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         color: bgColor,
         borderRadius: BorderRadius.circular(6.r),
         border: Border.all(
-          color: borderColor ?? Colors.white12,
+          color: borderColor ?? Colors.white24,
           width: 1,
         ),
       ),
@@ -364,7 +364,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
   // ── SUB-TAB BAR (OUTER) ───────────────────────────────────────────────────
   Widget _buildSubTabBar() {
     return Container(
-      color: const Color(0xFF0C1F1F),
+      color: const Color(0xFF0D1117),
       padding: EdgeInsets.symmetric(vertical: 8.h),
       child: Obx(() {
         final currentTab = controller.selectedTab.value;
@@ -390,7 +390,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
-              color: isSelected ? const Color(0xFFE6A817) : Colors.transparent,
+              color: isSelected ? const Color(0xFF2DD4BF) : Colors.transparent,
               width: 2.0,
             ),
           ),
@@ -398,7 +398,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? const Color(0xFFE6A817) : Colors.white54,
+            color: isSelected ? const Color(0xFF2DD4BF) : Colors.white54,
             fontSize: 13.sp,
             fontWeight: FontWeight.bold,
             letterSpacing: 0.5,
@@ -414,7 +414,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       return const Center(
         child: Text(
           'Failed to load details',
-          style: TextStyle(color: Colors.white38),
+          style: TextStyle(color: Colors.white60),
         ),
       );
     }
@@ -453,7 +453,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         return _buildBulletinTab(details);
       default:
         return const Center(
-          child: Text('Coming Soon', style: TextStyle(color: Colors.white38)),
+          child: Text('Coming Soon', style: TextStyle(color: Colors.white60)),
         );
     }
   }
@@ -468,7 +468,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
 
   Widget _buildInnerMainTabBar() {
     return Container(
-      color: const Color(0xFF0A2626),
+      color: const Color(0xFF161B22),
       child: Obx(() {
         final currentMainTab = controller.selectedMainTab.value;
         return Row(
@@ -495,7 +495,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             border: Border(
               bottom: BorderSide(
                 color: isSelected
-                    ? const Color(0xFFE6A817)
+                          ? const Color(0xFF2DD4BF)
                     : Colors.transparent,
                 width: 3.w,
               ),
@@ -505,9 +505,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? const Color(0xFFE6A817) : Colors.white60,
+              color: isSelected ? const Color(0xFF2DD4BF) : Colors.white70,
               fontSize: 13.sp,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
             ),
           ),
         ),
@@ -527,7 +527,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     ];
     return Container(
       height: 38.h,
-      color: const Color(0xFF0A2626),
+      color: const Color(0xFF161B22),
       child: Obx(() {
         final currentSubTab = controller.selectedKosuAnaliziSubTab.value;
         return ListView.builder(
@@ -544,7 +544,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                   border: Border(
                     bottom: BorderSide(
                       color: isSelected
-                          ? const Color(0xFFE6A817)
+                          ? const Color(0xFF2DD4BF)
                           : Colors.transparent,
                       width: 2.w,
                     ),
@@ -554,11 +554,11 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                 child: Text(
                   subTabs[index],
                   style: TextStyle(
-                    color: isSelected ? Colors.white : Colors.white60,
+                    color: isSelected ? Colors.black : Colors.white70,
                     fontSize: 11.sp,
                     fontWeight: isSelected
                         ? FontWeight.bold
-                        : FontWeight.normal,
+                        : FontWeight.w500,
                   ),
                 ),
               ),
@@ -573,7 +573,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     final subTabs = ['Atlar', 'Kısraklar', 'Aygırlar', 'Kısrak Babaları'];
     return Container(
       height: 38.h,
-      color: const Color(0xFF0A2626),
+      color: const Color(0xFF161B22),
       child: Obx(() {
         final currentSubTab = controller.selectedAtlarSubTab.value;
         return Row(
@@ -587,7 +587,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                     border: Border(
                       bottom: BorderSide(
                         color: isSelected
-                            ? const Color(0xFFE6A817)
+                          ? const Color(0xFF2DD4BF)
                             : Colors.transparent,
                         width: 2.w,
                       ),
@@ -597,11 +597,11 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                   child: Text(
                     subTabs[index],
                     style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.white60,
+                      color: isSelected ? Colors.black : Colors.white70,
                       fontSize: 11.sp,
                       fontWeight: isSelected
                           ? FontWeight.bold
-                          : FontWeight.normal,
+                          : FontWeight.w500,
                     ),
                   ),
                 ),
@@ -617,7 +617,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     final subTabs = ['Jokeyler', 'Aprantiler'];
     return Container(
       height: 38.h,
-      color: const Color(0xFF0A2626),
+      color: const Color(0xFF161B22),
       child: Obx(() {
         final currentSubTab = controller.selectedJokeylerSubTab.value;
         return Row(
@@ -631,7 +631,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                     border: Border(
                       bottom: BorderSide(
                         color: isSelected
-                            ? const Color(0xFFE6A817)
+                          ? const Color(0xFF2DD4BF)
                             : Colors.transparent,
                         width: 2.w,
                       ),
@@ -641,11 +641,11 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                   child: Text(
                     subTabs[index],
                     style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.white60,
+                      color: isSelected ? Colors.black : Colors.white70,
                       fontSize: 11.sp,
                       fontWeight: isSelected
                           ? FontWeight.bold
-                          : FontWeight.normal,
+                          : FontWeight.w500,
                     ),
                   ),
                 ),
@@ -666,7 +666,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       return const Center(
         child: Text(
           'No horses registered',
-          style: TextStyle(color: Colors.white38),
+          style: TextStyle(color: Colors.white60),
         ),
       );
     }
@@ -822,7 +822,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     return Column(
       children: [
         Container(
-          color: const Color(0xFF132E2E),
+          color: const Color(0xFF161B22),
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
           child: Row(
             children: [
@@ -868,7 +868,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
             itemCount: list.length,
             separatorBuilder: (context, index) =>
-                const Divider(color: Colors.white12, height: 1),
+                const Divider(color: Colors.white24, height: 1),
             itemBuilder: (context, index) {
               final item = list[index];
               return Padding(
@@ -892,7 +892,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                           Text(
                             item['date']!,
                             style: TextStyle(
-                              color: Colors.white38,
+                              color: Colors.white60,
                               fontSize: 10.sp,
                             ),
                           ),
@@ -1038,7 +1038,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     return Column(
       children: [
         Container(
-          color: const Color(0xFF0A2626),
+          color: const Color(0xFF1C2230),
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
           child: Row(
             children: [
@@ -1049,9 +1049,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               Container(
                 padding: EdgeInsets.all(6.w),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF132E2E),
+                  color: const Color(0xFF1C2230),
                   borderRadius: BorderRadius.circular(4.r),
-                  border: Border.all(color: Colors.white12),
+                  border: Border.all(color: Colors.white24),
                 ),
                 child: Icon(
                   Icons.filter_list,
@@ -1071,9 +1071,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               return Container(
                 margin: EdgeInsets.only(bottom: 12.h),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF0A2626),
+                  color: const Color(0xFF1C2230),
                   borderRadius: BorderRadius.circular(8.r),
-                  border: Border.all(color: Colors.white12),
+                  border: Border.all(color: Colors.white24),
                 ),
                 child: Column(
                   children: [
@@ -1087,7 +1087,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                               vertical: 4.h,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF132E2E),
+                              color: const Color(0xFF1C2230),
                               borderRadius: BorderRadius.circular(4.r),
                             ),
                             child: Text(
@@ -1116,7 +1116,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                                 Text(
                                   'St: ${item['st']!} | ${item['equipment']!} | ${item['weight']!}',
                                   style: TextStyle(
-                                    color: Colors.white38,
+                                    color: Colors.white70,
                                     fontSize: 11.sp,
                                   ),
                                 ),
@@ -1125,13 +1125,13 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                           ),
                           Icon(
                             Icons.keyboard_arrow_right,
-                            color: Colors.white30,
+                            color: Colors.white70,
                             size: 20.sp,
                           ),
                         ],
                       ),
                     ),
-                    const Divider(color: Colors.white12, height: 1),
+                    const Divider(color: Colors.white24, height: 1),
                     Container(
                       color: Colors.black.withValues(alpha: 0.15),
                       padding: EdgeInsets.all(12.w),
@@ -1163,7 +1163,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                                 Text(
                                   'Jokey: ${item['lastRunJockey']!}',
                                   style: TextStyle(
-                                    color: Colors.white38,
+                                    color: Colors.white70,
                                     fontSize: 10.sp,
                                   ),
                                 ),
@@ -1220,9 +1220,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
       decoration: BoxDecoration(
-        color: const Color(0xFF132E2E),
+        color: const Color(0xFF161B22),
         borderRadius: BorderRadius.circular(4.r),
-        border: Border.all(color: Colors.white12),
+        border: Border.all(color: Colors.white24),
       ),
       child: Row(
         children: [
@@ -1293,7 +1293,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     return Column(
       children: [
         Container(
-          color: const Color(0xFF132E2E),
+          color: const Color(0xFF161B22),
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
           child: Row(
             children: [
@@ -1328,7 +1328,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
             itemCount: list.length,
             separatorBuilder: (context, index) =>
-                const Divider(color: Colors.white12, height: 1),
+                const Divider(color: Colors.white24, height: 1),
             itemBuilder: (context, index) {
               final item = list[index];
               return Padding(
@@ -1352,7 +1352,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                           Text(
                             item['info']!,
                             style: TextStyle(
-                              color: Colors.white38,
+                              color: Colors.white60,
                               fontSize: 10.sp,
                             ),
                           ),
@@ -1478,7 +1478,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     return Column(
       children: [
         Container(
-          color: const Color(0xFF0A2626),
+          color: const Color(0xFF1C2230),
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
           child: Row(
             children: [
@@ -1489,9 +1489,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               Container(
                 padding: EdgeInsets.all(6.w),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF132E2E),
+                  color: const Color(0xFF161B22),
                   borderRadius: BorderRadius.circular(4.r),
-                  border: Border.all(color: Colors.white12),
+                  border: Border.all(color: Colors.white24),
                 ),
                 child: Icon(
                   Icons.filter_list,
@@ -1582,7 +1582,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                     ),
                   ),
                   Container(
-                    color: const Color(0xFF132E2E),
+                    color: const Color(0xFF161B22),
                     padding: EdgeInsets.symmetric(
                       horizontal: 12.w,
                       vertical: 6.h,
@@ -1641,9 +1641,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                   ...runners.map((runner) {
                     return Container(
                       decoration: const BoxDecoration(
-                        color: Color(0xFF0A2626),
+                        color: Color(0xFF1C2230),
                         border: Border(
-                          bottom: BorderSide(color: Colors.white10),
+                          bottom: BorderSide(color: Colors.white24),
                         ),
                       ),
                       padding: EdgeInsets.symmetric(
@@ -1681,14 +1681,14 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                                 Text(
                                   runner['age']!,
                                   style: TextStyle(
-                                    color: Colors.white38,
+                                    color: Colors.white60,
                                     fontSize: 10.sp,
                                   ),
                                 ),
                                 Text(
                                   runner['st']!,
                                   style: TextStyle(
-                                    color: Colors.white38,
+                                    color: Colors.white60,
                                     fontSize: 10.sp,
                                   ),
                                 ),
@@ -1719,7 +1719,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                                 Text(
                                   runner['subjockey']!,
                                   style: TextStyle(
-                                    color: Colors.white38,
+                                    color: Colors.white60,
                                     fontSize: 10.sp,
                                   ),
                                 ),
@@ -1788,7 +1788,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     return Column(
       children: [
         Container(
-          color: const Color(0xFF132E2E),
+          color: const Color(0xFF161B22),
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
           child: Row(
             children: [
@@ -1834,7 +1834,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
             itemCount: list.length,
             separatorBuilder: (context, index) =>
-                const Divider(color: Colors.white12, height: 1),
+                const Divider(color: Colors.white24, height: 1),
             itemBuilder: (context, index) {
               final item = list[index];
               return Padding(
@@ -1941,7 +1941,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     return Column(
       children: [
         Container(
-          color: const Color(0xFF132E2E),
+          color: const Color(0xFF161B22),
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
           child: Row(
             children: [
@@ -1998,7 +1998,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
             itemCount: list.length,
             separatorBuilder: (context, index) =>
-                const Divider(color: Colors.white12, height: 1),
+                const Divider(color: Colors.white24, height: 1),
             itemBuilder: (context, index) {
               final item = list[index];
               return Padding(
@@ -2033,7 +2033,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                           Text(
                             item['info']!,
                             style: TextStyle(
-                              color: Colors.white38,
+                              color: Colors.white60,
                               fontSize: 10.sp,
                             ),
                           ),
@@ -2124,7 +2124,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     return Column(
       children: [
         Container(
-          color: const Color(0xFF132E2E),
+          color: const Color(0xFF161B22),
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
           child: Row(
             children: [
@@ -2181,7 +2181,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
             itemCount: list.length,
             separatorBuilder: (context, index) =>
-                const Divider(color: Colors.white12, height: 1),
+                const Divider(color: Colors.white24, height: 1),
             itemBuilder: (context, index) {
               final item = list[index];
               return Padding(
@@ -2216,7 +2216,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                           Text(
                             item['info']!,
                             style: TextStyle(
-                              color: Colors.white38,
+                              color: Colors.white60,
                               fontSize: 10.sp,
                             ),
                           ),
@@ -2301,12 +2301,12 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       return Container(
         margin: EdgeInsets.only(bottom: 12.h),
         decoration: BoxDecoration(
-          color: const Color(0xFF112828),
+          color: const Color(0xFF161B22),
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
             color: isExpanded
-                ? const Color(0xFFE6A817).withValues(alpha: 0.5)
-                : Colors.white12,
+                ? const Color(0xFF2DD4BF).withValues(alpha: 0.5)
+                : Colors.white24,
             width: isExpanded ? 1.5 : 1.0,
           ),
           boxShadow: [
@@ -2337,7 +2337,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(6.r),
-                            border: Border.all(color: Colors.white12),
+                            border: Border.all(color: Colors.white24),
                           ),
                           alignment: Alignment.center,
                           child: Text(
@@ -2404,7 +2404,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                               if (equipmentText.isNotEmpty) equipmentText,
                             ].join('  '),
                             style: TextStyle(
-                              color: Colors.white38,
+                              color: Colors.white60,
                               fontSize: 11.sp,
                             ),
                           ),
@@ -2471,7 +2471,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                           Text(
                             'Trainer: $trainerName',
                             style: TextStyle(
-                              color: Colors.white38,
+                              color: Colors.white60,
                               fontSize: 11.sp,
                             ),
                             maxLines: 1,
@@ -2502,7 +2502,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                         ),
                         decoration: const BoxDecoration(
                           border: Border(
-                            left: BorderSide(color: Colors.white10),
+                            left: BorderSide(color: Colors.white24),
                           ),
                         ),
                         child: Icon(
@@ -2519,7 +2519,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
 
             // Expanded detail section (reused from original code)
             if (isExpanded) ...[
-              const Divider(color: Colors.white12, height: 1),
+              const Divider(color: Colors.white24, height: 1),
               Padding(
                 padding: EdgeInsets.all(14.w),
                 child: Column(
@@ -2554,7 +2554,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                               children: [
                                 const TextSpan(
                                   text: 'PERFORMANCE: ',
-                                  style: TextStyle(color: Colors.white38),
+                                  style: TextStyle(color: Colors.white60),
                                 ),
                                 TextSpan(
                                   text:
@@ -2578,7 +2578,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                               vertical: 8.h,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF132E2E),
+                              color: const Color(0xFF161B22),
                               borderRadius: BorderRadius.circular(8.r),
                             ),
                             child: Text(
@@ -2597,7 +2597,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                     // Show progress bars of suitability under expanded view for premium users
                     if (isPremium) ...[
                       SizedBox(height: 16.h),
-                      const Divider(color: Colors.white12, height: 1),
+                      const Divider(color: Colors.white24, height: 1),
                       SizedBox(height: 12.h),
                       _buildSuitabilityRow(
                         'Going Suitability',
@@ -2657,7 +2657,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       return Center(
         child: Text(
           'No horses registered',
-          style: const TextStyle(color: Colors.white38),
+          style: const TextStyle(color: Colors.white60),
         ),
       );
     }
@@ -2717,10 +2717,10 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       return Container(
         margin: EdgeInsets.only(bottom: 12.h),
         decoration: BoxDecoration(
-          color: const Color(0xFF132E2E),
+          color: const Color(0xFF161B22),
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color: isExpanded ? const Color(0xFFE6A817) : Colors.white10,
+            color: isExpanded ? const Color(0xFFE6A817) : Colors.white24,
             width: isExpanded ? 1.2 : 1.0,
           ),
         ),
@@ -2737,7 +2737,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                       width: 36.w,
                       height: 36.w,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF0A2626),
+                        color: const Color(0xFF1C2230),
                         borderRadius: BorderRadius.circular(8.r),
                         border: Border.all(
                           color: const Color(0xFF2D9B83).withValues(alpha: 0.3),
@@ -2789,7 +2789,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               ),
             ),
             if (isExpanded) ...[
-              const Divider(color: Colors.white10, height: 1),
+              const Divider(color: Colors.white24, height: 1),
               Padding(
                 padding: EdgeInsets.all(16.w),
                 child: Column(
@@ -2916,7 +2916,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFF132E2E), Color(0xFF0A2626)],
+                colors: [Color(0xFF161B22), Color(0xFF1C2230)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -2987,10 +2987,10 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
 
             if (rank == 1) {
               rankBgColor = const Color(0xFFE6A817); // Gold
-              rankTextColor = const Color(0xFF0C1F1F);
+              rankTextColor = const Color(0xFF0D1117);
             } else if (rank == 2) {
               rankBgColor = const Color(0xFF94A3B8); // Silver
-              rankTextColor = const Color(0xFF0C1F1F);
+              rankTextColor = const Color(0xFF0D1117);
             } else if (rank == 3) {
               rankBgColor = const Color(0xFFCD7F32); // Bronze
             } else {
@@ -3031,7 +3031,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           Text(
             '* Olasılıklar; HP, kazanç, pist uyumu, jokey geçmişi ve ortak koşu geçmişinden hesaplanmıştır.',
             style: TextStyle(
-              color: Colors.white24,
+              color: Colors.white38,
               fontSize: 11.sp,
               fontStyle: FontStyle.italic,
             ),
@@ -3074,9 +3074,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: const Color(0xFF132E2E),
+        color: const Color(0xFF161B22),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.white10),
+        border: Border.all(color: Colors.white24),
       ),
       child: Column(
         children: [
@@ -3133,7 +3133,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                 height: 6.h,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.white10,
+                  color: Colors.white24,
                   borderRadius: BorderRadius.circular(3.r),
                 ),
               ),
@@ -3162,7 +3162,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     if (controller.isStatsLoading.value && stats == null) {
       return const Center(
         child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE6A817)),
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2DD4BF)),
         ),
       );
     }
@@ -3171,7 +3171,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       return const Center(
         child: Text(
           'No statistics available',
-          style: TextStyle(color: Colors.white38),
+          style: TextStyle(color: Colors.white60),
         ),
       );
     }
@@ -3239,9 +3239,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: const Color(0xFF132E2E),
+        color: const Color(0xFF161B22),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.white10),
+        border: Border.all(color: Colors.white24),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -3303,7 +3303,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                       borderRadius: BorderRadius.circular(2.r),
                       child: LinearProgressIndicator(
                         value: item.value,
-                        backgroundColor: Colors.white12,
+                        backgroundColor: Colors.white24,
                         valueColor: const AlwaysStoppedAnimation<Color>(
                           Color(0xFF2D9B83),
                         ),
@@ -3328,7 +3328,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         Text(
           title,
           style: TextStyle(
-            color: Colors.white38,
+            color: Colors.white60,
             fontSize: 10.sp,
             fontWeight: FontWeight.bold,
           ),
@@ -3352,7 +3352,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       borderRadius: BorderRadius.circular(2.r),
       child: LinearProgressIndicator(
         value: value.clamp(0.0, 1.0),
-        backgroundColor: Colors.white12,
+        backgroundColor: Colors.white24,
         valueColor: AlwaysStoppedAnimation<Color>(color),
         minHeight: 4.h,
       ),
@@ -3373,7 +3373,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           width: 120.w,
           child: Text(
             label,
-            style: TextStyle(color: Colors.white38, fontSize: 11.sp),
+            style: TextStyle(color: Colors.white60, fontSize: 11.sp),
           ),
         ),
         SizedBox(width: 8.w),
@@ -3384,7 +3384,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           child: Text(
             score != null ? score.toStringAsFixed(0) : 'N/A',
             style: TextStyle(
-              color: score != null ? barColor : Colors.white24,
+              color: score != null ? barColor : Colors.white38,
               fontSize: 11.sp,
               fontWeight: FontWeight.bold,
             ),
@@ -3403,13 +3403,13 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           return Container(
             height: Get.height * 0.85,
             decoration: BoxDecoration(
-              color: const Color(0xFF0C1F1F),
+              color: const Color(0xFF0D1117),
               borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-              border: Border.all(color: Colors.white12),
+              border: Border.all(color: Colors.white24),
             ),
             child: const Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE6A817)),
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2DD4BF)),
               ),
             ),
           );
@@ -3420,14 +3420,14 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           return Container(
             height: Get.height * 0.85,
             decoration: BoxDecoration(
-              color: const Color(0xFF0C1F1F),
+              color: const Color(0xFF0D1117),
               borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-              border: Border.all(color: Colors.white12),
+              border: Border.all(color: Colors.white24),
             ),
             child: Center(
               child: Text(
                 'Failed to load career profile',
-                style: TextStyle(color: Colors.white38, fontSize: 14.sp),
+                style: TextStyle(color: Colors.white60, fontSize: 14.sp),
               ),
             ),
           );
@@ -3458,9 +3458,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         return Container(
           height: Get.height * 0.85,
           decoration: BoxDecoration(
-            color: const Color(0xFF0C1F1F),
+            color: const Color(0xFF0D1117),
             borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-            border: Border.all(color: Colors.white12),
+            border: Border.all(color: Colors.white24),
           ),
           padding: EdgeInsets.all(20.w),
           child: SafeArea(
@@ -3487,7 +3487,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                           Text(
                             '${horse.age ?? 4}yo ${horse.color ?? "d"} · ${horse.country ?? "TR"}',
                             style: TextStyle(
-                              color: Colors.white38,
+                              color: Colors.white60,
                               fontSize: 13.sp,
                             ),
                           ),
@@ -3497,7 +3497,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                     IconButton(
                       icon: Icon(
                         Icons.close,
-                        color: Colors.white38,
+                        color: Colors.white60,
                         size: 24.sp,
                       ),
                       onPressed: () => Get.back(),
@@ -3509,9 +3509,9 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                   width: double.infinity,
                   padding: EdgeInsets.symmetric(vertical: 12.h),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF0A2626),
+                    color: const Color(0xFF1C2230),
                     borderRadius: BorderRadius.circular(8.r),
-                    border: Border.all(color: const Color(0xFF132E2E)),
+                    border: Border.all(color: const Color(0xFF161B22)),
                   ),
                   child: Center(
                     child: Text(
@@ -3548,7 +3548,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                 Text(
                   'RACE HISTORY (LAST 6)',
                   style: TextStyle(
-                    color: Colors.white38,
+                    color: Colors.white60,
                     fontSize: 12.sp,
                     fontWeight: FontWeight.bold,
                   ),
@@ -3592,7 +3592,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: const Color(0xFF112828),
+        color: const Color(0xFF161B22),
         borderRadius: BorderRadius.circular(8.r),
       ),
       child: Column(
@@ -3600,7 +3600,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         children: [
           Text(
             title,
-            style: TextStyle(color: Colors.white38, fontSize: 11.sp),
+            style: TextStyle(color: Colors.white60, fontSize: 11.sp),
           ),
           SizedBox(height: 4.h),
           Text(
@@ -3623,7 +3623,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         Text(
           title,
           style: TextStyle(
-            color: Colors.white38,
+            color: Colors.white60,
             fontSize: 10.sp,
             fontWeight: FontWeight.bold,
           ),
@@ -3678,12 +3678,12 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               SizedBox(width: 8.w),
               Text(
                 subtitle,
-                style: TextStyle(color: Colors.white38, fontSize: 11.sp),
+                style: TextStyle(color: Colors.white60, fontSize: 11.sp),
               ),
             ],
           ),
           SizedBox(height: 8.h),
-          const Divider(color: Colors.white12, height: 1),
+          const Divider(color: Colors.white24, height: 1),
         ],
       ),
     );
@@ -3731,7 +3731,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             Text(
               description,
               style: TextStyle(
-                color: Colors.white38,
+                color: Colors.white60,
                 fontSize: 12.sp,
                 height: 1.4,
               ),
@@ -3813,7 +3813,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       Container(
         padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
         decoration: BoxDecoration(
-          color: const Color(0xFF112828),
+          color: const Color(0xFF161B22),
           borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
           border: Border.all(
             color: const Color(0xFFE6A817).withValues(alpha: 0.2),
@@ -3828,7 +3828,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                 width: 40.w,
                 height: 4.h,
                 decoration: BoxDecoration(
-                  color: Colors.white24,
+                  color: Colors.white38,
                   borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
@@ -3888,7 +3888,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                 onTap: () => Get.back(),
                 child: Text(
                   'Maybe later',
-                  style: TextStyle(color: Colors.white38, fontSize: 13.sp),
+                  style: TextStyle(color: Colors.white60, fontSize: 13.sp),
                 ),
               ),
             ],
@@ -4009,7 +4009,7 @@ class HorseAnalysisView extends GetView<RaceDetailsController> {
     const mainView = RaceDetailsView();
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0C1F1F),
+      backgroundColor: const Color(0xFF0D1117),
       body: SafeArea(
         child: Obx(() {
           final details = controller.raceDetails.value;
@@ -4053,7 +4053,7 @@ class HorseAnalysisView extends GetView<RaceDetailsController> {
   // Unified clean header
   Widget _buildHeader(BuildContext context, String locationName) {
     return Container(
-      color: const Color(0xFF0A2626),
+      color: const Color(0xFF1C2230),
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -4081,7 +4081,7 @@ class HorseAnalysisView extends GetView<RaceDetailsController> {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF132E2E),
+                  color: const Color(0xFF161B22),
                   borderRadius: BorderRadius.circular(12.r),
                   border: Border.all(
                     color: const Color(0xFF2D9B83).withValues(alpha: 0.3),
@@ -4136,7 +4136,7 @@ class HorseAnalysisView extends GetView<RaceDetailsController> {
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
-        color: const Color(0xFF0A2626),
+        color: const Color(0xFF1C2230),
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: Row(
@@ -4163,7 +4163,7 @@ class HorseAnalysisView extends GetView<RaceDetailsController> {
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? Colors.white : Colors.white60,
+              color: isSelected ? Colors.black : Colors.white60,
               fontSize: 12.sp,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
@@ -4201,17 +4201,17 @@ class HorseAnalysisView extends GetView<RaceDetailsController> {
               decoration: BoxDecoration(
                 color: isSelected
                     ? const Color(0xFF2D9B83)
-                    : const Color(0xFF132E2E),
+                    : const Color(0xFF161B22),
                 borderRadius: BorderRadius.circular(19.r),
                 border: Border.all(
-                  color: isSelected ? Colors.transparent : Colors.white10,
+                  color: isSelected ? Colors.transparent : Colors.white24,
                 ),
               ),
               alignment: Alignment.center,
               child: Text(
                 title,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.white60,
+                  color: isSelected ? Colors.black : Colors.white60,
                   fontSize: 12.sp,
                   fontWeight: FontWeight.bold,
                 ),
@@ -4241,9 +4241,9 @@ class HorseAnalysisView extends GetView<RaceDetailsController> {
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
-        color: const Color(0xFF132E2E),
+        color: const Color(0xFF161B22),
         borderRadius: BorderRadius.circular(8.r),
-        border: Border.all(color: Colors.white10),
+        border: Border.all(color: Colors.white24),
       ),
       child: Row(
         children: [
@@ -4297,18 +4297,18 @@ class HorseAnalysisView extends GetView<RaceDetailsController> {
               padding: EdgeInsets.symmetric(horizontal: 12.w),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? const Color(0xFFE6A817).withValues(alpha: 0.15)
+                    ? const Color(0xFF2DD4BF)
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(8.r),
                 border: Border.all(
-                  color: isSelected ? const Color(0xFFE6A817) : Colors.white10,
+                  color: isSelected ? const Color(0xFF2DD4BF) : Colors.white24,
                 ),
               ),
               alignment: Alignment.center,
               child: Text(
                 subTabs[index],
                 style: TextStyle(
-                  color: isSelected ? const Color(0xFFE6A817) : Colors.white60,
+                  color: isSelected ? Colors.black : Colors.white60,
                   fontSize: 11.sp,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 ),

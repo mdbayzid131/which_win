@@ -52,7 +52,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
                     if (controller.plans.isEmpty) {
                       return const Center(
                         child: CircularProgressIndicator(
-                          color: Color(0xFF00CC99),
+                          color: Color(0xFF2DD4BF),
                         ),
                       );
                     }
@@ -122,7 +122,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
               return Container(
                 color: Colors.black54,
                 child: const Center(
-                  child: CircularProgressIndicator(color: Color(0xFF00CC99)),
+                  child: CircularProgressIndicator(color: Color(0xFF2DD4BF)),
                 ),
               );
             }
@@ -137,27 +137,13 @@ class SubscriptionView extends GetView<SubscriptionController> {
     return GestureDetector(
       onTap: () => Get.back(),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
+        padding: EdgeInsets.all(8.w),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.white24, width: 1.2),
-          borderRadius: BorderRadius.circular(20.r),
+          shape: BoxShape.circle,
           color: Colors.black.withValues(alpha: 0.2),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 12.sp),
-            SizedBox(width: 6.w),
-            Text(
-              'back'.tr,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 13.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
+        child: Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 18.sp),
       ),
     );
   }
@@ -178,7 +164,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
         Text(
           "WIN ",
           style: TextStyle(
-            color: const Color(0xFF00CC99),
+            color: const Color(0xFF2DD4BF),
             fontSize: 22.sp,
             fontWeight: FontWeight.w900,
             letterSpacing: 0.5,
@@ -235,7 +221,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
                         Center(
                           child: Icon(
                             Icons.psychology_rounded,
-                            color: const Color(0xFF00CC99),
+                            color: const Color(0xFF2DD4BF),
                             size: 64.sp,
                           ),
                         ),
@@ -408,7 +394,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
             color: const Color(0xFF0F1419),
             borderRadius: BorderRadius.circular(16.r),
             border: Border.all(
-              color: isSelected ? const Color(0xFF00CC99) : Colors.white12,
+              color: isSelected ? const Color(0xFF2DD4BF) : Colors.white12,
               width: 1.5,
             ),
           ),
@@ -419,7 +405,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
                 isSelected
                     ? Icons.check_circle_rounded
                     : Icons.radio_button_off_outlined,
-                color: isSelected ? const Color(0xFF00CC99) : Colors.white54,
+                color: isSelected ? const Color(0xFF2DD4BF) : Colors.white54,
                 size: 24.sp,
               ),
               SizedBox(width: 16.w),
@@ -433,7 +419,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
                       plan.name ?? '',
                       style: TextStyle(
                         color: isSelected
-                            ? const Color(0xFF00CC99)
+                            ? const Color(0xFF2DD4BF)
                             : Colors.white,
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
@@ -478,12 +464,12 @@ class SubscriptionView extends GetView<SubscriptionController> {
           child: ElevatedButton(
             onPressed: () => controller.subscribe(),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF00CC99),
+              backgroundColor: const Color(0xFF2DD4BF),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16.r),
               ),
               elevation: 8,
-              shadowColor: const Color(0xFF00CC99).withValues(alpha: 0.4),
+              shadowColor: const Color(0xFF2DD4BF).withValues(alpha: 0.4),
             ),
             child: Text(
               'subscribe_now'.tr,
