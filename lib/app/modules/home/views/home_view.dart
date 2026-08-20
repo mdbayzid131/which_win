@@ -10,6 +10,7 @@ import 'package:which_win/data/models/race_model.dart';
 import 'package:which_win/data/models/meeting_model.dart';
 import 'package:which_win/data/repositories/race_repository.dart';
 import 'package:which_win/core/services/storage_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
@@ -471,27 +472,130 @@ class HomeView extends GetView<HomeController> {
                   'language'.tr,
                   () => _showLanguageSelectionBottomSheet(),
                 ),
+                _buildWhichWinFootballItem(),
               ],
             ),
           ),
           // Drawer Footer
-          Padding(
+          Obx(() => Padding(
             padding: EdgeInsets.all(20.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${'version'.tr} 2.1.8',
+                  '${'version'.tr} ${controller.appVersion.value.isNotEmpty ? controller.appVersion.value : '...'}',
                   style: TextStyle(color: Colors.white38, fontSize: 12.sp),
                 ),
+                SizedBox(height: 2.h),
                 Text(
-                  'er-1def2-ddoewrf-4324-sd',
+                  controller.deviceId.value.isNotEmpty
+                      ? controller.deviceId.value
+                      : '...',
                   style: TextStyle(color: Colors.white24, fontSize: 10.sp),
                 ),
               ],
             ),
-          ),
+          )),
         ],
+      ),
+    );
+  }
+
+  Widget _buildWhichWinFootballItem() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+      child: GestureDetector(
+        onTap: () async {
+          const url = 'https://www.whichwin.com';
+          final uri = Uri.parse(url);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          }
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF1A3A2A), Color(0xFF0D2E1F)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(14.r),
+            border: Border.all(
+              color: const Color(0xFF2D9B83).withValues(alpha: 0.5),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF2D9B83).withValues(alpha: 0.12),
+                blurRadius: 12,
+                spreadRadius: 1,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              // Football icon badge
+              Container(
+                width: 44.w,
+                height: 44.w,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF2D9B83).withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: const Color(0xFF2D9B83).withValues(alpha: 0.4),
+                    width: 1.5,
+                  ),
+                ),
+                child: Icon(
+                  Icons.sports_soccer,
+                  color: const Color(0xFF4DB6AC),
+                  size: 24.sp,
+                ),
+              ),
+              SizedBox(width: 14.w),
+              // Text info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Which Win Football',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                    SizedBox(height: 3.h),
+                    Text(
+                      'whichwin.com',
+                      style: TextStyle(
+                        color: const Color(0xFF4DB6AC),
+                        fontSize: 12.sp,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Arrow with external link icon
+              Container(
+                padding: EdgeInsets.all(6.w),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF2D9B83).withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Icon(
+                  Icons.open_in_new_rounded,
+                  color: const Color(0xFF4DB6AC),
+                  size: 18.sp,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:get/get.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:which_win/app/routes/app_pages.dart';
 import 'package:which_win/config/constants/storage_constants.dart';
 import 'package:which_win/core/services/push_notification_service.dart';
@@ -13,6 +14,8 @@ import 'package:which_win/data/repositories/notification_repository.dart';
 class SplashScreenController extends GetxController {
   final AuthRepo _authRepo = Get.find<AuthRepo>();
 
+  final appVersion = ''.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -21,6 +24,12 @@ class SplashScreenController extends GetxController {
 
   Future<void> _initializeApp() async {
     try {
+      // 0. Load app version first (before any navigation)
+      try {
+        final info = await PackageInfo.fromPlatform();
+        appVersion.value = info.version;
+      } catch (_) {}
+
       // 1. Get Device ID
       final deviceId = await DeviceHelper.getDeviceId();
       Helpers.debug('Device ID: $deviceId');

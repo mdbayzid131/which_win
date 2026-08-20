@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:which_win/app/modules/calendar/controllers/calendar_controller.dart';
 import 'package:which_win/core/services/api_checker.dart';
+import 'package:which_win/core/utils/device_helper.dart';
 import 'package:which_win/data/models/race_model.dart';
 import 'package:which_win/data/models/meeting_model.dart';
 import 'package:which_win/data/repositories/race_repository.dart';
@@ -22,6 +24,10 @@ class HomeController extends GetxController {
   final isLoadMore = false.obs;
   final meta = Rxn<RaceMeta>();
   final searchQuery = ''.obs;
+
+  // App info
+  final appVersion = ''.obs;
+  final deviceId = ''.obs;
 
   List<MeetingModel> get filteredMeetings {
     if (selectedCategory.value == 'All') {
@@ -63,6 +69,21 @@ class HomeController extends GetxController {
     });
     fetchLocations();
     fetchRaces();
+    _loadAppInfo();
+  }
+
+  Future<void> _loadAppInfo() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      appVersion.value = '${info.version}+${info.buildNumber}';
+    } catch (_) {
+      appVersion.value = '1.0.0';
+    }
+    try {
+      deviceId.value = await DeviceHelper.getDeviceId();
+    } catch (_) {
+      deviceId.value = 'unknown';
+    }
   }
 
   Future<void> fetchLocations() async {

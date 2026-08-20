@@ -56,7 +56,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     );
   }
 
-  // ── APP BAR (exact match to reference) ─────────────────────────────────
+  // ── APP BAR ─────────────────────────────────────────────────────────────
   Widget _buildAppBar(
     BuildContext context,
     String locationName,
@@ -66,6 +66,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       color: const Color(0xFF0C1F1F),
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Back arrow
           GestureDetector(
@@ -74,64 +75,69 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           ),
           SizedBox(width: 16.w),
 
-          // City name (bold, large)
-          Text(
-            locationName,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 22.sp,
-              fontWeight: FontWeight.bold,
+          // Location name
+          Expanded(
+            child: Text(
+              locationName,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 22.sp,
+                fontWeight: FontWeight.bold,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
 
-          const Spacer(),
-
-          // Swirl logo icon
-          ClipOval(
-            child: Image.asset(
-              'assets/images/swirl_logo.png',
-              width: 36.w,
-              height: 36.w,
-              fit: BoxFit.cover,
-            ),
-          ),
-          SizedBox(width: 10.w),
-
-          // L badge
-          _buildAppBarBadge('L'),
-          SizedBox(width: 6.w),
-
-          // Day number badge
-          _buildAppBarBadge(dayStr),
-          SizedBox(width: 6.w),
-
-          // TR badge
-          _buildAppBarBadge('TR'),
+          // Day number badge (right side)
+          if (dayStr.isNotEmpty) _buildAppBarBadge(dayStr),
         ],
       ),
     );
   }
 
-  Widget _buildAppBarBadge(String label) {
+
+  Widget _buildAppBarBadge(String label, {bool isLive = false}) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: const Color(0xFF0C1F1F),
+        color: isLive
+            ? Colors.red.withValues(alpha: 0.15)
+            : const Color(0xFF0C1F1F),
         borderRadius: BorderRadius.circular(4.r),
-        border: Border.all(color: Colors.white24, width: 1.5),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 14.sp,
-          fontWeight: FontWeight.bold,
+        border: Border.all(
+          color: isLive ? Colors.red.withValues(alpha: 0.7) : Colors.white24,
+          width: 1.5,
         ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (isLive) ...[
+            Container(
+              width: 5.w,
+              height: 5.w,
+              decoration: const BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+            ),
+            SizedBox(width: 4.w),
+          ],
+          Text(
+            label,
+            style: TextStyle(
+              color: isLive ? Colors.red : Colors.white,
+              fontSize: 13.sp,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  // ── WEATHER & TRACK INFO BANNER (matching reference) ────────────────────
+  // ── WEATHER & TRACK INFO BANNER ────────────────────────────────────
   Widget _buildWeatherBanner(RaceDetailsData? details) {
     final locationName = details?.location ?? 'Ankara';
     final trackType = details?.trackType ?? 'Turf';
@@ -147,7 +153,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '$locationName 75. Yıl Hipodromu',
+            '$locationName Racecourse',
             style: TextStyle(
               color: Colors.white,
               fontSize: 13.sp,
@@ -156,7 +162,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           ),
           SizedBox(height: 2.h),
           Text(
-            'Açık: 26°  Nem: %39  Kum: Normal  Çim: ${isTurf ? "Normal" : "İyi"}',
+            'Track: ${isTurf ? "Turf (Good)" : "Dirt (Normal)"}',
             style: TextStyle(
               color: const Color(0xFF2D9B83),
               fontSize: 12.sp,
@@ -254,17 +260,19 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     RaceDetailsData? details,
     RaceModel? currentRace,
   ) {
-    final timeVal = details?.time ?? currentRace?.time ?? '14:30';
-    final distanceVal = details?.distance ?? currentRace?.distance ?? '1900m';
-    final trackType = details?.trackType ?? currentRace?.trackType ?? 'Çim';
+    final timeVal = details?.time ?? currentRace?.time ?? '';
+    final distanceVal = details?.distance ?? currentRace?.distance ?? '';
+    final trackType = details?.trackType ?? currentRace?.trackType ?? 'Turf';
     final isTurf =
         trackType.toLowerCase().contains('turf') ||
         trackType.toLowerCase().contains('çim');
-    final surfaceStr = isTurf ? 'Çim' : 'Kum';
-    final conditionsText = '3 ve Yukarı İngilizler / ŞARTLI 3/Y1 / EİD:1.53.13';
+    final surfaceStr = isTurf ? 'Turf' : 'Dirt';
+    final raceName = details?.name ?? currentRace?.name ?? 'Race';
+    final prize = details?.prize ?? currentRace?.prize;
 
-    final prizeBreakdown =
-        '1.)800.000   2.)400.000   3.)200.000   4.)100.000   5.)50.000';
+    final String prizeText = (prize != null && prize.isNotEmpty && prize != 'N/A')
+        ? 'Prize: $prize'
+        : '';
 
     return Column(
       children: [
@@ -279,7 +287,12 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
           ),
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
           child: Text(
-            '$timeVal  $distanceVal $surfaceStr / $conditionsText',
+            [
+              if (timeVal.isNotEmpty) timeVal,
+              if (distanceVal.isNotEmpty) distanceVal,
+              surfaceStr,
+              raceName,
+            ].join('  ·  '),
             style: TextStyle(
               color: Colors.white70,
               fontSize: 11.sp,
@@ -290,23 +303,24 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        Container(
-          width: double.infinity,
-          decoration: const BoxDecoration(
-            color: Color(0xFF112828),
-            border: Border(bottom: BorderSide(color: Colors.white10)),
-          ),
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
-          child: Text(
-            prizeBreakdown,
-            style: TextStyle(
-              color: const Color(0xFFE6A817),
-              fontSize: 11.sp,
-              fontWeight: FontWeight.bold,
+        if (prizeText.isNotEmpty)
+          Container(
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              color: Color(0xFF112828),
+              border: Border(bottom: BorderSide(color: Colors.white10)),
             ),
-            textAlign: TextAlign.center,
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
+            child: Text(
+              prizeText,
+              style: TextStyle(
+                color: const Color(0xFFE6A817),
+                fontSize: 11.sp,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ),
-        ),
       ],
     );
   }
@@ -2223,28 +2237,26 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         ? '${entry.weight!.toStringAsFixed(0)} kg'
         : '56 kg';
 
-    // Demo saddle vs. gate numbers
-    final gateNumber = entry.draw ?? (index + 1);
-    final saddleNumbers = [75, 112, 98, 66, 54, 87, 43, 29, 12, 105];
-    final saddleNumber = saddleNumbers[index % saddleNumbers.length];
+    // Gate vs Saddle number
+    final gateNumber = entry.draw ?? entry.number ?? (index + 1);
+    final saddleNumber = entry.number;
 
-    // Demo/API earnings representation
-    final earnings = horse?.totalEarnings ?? (650000.0 - (index * 45000.0));
-    final earningsText = 'Earnings: ${_formatCurrency(earnings)}';
+    // Earnings representation
+    final earnings = horse?.totalEarnings;
+    final earningsText = (earnings != null && earnings > 0)
+        ? 'Earnings: ${_formatCurrency(earnings)}'
+        : 'Earnings: N/A';
 
     // ST: Gate, KGS: Days since last run, HP: Horse power rating
     final stVal = gateNumber;
-    final kgsVal = [14, 23, 12, 257, 33, 52, 9, 18, 45, 60][index % 10];
-    final hpVal =
-        entry.horsePower?.toInt() ??
-        entry.normalizedScore?.toInt() ??
-        [95, 52, 88, 96, 72, 87, 68, 79][index % 8];
+    final kgsVal = entry.lastRun ?? '-';
+    final hpVal = entry.horsePower?.toInt() ?? entry.normalizedScore?.toInt() ?? 0;
 
-    // EİD: Expected time and ID
-    final expectedTime = '1.55.${(20 + index * 4).toString().padLeft(2, '0')}';
-    final horseIdStr = (horse?.id != null && horse!.id!.length >= 6)
-        ? horse.id!.substring(0, 6)
-        : (horse?.id ?? 'N/A');
+    final equipmentText = entry.headgear ?? '';
+    final bool isApprentice = jockeyName.toLowerCase().startsWith('ap ');
+    final displayJockeyName = isApprentice
+        ? jockeyName.substring(3).trim()
+        : jockeyName;
 
     return Obx(() {
       final isExpanded = controller.expandedIndex.value == index;
@@ -2279,7 +2291,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                 padding: EdgeInsets.all(12.w),
                 child: Row(
                   children: [
-                    // Column 1: Gate box (light) and Saddle box (dark theme green/teal)
+                    // Column 1: Gate box (light) and optional Saddle box (dark theme green/teal)
                     Column(
                       children: [
                         // Gate Number Box
@@ -2301,32 +2313,30 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                             ),
                           ),
                         ),
-                        SizedBox(height: 6.h),
-                        // Saddle Number Box
-                        Container(
-                          width: 38.w,
-                          height: 28.h,
-                          decoration: BoxDecoration(
-                            color: const Color(
-                              0xFF004D40,
-                            ), // Dark green background
-                            borderRadius: BorderRadius.circular(6.r),
-                            border: Border.all(
-                              color: const Color(
-                                0xFFD4AF37,
-                              ).withValues(alpha: 0.4),
+                        if (saddleNumber != null && saddleNumber != gateNumber) ...[
+                          SizedBox(height: 6.h),
+                          // Saddle Number Box
+                          Container(
+                            width: 38.w,
+                            height: 28.h,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF004D40),
+                              borderRadius: BorderRadius.circular(6.r),
+                              border: Border.all(
+                                color: const Color(0xFFD4AF37).withValues(alpha: 0.4),
+                              ),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              '$saddleNumber',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w900,
+                              ),
                             ),
                           ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            '$saddleNumber',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 13.sp,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                        ),
+                        ],
                       ],
                     ),
                     SizedBox(width: 12.w),
@@ -2350,7 +2360,13 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                           ),
                           SizedBox(height: 4.h),
                           Text(
-                            '$weightText  $age $color $sex  ${index % 2 == 0 ? "KG DB SK" : "DB SK"}',
+                            [
+                              if (weightText.isNotEmpty) weightText,
+                              if (age.isNotEmpty) age,
+                              if (color.isNotEmpty) color,
+                              if (sex.isNotEmpty) sex,
+                              if (equipmentText.isNotEmpty) equipmentText,
+                            ].join('  '),
                             style: TextStyle(
                               color: Colors.white38,
                               fontSize: 11.sp,
@@ -2379,17 +2395,18 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                           // Jockey & Silk Row
                           Row(
                             children: [
-                              Text(
-                                'Ap ',
-                                style: TextStyle(
-                                  color: Colors.redAccent,
-                                  fontSize: 11.sp,
-                                  fontWeight: FontWeight.bold,
+                              if (isApprentice)
+                                Text(
+                                  'Ap ',
+                                  style: TextStyle(
+                                    color: Colors.redAccent,
+                                    fontSize: 11.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
                               Expanded(
                                 child: Text(
-                                  jockeyName,
+                                  displayJockeyName,
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 12.sp,
@@ -2406,7 +2423,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                           SizedBox(height: 4.h),
                           // Stats row
                           Text(
-                            'ST:$stVal  KGS:$kgsVal  HP:$hpVal',
+                            'ST:$stVal  KGS:$kgsVal  HP:${hpVal > 0 ? hpVal : "-"}',
                             style: TextStyle(
                               color: Colors.white70,
                               fontSize: 11.sp,
@@ -2414,13 +2431,15 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
                             ),
                           ),
                           SizedBox(height: 6.h),
-                          // EID and ID details
+                          // Trainer info
                           Text(
-                            'EID: $expectedTime / $horseIdStr',
+                            'Trainer: $trainerName',
                             style: TextStyle(
                               color: Colors.white38,
                               fontSize: 11.sp,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),

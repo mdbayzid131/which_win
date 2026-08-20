@@ -47,10 +47,12 @@ class SplashScreenView extends GetView<SplashScreenController> {
             ),
             const Spacer(flex: 4),
             // Version Text
-            Text(
-              '${'version'.tr}: 2.1.8',
+            Obx(() => Text(
+              controller.appVersion.value.isNotEmpty
+                  ? '${'version'.tr}: ${controller.appVersion.value}'
+                  : '${'version'.tr}: ...',
               style: const TextStyle(color: Colors.grey, fontSize: 12),
-            ),
+            )),
 
             const SizedBox(height: 20),
           ],
