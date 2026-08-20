@@ -46,6 +46,17 @@ class Helpers {
     return '$hours:$mins:$secs';
   }
 
+  // ──────────────────── CURRENCY FORMATTING ────────────────────
+
+  /// Format number as currency (e.g. 125000 → "$125,000" or "$125,000.00")
+  static String formatCurrency(num amount, {String symbol = '\$', int decimals = 0}) {
+    final formatted = amount.toStringAsFixed(decimals).replaceAllMapped(
+      RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+      (m) => '${m[1]},',
+    );
+    return '$symbol$formatted';
+  }
+
   // ──────────────────── LOGGING ────────────────────
   
 

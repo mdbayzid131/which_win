@@ -109,13 +109,40 @@ class RaceDetailsController extends GetxController {
       if (response.statusCode == 200) {
         final raceResponse = RacesResponse.fromJson(response.data);
         final list = raceResponse.data ?? [];
-        // Sort by time or name so races are in chronological order (KOŞU 1, KOŞU 2...)
+        
+        int parseMinutes(String? t) {
+          if (t == null || t.isEmpty) return 0;
+          final clean = t.trim().replaceAll(RegExp(r'[^\d:]'), '');
+          final parts = clean.split(':');
+          if (parts.isEmpty) return 0;
+          int h = int.tryParse(parts[0]) ?? 0;
+          int m = parts.length > 1 ? (int.tryParse(parts[1]) ?? 0) : 0;
+          if (h > 0 && h < 7) h += 12; // 4:10 -> 16:10 in horse racing times
+          return h * 60 + m;
+        }
+
+        // Sort by chronological race time properly
         list.sort((a, b) {
-          final aTime = a.time ?? '';
-          final bTime = b.time ?? '';
-          return aTime.compareTo(bTime);
+          final aMin = parseMinutes(a.time);
+          final bMin = parseMinutes(b.time);
+          if (aMin != bMin) return aMin.compareTo(bMin);
+          return (a.name ?? '').compareTo(b.name ?? '');
         });
+
         siblingRaces.assignAll(list);
+
+        // Ensure race.value matches element from siblingRaces
+        final currentId = race.value?.id;
+        final currentName = race.value?.name;
+        if (currentId != null || currentName != null) {
+          final matched = list.firstWhereOrNull(
+            (r) => (currentId != null && r.id == currentId) ||
+                   (currentName != null && r.name == currentName),
+          );
+          if (matched != null) {
+            race.value = matched;
+          }
+        }
       }
     } catch (e) {
       debugPrint("Error fetching sibling races: $e");
@@ -123,7 +150,8 @@ class RaceDetailsController extends GetxController {
   }
 
   void selectSiblingRace(RaceModel newRace) {
-    if (newRace.id == race.value?.id) return;
+    if ((newRace.id != null && newRace.id == race.value?.id) ||
+        (newRace.name != null && newRace.name == race.value?.name)) return;
     race.value = newRace;
     raceDetails.value = null;
     raceStats.value = null;

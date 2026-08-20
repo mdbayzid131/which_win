@@ -224,8 +224,8 @@ class HomeView extends GetView<HomeController> {
                         padding: EdgeInsets.symmetric(horizontal: 16.w),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? const Color(0xFF2DD4BF)
-                              : const Color(0xFF1A1A1A),
+                              ? const Color(0xFF10B981)
+                              : const Color(0xFF252A36),
                           borderRadius: BorderRadius.circular(20.r),
                           border: Border.all(
                             color: isSelected
@@ -1678,13 +1678,11 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F1419),
+        color: const Color(0xFF1A1E26),
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
-          color: _isExpanded
-              ? const Color(0xFF2DD4BF).withValues(alpha: 0.5)
-              : Colors.white12,
-          width: _isExpanded ? 1.5 : 1.0,
+          color: _isExpanded ? Colors.white24 : Colors.white12,
+          width: 1.0,
         ),
         boxShadow: [
           BoxShadow(
@@ -1753,9 +1751,9 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                         Text(
                           widget.meeting.location ?? '',
                           style: TextStyle(
-                            color: Colors.white38,
+                            color: Colors.white70,
                             fontSize: 14.sp,
-                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
@@ -1772,12 +1770,10 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                             vertical: 4.h,
                           ),
                           decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFF3D1C00), Color(0xFF2D1400)],
-                            ),
+                            color: Colors.red.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(6.r),
                             border: Border.all(
-                              color: const Color(0xFF2DD4BF).withValues(alpha: 0.3),
+                              color: Colors.red.withValues(alpha: 0.5),
                             ),
                           ),
                           child: Row(
@@ -1787,7 +1783,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                                 width: 6.w,
                                 height: 6.w,
                                 decoration: const BoxDecoration(
-                                  color: Color(0xFF2DD4BF),
+                                  color: Colors.red,
                                   shape: BoxShape.circle,
                                 ),
                               ),
@@ -1795,7 +1791,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                               Text(
                                 'LIVE',
                                 style: TextStyle(
-                                  color: const Color(0xFF2DD4BF),
+                                  color: Colors.red,
                                   fontSize: 11.sp,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -1812,7 +1808,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                           vertical: 4.h,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.05),
+                          color: Colors.white.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(6.r),
                         ),
                         child: Row(
@@ -1821,7 +1817,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                             Text(
                               '${widget.meeting.racesCount} races',
                               style: TextStyle(
-                                color: Colors.white70,
+                                color: Colors.white,
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -1832,7 +1828,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                               duration: const Duration(milliseconds: 200),
                               child: Icon(
                                 Icons.arrow_forward_ios,
-                                color: const Color(0xFF2DD4BF),
+                                color: const Color(0xFF10B981),
                                 size: 10.sp,
                               ),
                             ),
@@ -1853,7 +1849,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 20.h),
                 child: const Center(
-                  child: CircularProgressIndicator(color: Color(0xFF2DD4BF)),
+                  child: CircularProgressIndicator(color: Color(0xFF10B981)),
                 ),
               )
             else if (_races.isEmpty)
@@ -1862,7 +1858,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                 child: Center(
                   child: Text(
                     'no_races_meeting'.tr,
-                    style: TextStyle(color: Colors.white38, fontSize: 14.sp),
+                    style: TextStyle(color: Colors.white70, fontSize: 14.sp),
                   ),
                 ),
               )
@@ -1911,7 +1907,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF161B22),
+          color: const Color(0xFF222732),
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(color: Colors.white12),
         ),
@@ -1925,25 +1921,21 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Race Number Circle
+                    // Race Number Badge (Solid Emerald Teal with crisp bold Black text)
                     Container(
                       width: 36.w,
                       height: 36.w,
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF004D40), Color(0xFF00796B)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        color: const Color(0xFF10B981),
                         borderRadius: BorderRadius.circular(8.r),
                       ),
                       alignment: Alignment.center,
                       child: Text(
                         '$raceNumber',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontSize: 16.sp,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -1971,8 +1963,9 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                               Text(
                                 raceModel.time ?? '',
                                 style: TextStyle(
-                                  color: Colors.white38,
+                                  color: Colors.white70,
                                   fontSize: 12.sp,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ],
@@ -1981,7 +1974,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                           Text(
                             '$trackType · ${raceModel.distance ?? ""} · $entriesCount entries',
                             style: TextStyle(
-                              color: Colors.white54,
+                              color: Colors.white70,
                               fontSize: 11.sp,
                             ),
                           ),
@@ -1995,7 +1988,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
               if (restMessage.isNotEmpty)
                 Container(
                   width: double.infinity,
-                  color: const Color(0xFF0F1419),
+                  color: const Color(0xFF181C24),
                   padding: EdgeInsets.symmetric(
                     horizontal: 12.w,
                     vertical: 8.h,
@@ -2008,13 +2001,13 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                           vertical: 2.h,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF2DD4BF).withValues(alpha: 0.15),
+                          color: const Color(0xFF10B981).withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(4.r),
                         ),
                         child: Text(
                           labelText,
                           style: TextStyle(
-                            color: const Color(0xFF2DD4BF),
+                            color: const Color(0xFF10B981),
                             fontSize: 10.sp,
                             fontWeight: FontWeight.bold,
                           ),
@@ -2027,8 +2020,9 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            color: Colors.white70,
+                            color: Colors.white,
                             fontSize: 11.sp,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),

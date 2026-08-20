@@ -11,12 +11,16 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0D1117),
+      backgroundColor: const Color(0xFF121418),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0D1117),
+        backgroundColor: const Color(0xFF121418),
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20.sp),
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: Colors.white,
+            size: 20.sp,
+          ),
           onPressed: () => Get.back(),
         ),
         title: Row(
@@ -78,7 +82,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
           if (controller.isLoading.value) {
             return const Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2DD4BF)),
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF10B981)),
               ),
             );
           }
@@ -93,8 +97,8 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
           }
 
           return RefreshIndicator(
-            color: const Color(0xFF2DD4BF),
-            backgroundColor: const Color(0xFF161B22),
+            color: const Color(0xFF10B981),
+            backgroundColor: const Color(0xFF1E222B),
             onRefresh: () => controller.fetchRaces(),
             child: ListView.builder(
               padding: EdgeInsets.all(16.w),
@@ -105,7 +109,10 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                 return GestureDetector(
                   onTap: () {
                     if (raceModel.status == 'FINISHED') {
-                      Get.toNamed(AppRoutes.RACE_ANALYSIS, arguments: raceModel);
+                      Get.toNamed(
+                        AppRoutes.RACE_ANALYSIS,
+                        arguments: raceModel,
+                      );
                     } else {
                       Get.toNamed(AppRoutes.RACE_DETAILS, arguments: raceModel);
                     }
@@ -140,7 +147,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
-        color: const Color(0xFF1C2230),
+        color: const Color(0xFF1E222B),
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: Colors.white24),
         boxShadow: [
@@ -161,32 +168,21 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Race Number Circle
+                  // Race Number Circle (Clean Emerald Badge)
                   Container(
                     width: 44.w,
                     height: 44.w,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF0D9488), Color(0xFF14B8A6)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
+                      color: const Color(0xFF10B981),
                       borderRadius: BorderRadius.circular(10.r),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF0D9488).withValues(alpha: 0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
                     ),
                     alignment: Alignment.center,
                     child: Text(
                       '$raceNumber',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: 18.sp,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -231,7 +227,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                             _buildInfoTag(
                               trackType,
                               _getTrackIcon(trackType),
-                              const Color(0xFF2DD4BF),
+                              const Color(0xFF10B981),
                             ),
                             if (raceModel.distance != null &&
                                 raceModel.distance!.isNotEmpty)
@@ -253,7 +249,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                       vertical: 6.h,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1C2230),
+                      color: const Color(0xFF1E222B),
                       borderRadius: BorderRadius.circular(8.r),
                       border: Border.all(color: Colors.white24),
                     ),
@@ -262,7 +258,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                       children: [
                         Icon(
                           Icons.groups_rounded,
-                          color: const Color(0xFF2DD4BF),
+                          color: const Color(0xFF10B981),
                           size: 16.sp,
                         ),
                         SizedBox(height: 2.h),
@@ -294,7 +290,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                 decoration: const BoxDecoration(
-                  color: Color(0xFF1C2230),
+                  color: Color(0xFF1E222B),
                   border: Border(top: BorderSide(color: Colors.white24)),
                 ),
                 child: Row(
@@ -305,7 +301,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                           ? Icons.auto_awesome
                           : Icons.compare_arrows_rounded,
                       color: labelText.contains('Prediction')
-                          ? const Color(0xFF2DD4BF)
+                          ? const Color(0xFF10B981)
                           : const Color(0xFFFBBF24),
                       size: 16.sp,
                     ),
@@ -330,7 +326,7 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                               text: restMessage,
                               style: TextStyle(
                                 color: labelText.contains('Prediction')
-                                    ? const Color(0xFF2DD4BF)
+                                    ? const Color(0xFF10B981)
                                     : const Color(0xFFFBBF24),
                                 fontWeight: FontWeight.w600,
                               ),
@@ -361,14 +357,14 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
         icon = Icons.sensors;
         break;
       case 'FINISHED':
-        bgColor = const Color(0xFF1C2230);
+        bgColor = const Color(0xFF1E222B);
         textColor = const Color(0xFF94A3B8);
         icon = Icons.check_circle_outline;
         break;
       case 'UPCOMING':
       default:
         bgColor = const Color(0xFF0F2D37);
-        textColor = const Color(0xFF38BDF8);
+        textColor = const Color(0xFF10B981);
         icon = Icons.schedule;
         break;
     }
@@ -389,8 +385,8 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
             status.toUpperCase() == 'LIVE'
                 ? 'live'.tr
                 : (status.toUpperCase() == 'FINISHED'
-                    ? 'finished'.tr
-                    : 'upcoming'.tr),
+                      ? 'finished'.tr
+                      : 'upcoming'.tr),
             style: TextStyle(
               color: textColor,
               fontSize: 10.sp,
@@ -442,7 +438,8 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
 
   String _getFlagCode(String country) {
     final c = country.trim().toLowerCase();
-    if (c == 'united kingdom' || c == 'uk' || c == 'great britain' || c == 'gb') return 'gb';
+    if (c == 'united kingdom' || c == 'uk' || c == 'great britain' || c == 'gb')
+      return 'gb';
     if (c == 'france' || c == 'fr') return 'fr';
     if (c == 'turkey' || c == 'tr' || c == 'türkiye') return 'tr';
     if (c == 'united states' || c == 'usa' || c == 'us') return 'us';
