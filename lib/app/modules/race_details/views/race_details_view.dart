@@ -35,9 +35,6 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
               // ── Custom Header / App Bar ──────────────────────────────────────────
               _buildAppBar(context, locationName, dayStr),
 
-              // ── Weather & Track Info Banner ──────────────────────────────────────
-              _buildWeatherBanner(details),
-
               // ── Horizontal Race Selector Bar ─────────────────────────────────────
               _buildHorizontalRaceSelector(),
 
@@ -137,43 +134,6 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     );
   }
 
-  // ── WEATHER & TRACK INFO BANNER ────────────────────────────────────
-  Widget _buildWeatherBanner(RaceDetailsData? details) {
-    final locationName = details?.location ?? 'Ankara';
-    final trackType = details?.trackType ?? 'Turf';
-    final isTurf =
-        trackType.toLowerCase().contains('turf') ||
-        trackType.toLowerCase().contains('çim');
-
-    return Container(
-      width: double.infinity,
-      color: const Color(0xFF132E2E),
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '$locationName Racecourse',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 13.sp,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 2.h),
-          Text(
-            'Track: ${isTurf ? "Turf (Good)" : "Dirt (Normal)"}',
-            style: TextStyle(
-              color: const Color(0xFF2D9B83),
-              fontSize: 12.sp,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   // ── HORIZONTAL RACE SELECTOR BAR ─────────────────────────────────────────
   Widget _buildHorizontalRaceSelector() {
     final races = controller.siblingRaces;
@@ -255,7 +215,7 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     );
   }
 
-  // ── SELECTED RACE DETAILS BANNER ──────────────────────────────────────────
+  // ── SELECTED RACE DETAILS CARD ──────────────────────────────────────────────
   Widget _buildSelectedRaceDetailsBanner(
     RaceDetailsData? details,
     RaceModel? currentRace,
@@ -263,65 +223,141 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
     final timeVal = details?.time ?? currentRace?.time ?? '';
     final distanceVal = details?.distance ?? currentRace?.distance ?? '';
     final trackType = details?.trackType ?? currentRace?.trackType ?? 'Turf';
+    final surface = details?.surface ?? currentRace?.surface;
     final isTurf =
         trackType.toLowerCase().contains('turf') ||
         trackType.toLowerCase().contains('çim');
-    final surfaceStr = isTurf ? 'Turf' : 'Dirt';
-    final raceName = details?.name ?? currentRace?.name ?? 'Race';
+    final surfaceStr = (surface != null && surface.isNotEmpty)
+        ? surface
+        : (isTurf ? 'Turf' : 'Dirt');
+    final raceName = details?.name ?? currentRace?.name ?? 'Race Details';
     final prize = details?.prize ?? currentRace?.prize;
+    final fieldSize = details?.fieldSize ?? currentRace?.fieldSize;
+    final raceType = details?.raceType ?? currentRace?.raceType;
+    final ageBand = details?.ageBand ?? currentRace?.ageBand;
 
-    final String prizeText = (prize != null && prize.isNotEmpty && prize != 'N/A')
-        ? 'Prize: $prize'
-        : '';
+    final bool hasPrize = prize != null && prize.isNotEmpty && prize != 'N/A';
 
-    return Column(
-      children: [
-        Container(
-          width: double.infinity,
-          decoration: const BoxDecoration(
-            color: Color(0xFF112828),
-            border: Border(
-              top: BorderSide(color: Colors.white10),
-              bottom: BorderSide(color: Colors.white10),
-            ),
-          ),
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-          child: Text(
-            [
-              if (timeVal.isNotEmpty) timeVal,
-              if (distanceVal.isNotEmpty) distanceVal,
-              surfaceStr,
-              raceName,
-            ].join('  ·  '),
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        color: Color(0xFF132E2E),
+        border: Border(
+          top: BorderSide(color: Colors.white10),
+          bottom: BorderSide(color: Colors.white10),
+        ),
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Race Name / Title
+          Text(
+            raceName,
             style: TextStyle(
-              color: Colors.white70,
-              fontSize: 11.sp,
-              fontWeight: FontWeight.w500,
+              color: Colors.white,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.2,
             ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
-        ),
-        if (prizeText.isNotEmpty)
-          Container(
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              color: Color(0xFF112828),
-              border: Border(bottom: BorderSide(color: Colors.white10)),
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
-            child: Text(
-              prizeText,
-              style: TextStyle(
-                color: const Color(0xFFE6A817),
-                fontSize: 11.sp,
-                fontWeight: FontWeight.bold,
+          SizedBox(height: 8.h),
+
+          // Metadata Badges Row
+          Wrap(
+            spacing: 8.w,
+            runSpacing: 6.h,
+            children: [
+              if (timeVal.isNotEmpty)
+                _buildInfoChip(
+                  icon: Icons.access_time_rounded,
+                  label: timeVal,
+                  iconColor: const Color(0xFF4DB6AC),
+                ),
+              if (distanceVal.isNotEmpty)
+                _buildInfoChip(
+                  icon: Icons.straighten_rounded,
+                  label: distanceVal,
+                  iconColor: const Color(0xFF4DB6AC),
+                ),
+              _buildInfoChip(
+                icon: isTurf ? Icons.grass_rounded : Icons.landscape_rounded,
+                label: surfaceStr,
+                iconColor: isTurf ? Colors.lightGreenAccent : Colors.orangeAccent,
               ),
-              textAlign: TextAlign.center,
+              if (fieldSize != null && fieldSize > 0)
+                _buildInfoChip(
+                  icon: Icons.groups_rounded,
+                  label: '$fieldSize Runners',
+                  iconColor: const Color(0xFF4DB6AC),
+                ),
+              if (hasPrize)
+                _buildInfoChip(
+                  icon: Icons.emoji_events_rounded,
+                  label: prize,
+                  iconColor: const Color(0xFFFFC107),
+                  bgColor: const Color(0xFF29210C),
+                  textColor: const Color(0xFFFFC107),
+                  borderColor: const Color(0xFFFFC107).withValues(alpha: 0.4),
+                ),
+              if (raceType != null && raceType.isNotEmpty)
+                _buildInfoChip(
+                  icon: Icons.sports_score_rounded,
+                  label: raceType,
+                  iconColor: Colors.white70,
+                  bgColor: Colors.white.withValues(alpha: 0.08),
+                  textColor: Colors.white70,
+                ),
+              if (ageBand != null && ageBand.isNotEmpty)
+                _buildInfoChip(
+                  icon: Icons.info_outline_rounded,
+                  label: ageBand,
+                  iconColor: Colors.white70,
+                  bgColor: Colors.white.withValues(alpha: 0.08),
+                  textColor: Colors.white70,
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoChip({
+    required IconData icon,
+    required String label,
+    Color iconColor = const Color(0xFF4DB6AC),
+    Color bgColor = const Color(0xFF1A3D3D),
+    Color textColor = Colors.white,
+    Color? borderColor,
+  }) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(6.r),
+        border: Border.all(
+          color: borderColor ?? Colors.white12,
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12.sp, color: iconColor),
+          SizedBox(width: 4.w),
+          Text(
+            label,
+            style: TextStyle(
+              color: textColor,
+              fontSize: 11.sp,
+              fontWeight: FontWeight.bold,
             ),
           ),
-      ],
+        ],
+      ),
     );
   }
 

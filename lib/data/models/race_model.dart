@@ -17,6 +17,7 @@ class RaceModel {
   final int? riskRate;
   final int? entriesCount;
   final int? fieldSize;
+  final String? ageBand;
   final bool? hasPredictions;
 
   RaceModel({
@@ -38,6 +39,7 @@ class RaceModel {
     this.riskRate,
     this.entriesCount,
     this.fieldSize,
+    this.ageBand,
     this.hasPredictions,
   });
 
@@ -73,6 +75,7 @@ class RaceModel {
           : (json['_count'] != null && json['_count']['entries'] != null
               ? int.tryParse(json['_count']['entries'].toString())
               : null),
+      ageBand: json['ageBand']?.toString(),
       hasPredictions: json['hasPredictions'] as bool?,
     );
   }
@@ -97,6 +100,7 @@ class RaceModel {
       'riskRate': riskRate,
       '_count': {'entries': entriesCount},
       'fieldSize': fieldSize,
+      'ageBand': ageBand,
       'hasPredictions': hasPredictions,
     };
   }

@@ -65,35 +65,44 @@ class AppLogger {
   static String _prettyJson(dynamic data) {
     if (data == null) return 'null';
     try {
-      String jsonStr;
       if (data is String) {
         final decoded = json.decode(data);
-        jsonStr = const JsonEncoder.withIndent('  ').convert(decoded);
+        return const JsonEncoder.withIndent('  ').convert(decoded);
       } else if (data is Map || data is List) {
-        jsonStr = const JsonEncoder.withIndent('  ').convert(data);
+        return const JsonEncoder.withIndent('  ').convert(data);
       } else {
-        jsonStr = data.toString();
+        return data.toString();
       }
-
-      if (jsonStr.length > 2000) {
-        return '${jsonStr.substring(0, 2000)}\n... [truncated ${jsonStr.length - 2000} chars]';
-      }
-      return jsonStr;
     } catch (_) {
       return data.toString();
     }
   }
 
-  /// Print data with multi-line prefix alignment
+  /// Print data with multi-line prefix alignment and chunking to prevent logcat truncation
   static void _printData(String label, dynamic data) {
     final pretty = _prettyJson(data);
     final lines = pretty.split('\n');
     if (lines.length == 1) {
-      debugPrint('│ $label: ${lines.first}');
+      _logWrapped('│ $label: ${lines.first}');
     } else {
-      debugPrint('│ $label:');
+      _logWrapped('│ $label:');
       for (final line in lines) {
-        debugPrint('│   $line');
+        _logWrapped('│   $line');
+      }
+    }
+  }
+
+  /// Print log message in chunks of 800 characters to prevent Flutter/OS log truncation
+  static void _logWrapped(String text) {
+    if (text.length <= 800) {
+      debugPrint(text);
+    } else {
+      int start = 0;
+      while (start < text.length) {
+        int end = start + 800;
+        if (end > text.length) end = text.length;
+        debugPrint(text.substring(start, end));
+        start = end;
       }
     }
   }
