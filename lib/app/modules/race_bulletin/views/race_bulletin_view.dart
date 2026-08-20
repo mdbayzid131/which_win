@@ -440,28 +440,21 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
   }
 
   String _getFlagCode(String country) {
-    final c = country.toLowerCase();
-    if (c.contains('united kingdom') ||
-        c.contains('uk') ||
-        c.contains('great britain') ||
-        c.contains('gb')) {
-      return 'gb';
-    }
-    if (c.contains('france') || c.contains('fr')) {
-      return 'fr';
-    }
-    if (c.contains('turkey') || c.contains('tr') || c.contains('türkiye')) {
-      return 'tr';
-    }
-    if (c.contains('united states') || c.contains('usa') || c.contains('us')) {
-      return 'us';
-    }
-    if (c.contains('ireland') || c.contains('ie')) {
-      return 'ie';
-    }
-    if (c.contains('australia') || c.contains('au')) {
-      return 'au';
-    }
-    return 'tr';
+    final c = country.trim().toLowerCase();
+    if (c == 'united kingdom' || c == 'uk' || c == 'great britain' || c == 'gb') return 'gb';
+    if (c == 'france' || c == 'fr') return 'fr';
+    if (c == 'turkey' || c == 'tr' || c == 'türkiye') return 'tr';
+    if (c == 'united states' || c == 'usa' || c == 'us') return 'us';
+    if (c == 'ireland' || c == 'ire' || c == 'ie') return 'ie';
+    if (c == 'australia' || c == 'aus' || c == 'au') return 'au';
+
+    if (c.contains('kingdom') || c.contains('britain')) return 'gb';
+    if (c.contains('france')) return 'fr';
+    if (c.contains('turkey') || c.contains('türkiye')) return 'tr';
+    if (c.contains('states') || c.contains('america')) return 'us';
+    if (c.contains('ireland')) return 'ie';
+    if (c.contains('australia')) return 'au';
+
+    return 'gb';
   }
 }
