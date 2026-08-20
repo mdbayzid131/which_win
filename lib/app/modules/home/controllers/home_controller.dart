@@ -67,6 +67,7 @@ class HomeController extends GetxController {
 
   Future<void> fetchLocations() async {
     try {
+      meetingsList.clear();
       final dateStr = DateFormat(
         'yyyy-MM-dd',
       ).format(_calendarController.selectedDate.value);
@@ -101,6 +102,7 @@ class HomeController extends GetxController {
   Future<void> fetchRaces({bool isRefresh = true}) async {
     if (isRefresh) {
       isLoading.value = true;
+      raceList.clear();
     } else {
       isLoadMore.value = true;
     }
@@ -163,12 +165,16 @@ class HomeController extends GetxController {
 
   void setStatus(String status) {
     selectedStatus.value = status;
+    meetingsList.clear();
+    raceList.clear();
     fetchLocations();
     fetchRaces();
   }
 
   void setRegion(String region) {
     selectedRegion.value = region;
+    meetingsList.clear();
+    raceList.clear();
     fetchLocations();
     fetchRaces();
   }
@@ -176,17 +182,22 @@ class HomeController extends GetxController {
   void resetFilters() {
     selectedStatus.value = 'All';
     selectedRegion.value = 'All';
+    meetingsList.clear();
+    raceList.clear();
     fetchLocations();
     fetchRaces();
   }
 
   void selectCategory(String category) {
     selectedCategory.value = category;
+    raceList.clear();
     fetchRaces();
   }
 
   void searchRaces(String query) {
     searchQuery.value = query;
+    meetingsList.clear();
+    raceList.clear();
     fetchLocations();
     fetchRaces();
   }
@@ -201,6 +212,8 @@ class HomeController extends GetxController {
     } else {
       selectedStatus.value = 'All';
     }
+    meetingsList.clear();
+    raceList.clear();
     fetchLocations();
     fetchRaces();
   }

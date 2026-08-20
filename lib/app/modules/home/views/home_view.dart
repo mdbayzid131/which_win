@@ -256,8 +256,18 @@ class HomeView extends GetView<HomeController> {
                 final meetings = controller.filteredMeetings;
                 final races = controller.raceList;
 
+                if (controller.isLoading.value) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: isLiveFilter
+                          ? Colors.red
+                          : const Color(0xFFFF6600),
+                    ),
+                  );
+                }
+
                 if (isLiveFilter) {
-                  if (races.isEmpty && !controller.isLoading.value) {
+                  if (races.isEmpty) {
                     return Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -307,7 +317,7 @@ class HomeView extends GetView<HomeController> {
                   );
                 }
 
-                if (meetings.isEmpty && !controller.isLoading.value) {
+                if (meetings.isEmpty) {
                   return Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
