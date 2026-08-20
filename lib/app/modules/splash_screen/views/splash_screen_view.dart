@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
@@ -9,17 +9,37 @@ class SplashScreenView extends GetView<SplashScreenController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: const Color(0xFF121418),
       body: SafeArea(
         child: Column(
           children: [
             const Spacer(flex: 3),
-            // Logo
+            // Logo with ambient glow
             Center(
-              child: Image.asset(
-                'assets/images/logo.png',
-                width: 250,
-                fit: BoxFit.contain,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    width: 260,
+                    height: 260,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          const Color(0xFF10B981).withValues(alpha: 0.18),
+                          const Color(0xFF10B981).withValues(alpha: 0.05),
+                          Colors.transparent,
+                        ],
+                        stops: const [0.0, 0.5, 1.0],
+                      ),
+                    ),
+                  ),
+                  Image.asset(
+                    'assets/images/logo.png',
+                    width: 250,
+                    fit: BoxFit.contain,
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 60),
@@ -30,7 +50,7 @@ class SplashScreenView extends GetView<SplashScreenController> {
                 borderRadius: BorderRadius.circular(10),
                 child: const LinearProgressIndicator(
                   backgroundColor: Color(0xFF2C2C2C),
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2DD4BF)),
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF10B981)),
                   minHeight: 6,
                 ),
               ),
