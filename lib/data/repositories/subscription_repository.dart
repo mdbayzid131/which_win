@@ -28,9 +28,15 @@ class SubscriptionRepo {
   Future<dio.Response> verifyAppleSubscription({
     required String signedTransactionInfo,
     required String deviceId,
+    String? receiptData,
+    String? transactionId,
+    String? productId,
   }) async {
     return await apiClient.postData(ApiConstants.verifyAppleSubscription, {
       'signedTransactionInfo': signedTransactionInfo,
+      'receiptData': receiptData ?? signedTransactionInfo,
+      'transactionId': transactionId ?? '',
+      'productId': productId ?? '',
       'deviceId': deviceId,
     });
   }
