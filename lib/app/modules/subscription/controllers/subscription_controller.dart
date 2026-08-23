@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
+import 'package:intl/intl.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:which_win/core/utils/device_helper.dart';
 import 'package:which_win/data/models/subscription_model.dart';
@@ -13,6 +14,7 @@ class SubscriptionController extends GetxController {
   final plans = <SubscriptionPlanModel>[].obs;
   final isLoading = false.obs;
   final selectedPlanIndex = 0.obs;
+  final errorMessage = ''.obs;
 
   // In-App Purchase properties
   final InAppPurchase _iap = InAppPurchase.instance;
@@ -32,36 +34,6 @@ class SubscriptionController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Default mock plans to match screenshot design
-    plans.assignAll([
-      SubscriptionPlanModel(
-        id: 'weekly',
-        name: '1 Week',
-        description: '',
-        price: 4.99,
-        currency: 'USD',
-        duration: 'WEEKLY',
-        productId: 'com.whichwin.horseracing.weekly',
-      ),
-      SubscriptionPlanModel(
-        id: 'monthly',
-        name: '1 Month',
-        description: '',
-        price: 11.99,
-        currency: 'USD',
-        duration: 'MONTHLY',
-        productId: 'com.whichwin.horseracing.monthly',
-      ),
-      SubscriptionPlanModel(
-        id: 'yearly',
-        name: '1 Year',
-        description: '',
-        price: 59.99,
-        currency: 'USD',
-        duration: 'YEARLY',
-        productId: 'com.whichwin.horseracing.yearly',
-      ),
-    ]);
     _initializeIAP();
     fetchPlans();
   }
@@ -89,41 +61,77 @@ class SubscriptionController extends GetxController {
 
   Future<void> fetchPlans() async {
     isLoading.value = true;
+    errorMessage.value = '';
     try {
-      await _fetchStoreProducts();
+      // 1. Fetch configured plans from backend API
+      List<SubscriptionPlanModel> apiPlans = [];
+      try {
+        final subscriptionRepo = Get.find<SubscriptionRepo>();
+        final response = await subscriptionRepo.getPlans();
+        if (response.statusCode == 200 && response.data != null) {
+          final parsed = SubscriptionPlansResponse.fromJson(response.data);
+          if (parsed.data != null && parsed.data!.isNotEmpty) {
+            apiPlans = parsed.data!;
+            debugPrint('SubscriptionController: Fetched ${apiPlans.length} plans from API');
+          }
+        }
+      } catch (e) {
+        debugPrint('SubscriptionController: API getPlans info/fallback: $e');
+      }
+
+      // 2. Fetch live localized products from Apple / Google Play Store Console
+      await _fetchStoreProducts(apiPlans: apiPlans);
     } catch (e) {
-      // Error handled or logged
+      errorMessage.value = e.toString();
     } finally {
       isLoading.value = false;
     }
   }
 
-  Future<void> _fetchStoreProducts() async {
-    debugPrint('SubscriptionController: Initializing product fetching...');
+  Future<void> _fetchStoreProducts({List<SubscriptionPlanModel> apiPlans = const []}) async {
+    debugPrint('SubscriptionController: Initializing product fetching from Store Console...');
     final bool isAvailable = await _iap.isAvailable();
     if (!isAvailable) {
       debugPrint('SubscriptionController ERROR: In-app billing is NOT available on this device!');
+      if (apiPlans.isNotEmpty) {
+        plans.assignAll(apiPlans);
+      } else {
+        errorMessage.value = 'In-app billing is not available on this device.';
+      }
       isStoreLoading.value = false;
       return;
     }
 
     isStoreLoading.value = true;
     try {
-      final Set<String> idsToQuery = GetPlatform.isIOS
-          ? _iosProductIds
-          : {_androidPremiumProductId};
+      final Set<String> idsToQuery = {};
 
-      debugPrint('SubscriptionController: Querying product details for IDs: $idsToQuery');
+      if (GetPlatform.isIOS) {
+        idsToQuery.addAll(_iosProductIds);
+      } else {
+        idsToQuery.add(_androidPremiumProductId);
+      }
+
+      // Merge any product IDs returned from the API
+      for (final plan in apiPlans) {
+        if (plan.productId != null &&
+            plan.productId!.isNotEmpty &&
+            plan.productId != 'N/A') {
+          idsToQuery.add(plan.productId!);
+        }
+      }
+
+      debugPrint('SubscriptionController: Querying Store Console for IDs: $idsToQuery');
       final ProductDetailsResponse response = await _iap.queryProductDetails(
         idsToQuery,
       );
       
       debugPrint('SubscriptionController: Query finished.');
-      debugPrint('SubscriptionController: Found products count: ${response.productDetails.length}');
+      debugPrint('SubscriptionController: Found store products count: ${response.productDetails.length}');
       for (var product in response.productDetails) {
-        debugPrint(' - Product ID: ${product.id}, Price: ${product.price}, Title: ${product.title}');
+        debugPrint(' - Store Product: ID=${product.id}, Price=${product.price}, Title=${product.title}');
         if (product is GooglePlayProductDetails) {
-          debugPrint('   - Android Offer details: ${product.productDetails.subscriptionOfferDetails?.map((o) => o.basePlanId).toList()}');
+          debugPrint('   - Offers: ${product.productDetails.subscriptionOfferDetails?.map((o) => o.basePlanId).toList()}');
           debugPrint('   - Subscription Index: ${product.subscriptionIndex}');
         }
       }
@@ -134,18 +142,24 @@ class SubscriptionController extends GetxController {
       
       if (response.error != null) {
         debugPrint('SubscriptionController ERROR from store query: ${response.error!.message}');
+        errorMessage.value = response.error!.message;
       }
 
       storeProducts.assignAll(response.productDetails);
-      _populatePlansFromStore();
+      _populatePlansFromStore(apiPlans: apiPlans);
     } catch (e) {
       debugPrint('SubscriptionController EXCEPTION fetching products: $e');
+      if (apiPlans.isNotEmpty) {
+        plans.assignAll(apiPlans);
+      } else {
+        errorMessage.value = e.toString();
+      }
     } finally {
       isStoreLoading.value = false;
     }
   }
 
-  void _populatePlansFromStore() {
+  void _populatePlansFromStore({List<SubscriptionPlanModel> apiPlans = const []}) {
     final List<SubscriptionPlanModel> localPlans = [];
 
     if (GetPlatform.isIOS) {
@@ -167,18 +181,27 @@ class SubscriptionController extends GetxController {
                 ? 'MONTHLY'
                 : 'YEARLY';
         
-        final name = duration == 'WEEKLY'
-            ? '1 Week'
-            : duration == 'MONTHLY'
-                ? '1 Month'
-                : '1 Year';
+        final matchingApiPlan = apiPlans.firstWhereOrNull(
+          (p) => p.productId == product.id || p.id == product.id,
+        );
+
+        final name = matchingApiPlan?.name ??
+            (duration == 'WEEKLY'
+                ? '1 Week'
+                : duration == 'MONTHLY'
+                    ? '1 Month'
+                    : '1 Year');
 
         localPlans.add(SubscriptionPlanModel(
           id: product.id,
           name: name,
-          description: product.description,
-          price: product.rawPrice,
-          currency: product.currencyCode,
+          description: product.description.isNotEmpty
+              ? product.description
+              : (matchingApiPlan?.description ?? ''),
+          price: product.rawPrice > 0 ? product.rawPrice : (matchingApiPlan?.price ?? 0.0),
+          currency: product.currencyCode.isNotEmpty
+              ? product.currencyCode
+              : (matchingApiPlan?.currency ?? 'USD'),
           duration: duration,
           productId: product.id,
         ));
@@ -190,24 +213,20 @@ class SubscriptionController extends GetxController {
       for (final product in androidProducts) {
         final basePlanId = _getAndroidBasePlanId(product);
         if (basePlanId.isNotEmpty) {
-          debugPrint('SubscriptionController: Found base plan ID "$basePlanId" for product "${product.id}" via index');
-          _addPlan(localPlans, product, basePlanId);
+          _addPlan(localPlans, product, basePlanId, apiPlans);
         } else {
           // Fallback 1: Manually iterate subscriptionOfferDetails if available
           final offers = product.productDetails.subscriptionOfferDetails;
           if (offers != null && offers.isNotEmpty) {
-            debugPrint('SubscriptionController: basePlanId empty via index, iterating subscriptionOfferDetails manually');
             for (final offer in offers) {
               final bId = offer.basePlanId;
               if (bId.isNotEmpty) {
-                debugPrint('SubscriptionController: Found base plan ID "$bId" manually');
-                _addPlan(localPlans, product, bId);
+                _addPlan(localPlans, product, bId, apiPlans);
               }
             }
           } else {
             // Fallback 2: Simple product ID fallback
-            debugPrint('SubscriptionController: No offers found, falling back to product ID "${product.id}"');
-            _addPlan(localPlans, product, product.id);
+            _addPlan(localPlans, product, product.id, apiPlans);
           }
         }
       }
@@ -222,14 +241,23 @@ class SubscriptionController extends GetxController {
         if (bId.contains('monthly')) return 1;
         return 0;
       });
-
-      debugPrint('SubscriptionController: Populated ${localPlans.length} plans successfully');
     }
 
+    // If store products are empty (e.g. on emulator/no billing), fallback to API plans
+    if (localPlans.isEmpty && apiPlans.isNotEmpty) {
+      localPlans.addAll(apiPlans);
+    }
+
+    debugPrint('SubscriptionController: Populated ${localPlans.length} plans dynamically');
     plans.assignAll(localPlans);
   }
 
-  void _addPlan(List<SubscriptionPlanModel> localPlans, GooglePlayProductDetails product, String id) {
+  void _addPlan(
+    List<SubscriptionPlanModel> localPlans,
+    GooglePlayProductDetails product,
+    String id,
+    List<SubscriptionPlanModel> apiPlans,
+  ) {
     if (localPlans.any((p) => p.id == id)) {
       debugPrint('SubscriptionController: Plan with ID "$id" already exists, skipping duplicate');
       return;
@@ -241,18 +269,27 @@ class SubscriptionController extends GetxController {
             ? 'MONTHLY'
             : 'YEARLY';
 
-    final name = duration == 'WEEKLY'
-        ? '1 Week'
-        : duration == 'MONTHLY'
-            ? '1 Month'
-            : '1 Year';
+    final matchingApiPlan = apiPlans.firstWhereOrNull(
+      (p) => p.productId == id || p.id == id || p.productId == product.id,
+    );
+
+    final name = matchingApiPlan?.name ??
+        (duration == 'WEEKLY'
+            ? '1 Week'
+            : duration == 'MONTHLY'
+                ? '1 Month'
+                : '1 Year');
 
     localPlans.add(SubscriptionPlanModel(
       id: id,
       name: name,
-      description: product.description,
-      price: product.rawPrice,
-      currency: product.currencyCode,
+      description: product.description.isNotEmpty
+          ? product.description
+          : (matchingApiPlan?.description ?? ''),
+      price: product.rawPrice > 0 ? product.rawPrice : (matchingApiPlan?.price ?? 0.0),
+      currency: product.currencyCode.isNotEmpty
+          ? product.currencyCode
+          : (matchingApiPlan?.currency ?? 'USD'),
       duration: duration,
       productId: product.id,
     ));
@@ -301,7 +338,64 @@ class SubscriptionController extends GetxController {
       }
     }
     // Fallback if store product not found
-    return '${plan.currency ?? 'BDT'} ${plan.price ?? 0}';
+    final currencySymbol = _getCurrencySymbol(plan.currency);
+    return '$currencySymbol${plan.price ?? 0}';
+  }
+
+  // Helper to compute weekly breakdown for monthly/yearly plans
+  String getWeeklySubtitle(SubscriptionPlanModel plan, int index) {
+    final duration = plan.duration?.toUpperCase() ?? '';
+    final id = plan.id?.toLowerCase() ?? '';
+    final price = plan.price;
+    if (price == null || price <= 0) return '';
+
+    final symbol = _getCurrencySymbol(plan.currency);
+
+    if (duration.contains('MONTH') || id.contains('monthly') || index == 1) {
+      final weeklyRate = (price / 4.33).toStringAsFixed(2);
+      return '$symbol$weeklyRate / week';
+    } else if (duration.contains('YEAR') || id.contains('yearly') || index == 2) {
+      final weeklyRate = (price / 52.0).toStringAsFixed(2);
+      return '$symbol$weeklyRate / week';
+    }
+    return '';
+  }
+
+  String _getCurrencySymbol(String? currency) {
+    if (currency == null || currency.isEmpty) return '\$';
+    final c = currency.trim().toUpperCase();
+    if (c == 'USD' || c == '\$') return '\$';
+    if (c == 'BDT') return '৳';
+    if (c == 'EUR') return '€';
+    if (c == 'GBP') return '£';
+    return '$currency ';
+  }
+
+  // Helper to calculate and format the next billing date for the selected plan
+  String getNextBillingDate() {
+    if (plans.isEmpty ||
+        selectedPlanIndex.value < 0 ||
+        selectedPlanIndex.value >= plans.length) {
+      return '';
+    }
+
+    final plan = plans[selectedPlanIndex.value];
+    final duration = plan.duration?.toUpperCase() ?? '';
+    final id = plan.id?.toLowerCase() ?? '';
+    final now = DateTime.now();
+
+    DateTime nextDate;
+    if (duration.contains('WEEK') || id.contains('weekly')) {
+      nextDate = now.add(const Duration(days: 7));
+    } else if (duration.contains('MONTH') || id.contains('monthly')) {
+      nextDate = DateTime(now.year, now.month + 1, now.day);
+    } else if (duration.contains('YEAR') || id.contains('yearly')) {
+      nextDate = DateTime(now.year + 1, now.month, now.day);
+    } else {
+      nextDate = DateTime(now.year, now.month + 1, now.day);
+    }
+
+    return DateFormat('dd MMM, yyyy').format(nextDate);
   }
 
   void selectPlan(int index) {

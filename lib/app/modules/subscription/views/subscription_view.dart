@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:which_win/app/routes/app_pages.dart';
 import 'package:which_win/data/models/subscription_model.dart';
 import '../controllers/subscription_controller.dart';
 
@@ -41,21 +42,26 @@ class SubscriptionView extends GetView<SubscriptionController> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 80.w), // Balance the back button
+                      SizedBox(width: 40.w), // Balance the back button
                     ],
                   ),
                 ),
 
-                // Main scrollable content
+                // Main dynamic content
                 Expanded(
                   child: Obx(() {
-                    if (controller.plans.isEmpty) {
+                    if (controller.isLoading.value) {
                       return const Center(
                         child: CircularProgressIndicator(
                           color: Color(0xFF2DD4BF),
                         ),
                       );
                     }
+
+                    if (controller.plans.isEmpty) {
+                      return _buildErrorOrEmptyState();
+                    }
+
                     return SingleChildScrollView(
                       padding: EdgeInsets.symmetric(vertical: 16.h),
                       child: Column(
@@ -116,9 +122,9 @@ class SubscriptionView extends GetView<SubscriptionController> {
             ),
           ),
 
-          // Loader Overlay
+          // Loader Overlay (for purchase in-progress)
           Obx(() {
-            if (controller.isLoading.value) {
+            if (controller.isLoading.value && controller.plans.isNotEmpty) {
               return Container(
                 color: Colors.black54,
                 child: const Center(
@@ -379,12 +385,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
     return Obx(() {
       final isSelected = controller.selectedPlanIndex.value == index;
       String priceStr = controller.getPlanPriceString(plan, index);
-      String subtitle = "";
-      if (index == 1) {
-        subtitle = "\$2.77 / week";
-      } else if (index == 2) {
-        subtitle = "\$1.15 / week";
-      }
+      String subtitle = controller.getWeeklySubtitle(plan, index);
 
       return GestureDetector(
         onTap: () => controller.selectPlan(index),
@@ -434,7 +435,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
                 ),
               ),
 
-              // Right side weekly breakdown
+              // Right side weekly breakdown (Calculated dynamically)
               if (subtitle.isNotEmpty)
                 Text(
                   subtitle,
@@ -451,13 +452,19 @@ class SubscriptionView extends GetView<SubscriptionController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Center(
-          child: Text(
-            "Next Billing Date: Jun 29, 2026",
-            style: TextStyle(color: Colors.white38, fontSize: 13.sp),
-          ),
-        ),
-        SizedBox(height: 16.h),
+        Obx(() {
+          final nextDate = controller.getNextBillingDate();
+          if (nextDate.isEmpty) return const SizedBox.shrink();
+          return Padding(
+            padding: EdgeInsets.only(bottom: 16.h),
+            child: Center(
+              child: Text(
+                "Next Billing Date: $nextDate",
+                style: TextStyle(color: Colors.white38, fontSize: 13.sp),
+              ),
+            ),
+          );
+        }),
         SizedBox(
           height: 56.h,
           width: double.infinity,
@@ -488,14 +495,128 @@ class SubscriptionView extends GetView<SubscriptionController> {
             child: Text(
               'restore_purchases'.tr,
               style: TextStyle(
-                color: Colors.white30,
-                fontSize: 12.sp,
+                color: Colors.white70,
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w500,
                 decoration: TextDecoration.underline,
               ),
             ),
           ),
         ),
+        SizedBox(height: 6.h),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: () => Get.toNamed(AppRoutes.TERMS_CONDITIONS),
+              child: Text(
+                'terms_conditions'.tr,
+                style: TextStyle(
+                  color: Colors.white54,
+                  fontSize: 11.sp,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.w),
+              child: Text(
+                '•',
+                style: TextStyle(color: Colors.white38, fontSize: 11.sp),
+              ),
+            ),
+            GestureDetector(
+              onTap: () => Get.toNamed(AppRoutes.PRIVACY_POLICY),
+              child: Text(
+                'privacy_policy'.tr,
+                style: TextStyle(
+                  color: Colors.white54,
+                  fontSize: 11.sp,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 12.h),
+        Text(
+          'Recurring billing. Cancel anytime in your App Store / Google Play account settings at least 24 hours before the renewal date.',
+          style: TextStyle(color: Colors.white38, fontSize: 10.sp, height: 1.3),
+          textAlign: TextAlign.center,
+        ),
       ],
+    );
+  }
+
+  Widget _buildErrorOrEmptyState() {
+    return Center(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 28.w, vertical: 24.h),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 76.w,
+              height: 76.w,
+              decoration: BoxDecoration(
+                color: const Color(0xFF1E222B),
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white12),
+              ),
+              child: Icon(
+                Icons.error_outline_rounded,
+                color: const Color(0xFF2DD4BF),
+                size: 38.sp,
+              ),
+            ),
+            SizedBox(height: 20.h),
+            Text(
+              'Subscription Plans Unavailable',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 12.h),
+            Obx(() => Text(
+              controller.errorMessage.value.isNotEmpty
+                  ? controller.errorMessage.value
+                  : 'Unable to load subscription products. Please ensure in-app products are active in the store console and your device supports Google Play / App Store billing.',
+              style: TextStyle(
+                color: Colors.white60,
+                fontSize: 13.sp,
+                height: 1.4,
+              ),
+              textAlign: TextAlign.center,
+            )),
+            SizedBox(height: 28.h),
+            SizedBox(
+              width: 160.w,
+              height: 46.h,
+              child: ElevatedButton.icon(
+                onPressed: () => controller.fetchPlans(),
+                icon: Icon(Icons.refresh_rounded, size: 20.sp, color: Colors.black),
+                label: Text(
+                  'Try Again',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF2DD4BF),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
