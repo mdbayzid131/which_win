@@ -741,186 +741,7 @@ class HomeView extends GetView<HomeController> {
     });
   }
 
-  Widget _buildRaceCard(Map<String, dynamic> race) {
-    final bool isLive = race['isLive'] as bool;
-    final String country = race['country'] as String;
-    final String raceName = race['race'] as String;
-    final String flagCode = race['flag'] as String;
-    final String racesCount = race['racesCount'] as String;
 
-    return Container(
-      margin: EdgeInsets.only(bottom: 16.h),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0F1419),
-        borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(color: Colors.white12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Stack(
-        children: [
-          // Background subtle gradient
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Colors.white.withValues(alpha: 0.02), Colors.transparent],
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(16.w),
-            child: Row(
-              children: [
-                // Flag with premium styling
-                Container(
-                  width: 50.w,
-                  height: 50.w,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white24, width: 2),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.5),
-                        blurRadius: 10,
-                        spreadRadius: 1,
-                      ),
-                    ],
-                  ),
-                  child: ClipOval(
-                    child: Image.network(
-                      'https://flagcdn.com/w160/$flagCode.png',
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        color: Colors.grey[900],
-                        child: Icon(
-                          Icons.flag,
-                          color: Colors.white24,
-                          size: 20.sp,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 16.w),
-                // Details
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        country,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 17.sp,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      SizedBox(height: 4.h),
-                      Text(
-                        raceName,
-                        style: TextStyle(
-                          color: Colors.white38,
-                          fontSize: 14.sp,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Status/Info
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    if (isLive)
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 10.w,
-                          vertical: 4.h,
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF3D1C00), Color(0xFF2D1400)],
-                          ),
-                          borderRadius: BorderRadius.circular(6.r),
-                          border: Border.all(
-                            color: const Color(0xFF2DD4BF).withValues(alpha: 0.3),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 6.w,
-                              height: 6.w,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFF2DD4BF),
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            SizedBox(width: 6.w),
-                            Text(
-                              'LIVE',
-                              style: TextStyle(
-                                color: const Color(0xFF2DD4BF),
-                                fontSize: 11.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    else
-                      SizedBox(height: 22.h),
-                    SizedBox(height: 12.h),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10.w,
-                        vertical: 4.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(6.r),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            racesCount,
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(width: 4.w),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: Colors.blueAccent.withValues(alpha: 0.7),
-                            size: 10.sp,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildLiveRaceCard(RaceModel race) {
     final String country = race.country ?? 'Unknown';
@@ -1672,8 +1493,8 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
 
   @override
   Widget build(BuildContext context) {
-    final flagCode = _getFlagCode(widget.meeting.country ?? '');
-    final isLive = widget.meeting.isLive ?? false;
+    final flagCode = _getFlagCode(widget.meeting.country);
+    final isLive = widget.meeting.isLive;
 
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
@@ -1739,7 +1560,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.meeting.country ?? 'Unknown',
+                          widget.meeting.country.isEmpty ? 'Unknown' : widget.meeting.country,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 17.sp,
@@ -1749,7 +1570,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                         ),
                         SizedBox(height: 4.h),
                         Text(
-                          widget.meeting.location ?? '',
+                          widget.meeting.location,
                           style: TextStyle(
                             color: Colors.white70,
                             fontSize: 14.sp,

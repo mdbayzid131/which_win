@@ -57,6 +57,7 @@ class GiftAFriendController extends GetxController {
     final String text = currentLang == 'tr'
         ? 'Selam! Which Win uygulamasını incele ve 7 günlük ücretsiz premium kullanımı almak için referans kodumu kullan: ${referralCode.value}'
         : 'Hey! Check out Which Win app and use my referral code: ${referralCode.value} to get 7 days of free premium usage!';
+    // ignore: deprecated_member_use
     Share.share(text);
   }
 

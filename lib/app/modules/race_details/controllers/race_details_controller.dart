@@ -151,7 +151,9 @@ class RaceDetailsController extends GetxController {
 
   void selectSiblingRace(RaceModel newRace) {
     if ((newRace.id != null && newRace.id == race.value?.id) ||
-        (newRace.name != null && newRace.name == race.value?.name)) return;
+        (newRace.name != null && newRace.name == race.value?.name)) {
+      return;
+    }
     race.value = newRace;
     raceDetails.value = null;
     raceStats.value = null;

@@ -41,7 +41,7 @@ class StatisticsTabContent extends GetView<RaceDetailsController> {
         crossAxisSpacing: 12.w,
         childAspectRatio: 1.05,
         children: [
-          buildStatCard(
+          _buildStatCard(
             'earnings_stat'.tr,
             Icons.payments_outlined,
             (stats.earnings ?? [])
@@ -53,7 +53,7 @@ class StatisticsTabContent extends GetView<RaceDetailsController> {
                 )
                 .toList(),
           ),
-          buildStatCard(
+          _buildStatCard(
             'origin_stat'.tr,
             Icons.public_outlined,
             (stats.origin ?? [])
@@ -65,7 +65,7 @@ class StatisticsTabContent extends GetView<RaceDetailsController> {
                 )
                 .toList(),
           ),
-          buildStatCard(
+          _buildStatCard(
             'distance_stat'.tr,
             Icons.straighten_outlined,
             (stats.distance ?? [])
@@ -77,7 +77,7 @@ class StatisticsTabContent extends GetView<RaceDetailsController> {
                 )
                 .toList(),
           ),
-          buildStatCard(
+          _buildStatCard(
             'track_stat'.tr,
             Icons.layers_outlined,
             (stats.track ?? [])
@@ -94,7 +94,7 @@ class StatisticsTabContent extends GetView<RaceDetailsController> {
     });
   }
 
-  Widget buildStatCard(String title, IconData icon, List<_StatItem> items) {
+  Widget _buildStatCard(String title, IconData icon, List<_StatItem> items) {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
