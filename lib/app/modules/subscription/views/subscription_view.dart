@@ -50,7 +50,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
                 // Main dynamic content
                 Expanded(
                   child: Obx(() {
-                    if (controller.isLoading.value) {
+                    if (controller.isLoading.value && controller.plans.isEmpty) {
                       return const Center(
                         child: CircularProgressIndicator(
                           color: Color(0xFF2DD4BF),
@@ -69,7 +69,18 @@ class SubscriptionView extends GetView<SubscriptionController> {
                         children: [
                           // Logo text
                           _buildProLogo(),
-                          SizedBox(height: 20.h),
+                          SizedBox(height: 16.h),
+
+                          // Active Subscription Banner Card (if user has active subscription)
+                          Obx(() {
+                            if (controller.isSubscribed.value) {
+                              return Padding(
+                                padding: EdgeInsets.only(bottom: 20.h),
+                                child: _buildActiveSubscriptionCard(),
+                              );
+                            }
+                            return const SizedBox.shrink();
+                          }),
 
                           // Carousel/Slide Section
                           _buildCarouselSection(context),
@@ -381,9 +392,91 @@ class SubscriptionView extends GetView<SubscriptionController> {
     );
   }
 
+  Widget _buildActiveSubscriptionCard() {
+    final planName = controller.activePlanName.value.isNotEmpty
+        ? controller.activePlanName.value
+        : 'PRO Subscription';
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 24.w),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF00695C), Color(0xFF0F1419)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(
+            color: const Color(0xFF2DD4BF).withValues(alpha: 0.6),
+            width: 1.2,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(8.w),
+              decoration: const BoxDecoration(
+                color: Color(0xFF2DD4BF),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.stars_rounded, color: Colors.black, size: 22.sp),
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'CURRENT PLAN',
+                    style: TextStyle(
+                      color: const Color(0xFF2DD4BF),
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                  SizedBox(height: 2.h),
+                  Text(
+                    planName,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+              decoration: BoxDecoration(
+                color: const Color(0xFF2DD4BF).withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(20.r),
+                border: Border.all(color: const Color(0xFF2DD4BF)),
+              ),
+              child: Text(
+                'ACTIVE',
+                style: TextStyle(
+                  color: const Color(0xFF2DD4BF),
+                  fontSize: 10.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildPlanCard(SubscriptionPlanModel plan, int index) {
     return Obx(() {
       final isSelected = controller.selectedPlanIndex.value == index;
+      final isActivePlan = controller.isSubscribed.value &&
+          (plan.productId == controller.activeProductId.value ||
+              plan.id == controller.activeProductId.value);
       String priceStr = controller.getPlanPriceString(plan, index);
       String subtitle = controller.getWeeklySubtitle(plan, index);
 
@@ -395,7 +488,11 @@ class SubscriptionView extends GetView<SubscriptionController> {
             color: const Color(0xFF0F1419),
             borderRadius: BorderRadius.circular(16.r),
             border: Border.all(
-              color: isSelected ? const Color(0xFF2DD4BF) : Colors.white12,
+              color: isSelected
+                  ? const Color(0xFF2DD4BF)
+                  : (isActivePlan
+                      ? const Color(0xFF2DD4BF).withValues(alpha: 0.5)
+                      : Colors.white12),
               width: 1.5,
             ),
           ),
@@ -416,15 +513,38 @@ class SubscriptionView extends GetView<SubscriptionController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      plan.name ?? '',
-                      style: TextStyle(
-                        color: isSelected
-                            ? const Color(0xFF2DD4BF)
-                            : Colors.white,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          plan.name ?? '',
+                          style: TextStyle(
+                            color: isSelected
+                                ? const Color(0xFF2DD4BF)
+                                : Colors.white,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (isActivePlan) ...[
+                          SizedBox(width: 8.w),
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF2DD4BF).withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(4.r),
+                              border: Border.all(color: const Color(0xFF2DD4BF), width: 0.8),
+                            ),
+                            child: Text(
+                              'ACTIVE',
+                              style: TextStyle(
+                                color: const Color(0xFF2DD4BF),
+                                fontSize: 9.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                     SizedBox(height: 4.h),
                     Text(

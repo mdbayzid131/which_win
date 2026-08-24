@@ -46,9 +46,16 @@ class SplashScreenController extends GetxController {
           await StorageService.setString(StorageConstants.bearerToken, loginResponse.data!.token!);
           Helpers.info('Device login successful');
 
-          // 3.2 Persist premium status locally for instant UI gating (forced to true for design/testing)
-          bool premiumActive = true;
+          // Persist premium status locally from backend device login response
+          bool premiumActive = loginResponse.data?.user?.subscription?.isActive ??
+              (await StorageService.getBool(StorageConstants.isPremium) ?? false);
           await StorageService.setBool(StorageConstants.isPremium, premiumActive);
+          if (loginResponse.data?.user?.subscription?.plan != null) {
+            await StorageService.setString(
+              'active_subscription_plan_name',
+              loginResponse.data!.user!.subscription!.plan!,
+            );
+          }
           Helpers.info('Premium status saved: $premiumActive');
           
           // 3.1 Safely register push notification token with backend

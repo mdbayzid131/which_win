@@ -5,6 +5,8 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:intl/intl.dart';
 import 'package:dio/dio.dart' as dio;
+import 'package:which_win/config/constants/storage_constants.dart';
+import 'package:which_win/core/services/storage_service.dart';
 import 'package:which_win/core/utils/device_helper.dart';
 import 'package:which_win/data/models/subscription_model.dart';
 import 'package:which_win/data/repositories/subscription_repository.dart';
@@ -15,6 +17,11 @@ class SubscriptionController extends GetxController {
   final isLoading = false.obs;
   final selectedPlanIndex = 0.obs;
   final errorMessage = ''.obs;
+
+  // Active Subscription State
+  final isSubscribed = false.obs;
+  final activePlanName = ''.obs;
+  final activeProductId = ''.obs;
 
   // In-App Purchase properties
   final InAppPurchase _iap = InAppPurchase.instance;
@@ -34,8 +41,19 @@ class SubscriptionController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _checkActiveSubscription();
     _initializeIAP();
     fetchPlans();
+  }
+
+  Future<void> _checkActiveSubscription() async {
+    final bool savedIsPremium = await StorageService.getBool(StorageConstants.isPremium) ?? false;
+    final String savedProductId = await StorageService.getString('active_subscription_product_id');
+    final String savedPlanName = await StorageService.getString('active_subscription_plan_name');
+
+    isSubscribed.value = savedIsPremium;
+    if (savedProductId.isNotEmpty) activeProductId.value = savedProductId;
+    if (savedPlanName.isNotEmpty) activePlanName.value = savedPlanName;
   }
 
   @override
@@ -63,24 +81,8 @@ class SubscriptionController extends GetxController {
     isLoading.value = true;
     errorMessage.value = '';
     try {
-      // 1. Fetch configured plans from backend API
-      List<SubscriptionPlanModel> apiPlans = [];
-      try {
-        final subscriptionRepo = Get.find<SubscriptionRepo>();
-        final response = await subscriptionRepo.getPlans();
-        if (response.statusCode == 200 && response.data != null) {
-          final parsed = SubscriptionPlansResponse.fromJson(response.data);
-          if (parsed.data != null && parsed.data!.isNotEmpty) {
-            apiPlans = parsed.data!;
-            debugPrint('SubscriptionController: Fetched ${apiPlans.length} plans from API');
-          }
-        }
-      } catch (e) {
-        debugPrint('SubscriptionController: API getPlans info/fallback: $e');
-      }
-
-      // 2. Fetch live localized products from Apple / Google Play Store Console
-      await _fetchStoreProducts(apiPlans: apiPlans);
+      // Fetch live localized products directly from Apple App Store / Google Play Store Console
+      await _fetchStoreProducts();
     } catch (e) {
       errorMessage.value = e.toString();
     } finally {
@@ -88,16 +90,12 @@ class SubscriptionController extends GetxController {
     }
   }
 
-  Future<void> _fetchStoreProducts({List<SubscriptionPlanModel> apiPlans = const []}) async {
+  Future<void> _fetchStoreProducts() async {
     debugPrint('SubscriptionController: Initializing product fetching from Store Console...');
     final bool isAvailable = await _iap.isAvailable();
     if (!isAvailable) {
-      debugPrint('SubscriptionController ERROR: In-app billing is NOT available on this device!');
-      if (apiPlans.isNotEmpty) {
-        plans.assignAll(apiPlans);
-      } else {
-        errorMessage.value = 'In-app billing is not available on this device.';
-      }
+      debugPrint('SubscriptionController WARNING: In-app billing is NOT available on this device!');
+      _populatePlansFromStore();
       isStoreLoading.value = false;
       return;
     }
@@ -110,15 +108,6 @@ class SubscriptionController extends GetxController {
         idsToQuery.addAll(_iosProductIds);
       } else {
         idsToQuery.add(_androidPremiumProductId);
-      }
-
-      // Merge any product IDs returned from the API
-      for (final plan in apiPlans) {
-        if (plan.productId != null &&
-            plan.productId!.isNotEmpty &&
-            plan.productId != 'N/A') {
-          idsToQuery.add(plan.productId!);
-        }
       }
 
       debugPrint('SubscriptionController: Querying Store Console for IDs: $idsToQuery');
@@ -146,20 +135,16 @@ class SubscriptionController extends GetxController {
       }
 
       storeProducts.assignAll(response.productDetails);
-      _populatePlansFromStore(apiPlans: apiPlans);
+      _populatePlansFromStore();
     } catch (e) {
       debugPrint('SubscriptionController EXCEPTION fetching products: $e');
-      if (apiPlans.isNotEmpty) {
-        plans.assignAll(apiPlans);
-      } else {
-        errorMessage.value = e.toString();
-      }
+      _populatePlansFromStore();
     } finally {
       isStoreLoading.value = false;
     }
   }
 
-  void _populatePlansFromStore({List<SubscriptionPlanModel> apiPlans = const []}) {
+  void _populatePlansFromStore() {
     final List<SubscriptionPlanModel> localPlans = [];
 
     if (GetPlatform.isIOS) {
@@ -180,28 +165,23 @@ class SubscriptionController extends GetxController {
             : product.id.toLowerCase().contains('monthly')
                 ? 'MONTHLY'
                 : 'YEARLY';
-        
-        final matchingApiPlan = apiPlans.firstWhereOrNull(
-          (p) => p.productId == product.id || p.id == product.id,
-        );
 
-        final name = matchingApiPlan?.name ??
-            (duration == 'WEEKLY'
-                ? '1 Week'
-                : duration == 'MONTHLY'
-                    ? '1 Month'
-                    : '1 Year');
+        final name = duration == 'WEEKLY'
+            ? '1 Week'
+            : duration == 'MONTHLY'
+                ? '1 Month'
+                : '1 Year';
 
         localPlans.add(SubscriptionPlanModel(
           id: product.id,
           name: name,
           description: product.description.isNotEmpty
               ? product.description
-              : (matchingApiPlan?.description ?? ''),
-          price: product.rawPrice > 0 ? product.rawPrice : (matchingApiPlan?.price ?? 0.0),
+              : '$name Subscription',
+          price: product.rawPrice,
           currency: product.currencyCode.isNotEmpty
               ? product.currencyCode
-              : (matchingApiPlan?.currency ?? 'USD'),
+              : 'USD',
           duration: duration,
           productId: product.id,
         ));
@@ -213,25 +193,22 @@ class SubscriptionController extends GetxController {
       for (final product in androidProducts) {
         final basePlanId = _getAndroidBasePlanId(product);
         if (basePlanId.isNotEmpty) {
-          _addPlan(localPlans, product, basePlanId, apiPlans);
+          _addPlan(localPlans, product, basePlanId);
         } else {
-          // Fallback 1: Manually iterate subscriptionOfferDetails if available
           final offers = product.productDetails.subscriptionOfferDetails;
           if (offers != null && offers.isNotEmpty) {
             for (final offer in offers) {
               final bId = offer.basePlanId;
               if (bId.isNotEmpty) {
-                _addPlan(localPlans, product, bId, apiPlans);
+                _addPlan(localPlans, product, bId);
               }
             }
           } else {
-            // Fallback 2: Simple product ID fallback
-            _addPlan(localPlans, product, product.id, apiPlans);
+            _addPlan(localPlans, product, product.id);
           }
         }
       }
 
-      // Sort plans: weekly -> monthly -> yearly
       localPlans.sort((a, b) {
         final aId = a.id?.toLowerCase() ?? '';
         final bId = b.id?.toLowerCase() ?? '';
@@ -243,20 +220,93 @@ class SubscriptionController extends GetxController {
       });
     }
 
-    // If store products are empty (e.g. on emulator/no billing), fallback to API plans
-    if (localPlans.isEmpty && apiPlans.isNotEmpty) {
-      localPlans.addAll(apiPlans);
+    // Fallback if store products query returns empty (e.g. on emulator/no active store billing setup)
+    if (localPlans.isEmpty) {
+      debugPrint('SubscriptionController: Store query empty; populating default store fallback plans');
+      if (GetPlatform.isIOS) {
+        localPlans.addAll([
+          SubscriptionPlanModel(
+            id: 'com.whichwin.horseracing.weekly',
+            name: '1 Week',
+            description: '1 Week Subscription',
+            price: 4.99,
+            currency: 'USD',
+            duration: 'WEEKLY',
+            productId: 'com.whichwin.horseracing.weekly',
+          ),
+          SubscriptionPlanModel(
+            id: 'com.whichwin.horseracing.monthly',
+            name: '1 Month',
+            description: '1 Month Subscription',
+            price: 14.99,
+            currency: 'USD',
+            duration: 'MONTHLY',
+            productId: 'com.whichwin.horseracing.monthly',
+          ),
+          SubscriptionPlanModel(
+            id: 'com.whichwin.horseracing.yearly',
+            name: '1 Year',
+            description: '1 Year Subscription',
+            price: 99.99,
+            currency: 'USD',
+            duration: 'YEARLY',
+            productId: 'com.whichwin.horseracing.yearly',
+          ),
+        ]);
+      } else {
+        localPlans.addAll([
+          SubscriptionPlanModel(
+            id: 'weekly-plan',
+            name: '1 Week',
+            description: '1 Week Subscription',
+            price: 4.99,
+            currency: 'USD',
+            duration: 'WEEKLY',
+            productId: _androidPremiumProductId,
+          ),
+          SubscriptionPlanModel(
+            id: 'monthly-plan',
+            name: '1 Month',
+            description: '1 Month Subscription',
+            price: 14.99,
+            currency: 'USD',
+            duration: 'MONTHLY',
+            productId: _androidPremiumProductId,
+          ),
+          SubscriptionPlanModel(
+            id: 'yearly-plan',
+            name: '1 Year',
+            description: '1 Year Subscription',
+            price: 99.99,
+            currency: 'USD',
+            duration: 'YEARLY',
+            productId: _androidPremiumProductId,
+          ),
+        ]);
+      }
     }
 
-    debugPrint('SubscriptionController: Populated ${localPlans.length} plans dynamically');
+    debugPrint('SubscriptionController: Populated ${localPlans.length} plans');
     plans.assignAll(localPlans);
+
+    // Auto select active plan index if user is currently subscribed
+    if (activeProductId.value.isNotEmpty) {
+      final activeIndex = plans.indexWhere(
+        (p) => p.productId == activeProductId.value || p.id == activeProductId.value,
+      );
+      if (activeIndex != -1) {
+        selectedPlanIndex.value = activeIndex;
+        if (plans[activeIndex].name != null) {
+          activePlanName.value = plans[activeIndex].name!;
+        }
+      }
+    }
   }
 
   void _addPlan(
     List<SubscriptionPlanModel> localPlans,
     GooglePlayProductDetails product,
     String id,
-    List<SubscriptionPlanModel> apiPlans,
   ) {
     if (localPlans.any((p) => p.id == id)) {
       debugPrint('SubscriptionController: Plan with ID "$id" already exists, skipping duplicate');
@@ -269,27 +319,22 @@ class SubscriptionController extends GetxController {
             ? 'MONTHLY'
             : 'YEARLY';
 
-    final matchingApiPlan = apiPlans.firstWhereOrNull(
-      (p) => p.productId == id || p.id == id || p.productId == product.id,
-    );
-
-    final name = matchingApiPlan?.name ??
-        (duration == 'WEEKLY'
-            ? '1 Week'
-            : duration == 'MONTHLY'
-                ? '1 Month'
-                : '1 Year');
+    final name = duration == 'WEEKLY'
+        ? '1 Week'
+        : duration == 'MONTHLY'
+            ? '1 Month'
+            : '1 Year';
 
     localPlans.add(SubscriptionPlanModel(
       id: id,
       name: name,
       description: product.description.isNotEmpty
           ? product.description
-          : (matchingApiPlan?.description ?? ''),
-      price: product.rawPrice > 0 ? product.rawPrice : (matchingApiPlan?.price ?? 0.0),
+          : '$name Subscription',
+      price: product.rawPrice,
       currency: product.currencyCode.isNotEmpty
           ? product.currencyCode
-          : (matchingApiPlan?.currency ?? 'USD'),
+          : 'USD',
       duration: duration,
       productId: product.id,
     ));
@@ -461,56 +506,118 @@ class SubscriptionController extends GetxController {
     }
   }
 
+  // Track verified product IDs and completed transaction IDs in the current session
+  final Set<String> _verifiedProductIds = {};
+  final Set<String> _completedTransactionIds = {};
+
   Future<void> _listenToPurchaseUpdated(
     List<PurchaseDetails> purchaseDetailsList,
   ) async {
-    for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
-      debugPrint('SubscriptionController: Purchase stream updated: ProductID=${purchaseDetails.productID}, Status=${purchaseDetails.status}');
-      if (purchaseDetails.status == PurchaseStatus.pending) {
-        isLoading.value = true;
-      } else {
+    if (purchaseDetailsList.isEmpty) return;
+
+    bool newSuccessVerified = false;
+    bool hasError = false;
+    String lastErrorMessage = '';
+
+    // Group purchased/restored items by productID to select the single latest transaction per product
+    final Map<String, PurchaseDetails> latestPurchasesByProduct = {};
+
+    for (final PurchaseDetails pd in purchaseDetailsList) {
+      debugPrint('SubscriptionController: Stream item: ProductID=${pd.productID}, Status=${pd.status}, PurchaseID=${pd.purchaseID}');
+
+      final String transId = pd.purchaseID ?? pd.productID;
+
+      // Complete StoreKit purchase for all transactions so Apple clears them from queue
+      if (pd.pendingCompletePurchase && !_completedTransactionIds.contains(transId)) {
         try {
-          if (purchaseDetails.status == PurchaseStatus.error) {
-            Get.snackbar(
-              'Error',
-              'Payment failed: ${purchaseDetails.error?.message}',
+          await _iap.completePurchase(pd);
+          _completedTransactionIds.add(transId);
+          debugPrint('SubscriptionController: StoreKit transaction $transId completed.');
+        } catch (e) {
+          debugPrint('SubscriptionController: Error completing purchase $transId: $e');
+        }
+      }
+
+      if (pd.status == PurchaseStatus.error) {
+        hasError = true;
+        lastErrorMessage = pd.error?.message ?? 'Payment failed';
+      } else if (pd.status == PurchaseStatus.canceled) {
+        if (!Get.isSnackbarOpen) {
+          Get.snackbar(
+            'Cancelled',
+            'Purchase was cancelled by user.',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        }
+      } else if (pd.status == PurchaseStatus.purchased || pd.status == PurchaseStatus.restored) {
+        latestPurchasesByProduct[pd.productID] = pd;
+      }
+    }
+
+    // Turn off loader if no valid purchased/restored items to process (e.g., canceled or error)
+    if (latestPurchasesByProduct.isEmpty) {
+      isLoading.value = false;
+    } else {
+      // Validate only 1 transaction per product ID with backend
+      for (final entry in latestPurchasesByProduct.entries) {
+        final String productId = entry.key;
+        final PurchaseDetails pd = entry.value;
+
+        // Skip API call if this product ID was already verified in this session
+        if (_verifiedProductIds.contains(productId)) {
+          debugPrint('SubscriptionController: Product $productId already verified in session. Skipping API call.');
+          newSuccessVerified = true;
+          continue;
+        }
+
+        try {
+          isLoading.value = true;
+          final bool valid = await _validatePurchaseAndActivate(pd);
+          if (valid) {
+            _verifiedProductIds.add(productId);
+            newSuccessVerified = true;
+
+            isSubscribed.value = true;
+            activeProductId.value = productId;
+
+            final matchingPlan = plans.firstWhereOrNull(
+              (p) => p.productId == productId || p.id == productId,
             );
-          } else if (purchaseDetails.status == PurchaseStatus.canceled) {
-            Get.snackbar(
-              'Cancelled',
-              'Purchase was cancelled by user.',
-              snackPosition: SnackPosition.BOTTOM,
-            );
-          } else if (purchaseDetails.status == PurchaseStatus.purchased ||
-              purchaseDetails.status == PurchaseStatus.restored) {
-            final bool valid = await _validatePurchaseAndActivate(
-              purchaseDetails,
-            );
-            if (valid) {
-              Get.snackbar(
-                'Success',
-                'Your subscription is active!',
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: const Color(0xFF00695C),
-                colorText: Colors.white,
-              );
-            } else {
-              Get.snackbar('Error', 'Failed to verify purchase with backend.');
+            if (matchingPlan != null) {
+              activePlanName.value = matchingPlan.name ?? 'PRO Subscription';
+              selectedPlanIndex.value = plans.indexOf(matchingPlan);
             }
+
+            await StorageService.setBool(StorageConstants.isPremium, true);
+            await StorageService.setString('active_subscription_product_id', productId);
+            await StorageService.setString('active_subscription_plan_name', activePlanName.value);
+          } else {
+            hasError = true;
+            lastErrorMessage = 'Failed to verify purchase with backend.';
           }
         } catch (e) {
-          debugPrint('SubscriptionController: Error handling purchase update: $e');
+          debugPrint('SubscriptionController: Exception verifying $productId: $e');
         } finally {
           isLoading.value = false;
         }
-        if (purchaseDetails.pendingCompletePurchase) {
-          try {
-            await _iap.completePurchase(purchaseDetails);
-          } catch (e) {
-            debugPrint('SubscriptionController: Error completing purchase: $e');
-          }
-        }
       }
+    }
+
+    isLoading.value = false;
+
+    // Show feedback snackbar only once
+    if (newSuccessVerified) {
+      if (!Get.isSnackbarOpen) {
+        Get.snackbar(
+          'Success',
+          'Your subscription is active!',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const Color(0xFF00695C),
+          colorText: Colors.white,
+        );
+      }
+    } else if (hasError && !Get.isSnackbarOpen) {
+      Get.snackbar('Error', lastErrorMessage);
     }
   }
 
@@ -522,9 +629,13 @@ class SubscriptionController extends GetxController {
       final subscriptionRepo = Get.find<SubscriptionRepo>();
       final dio.Response response;
 
+      debugPrint('SubscriptionController: Validating purchase product=${purchaseDetails.productID}, transactionId=${purchaseDetails.purchaseID}');
       if (GetPlatform.isIOS) {
         response = await subscriptionRepo.verifyAppleSubscription(
           signedTransactionInfo: purchaseDetails.verificationData.serverVerificationData,
+          receiptData: purchaseDetails.verificationData.serverVerificationData,
+          transactionId: purchaseDetails.purchaseID ?? '',
+          productId: purchaseDetails.productID,
           deviceId: deviceId,
         );
       } else if (GetPlatform.isAndroid) {
@@ -537,15 +648,19 @@ class SubscriptionController extends GetxController {
         return false;
       }
 
+      debugPrint('SubscriptionController: Backend verification status=${response.statusCode}, response=${response.data}');
       return response.statusCode == 200 || response.statusCode == 201;
     } catch (e) {
+      debugPrint('SubscriptionController: Verification failed with exception: $e');
       return false;
     }
   }
 
   void restorePurchases() async {
+    if (isLoading.value) return;
     isLoading.value = true;
     try {
+      debugPrint('SubscriptionController: Requesting restorePurchases from Store...');
       await _iap.restorePurchases();
     } catch (e) {
       Get.snackbar('Error', 'Restore failed: $e');
