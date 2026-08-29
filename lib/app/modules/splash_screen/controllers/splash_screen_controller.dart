@@ -38,7 +38,7 @@ class SplashScreenController extends GetxController {
       // 2. Device Login
       final response = await _authRepo.deviceLogin(deviceId);
       
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.statusCode == 200 || response.statusCode == 201) { 
         final loginResponse = DeviceLoginResponse.fromJson(response.data);
         
         if (loginResponse.data?.token != null) {

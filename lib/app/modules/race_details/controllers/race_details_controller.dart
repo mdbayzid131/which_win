@@ -63,8 +63,8 @@ class RaceDetailsController extends GetxController {
   // ── PREMIUM STATUS ────────────────────────────────────────────────────────
 
   Future<void> _loadPremiumStatus() async {
-    // Forced to true for design/testing
-    isPremium.value = true;
+    final savedPremium = await StorageService.getBool(StorageConstants.isPremium) ?? false;
+    isPremium.value = savedPremium;
   }
 
   // ── REST FETCH ────────────────────────────────────────────────────────────
@@ -81,9 +81,9 @@ class RaceDetailsController extends GetxController {
         final raceDetailsResponse = RaceDetailsResponse.fromJson(response.data);
         raceDetails.value = raceDetailsResponse.data;
 
-        // Update isPremium from the server response if available (forced to true for design/testing)
-        isPremium.value = true;
-        await StorageService.setBool(StorageConstants.isPremium, true);
+        // Sync premium status from local storage
+        final savedPremium = await StorageService.getBool(StorageConstants.isPremium) ?? false;
+        isPremium.value = savedPremium;
 
         // Connect SSE only for LIVE races
         final status = raceDetails.value?.status?.toUpperCase() ?? '';
