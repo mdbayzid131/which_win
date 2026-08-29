@@ -378,55 +378,16 @@ class HomeView extends GetView<HomeController> {
         children: [
           // Drawer Header with Background Image
           Container(
-            height: 220.h,
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              // image: DecorationImage(
-              //   image: AssetImage(
-              //     'assets/images/premium_race_header.png',
-              //   ), // Premium generated background
-              //   fit: BoxFit.cover,
-              //   opacity: 0.7, // Slightly more visible for the premium image
-              color: Colors.transparent,
+            padding: EdgeInsets.only(
+              top: MediaQuery.of(context).padding.top + 4.h,
+              bottom: 4.h,
             ),
-            child: Container(
-              color: Colors.transparent,
-              // decoration: BoxDecoration(
-              //   gradient: LinearGradient(
-              //     begin: Alignment.topCenter,
-              //     end: Alignment.bottomCenter,
-              //     colors: [
-              //       Colors.black.withOpacity(0.2),
-              //       Colors.black.withOpacity(0.8),
-              //     ],
-              //   ),
-              // ),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width:
-                          280.w, // Increased width so the logo can grow larger
-                      height: 160.h, // Increased height to allow scaling
-                      // decoration: BoxDecoration(
-                      //   boxShadow: [
-                      //     BoxShadow(
-                      //       color: const Color(0xFF2DD4BF).withOpacity(0.1),
-                      //       blurRadius: 30,
-                      //       spreadRadius: 10,
-                      //     ),
-                      //   ],
-                      // ),
-                      child: Image.asset(
-                        logoPath,
-                        fit: BoxFit
-                            .cover, // Ensures the image scales up to fit the container
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            color: Colors.transparent,
+            child: Image.asset(
+              logoPath,
+              width: double.infinity,
+              height: 170.h,
+              fit: BoxFit.fitWidth,
             ),
           ),
           const Divider(color: Colors.white12, height: 1),
@@ -687,7 +648,9 @@ class HomeView extends GetView<HomeController> {
                             vertical: 2.h,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF2DD4BF).withValues(alpha: 0.2),
+                            color: const Color(
+                              0xFF2DD4BF,
+                            ).withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(4.r),
                           ),
                           child: Text(
@@ -710,7 +673,9 @@ class HomeView extends GetView<HomeController> {
                           ? const Color(0xFF2DD4BF)
                           : Colors.white54,
                       fontSize: 11.sp,
-                      fontWeight: isPremium ? FontWeight.w600 : FontWeight.normal,
+                      fontWeight: isPremium
+                          ? FontWeight.w600
+                          : FontWeight.normal,
                     ),
                   ),
                 ],
@@ -885,9 +850,6 @@ class HomeView extends GetView<HomeController> {
       }
     });
   }
-
-
-
 
   Widget _buildLiveRaceCard(RaceModel race) {
     final String country = race.country ?? 'Unknown';
@@ -1722,7 +1684,9 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.meeting.country.isEmpty ? 'Unknown' : widget.meeting.country,
+                          widget.meeting.country.isEmpty
+                              ? 'Unknown'
+                              : widget.meeting.country,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 17.sp,
