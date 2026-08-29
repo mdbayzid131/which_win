@@ -50,7 +50,8 @@ class SubscriptionView extends GetView<SubscriptionController> {
                 // Main dynamic content
                 Expanded(
                   child: Obx(() {
-                    if (controller.isLoading.value && controller.plans.isEmpty) {
+                    if (controller.isLoading.value &&
+                        controller.plans.isEmpty) {
                       return const Center(
                         child: CircularProgressIndicator(
                           color: Color(0xFF2DD4BF),
@@ -421,7 +422,11 @@ class SubscriptionView extends GetView<SubscriptionController> {
                 color: Color(0xFF2DD4BF),
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.stars_rounded, color: Colors.black, size: 22.sp),
+              child: Icon(
+                Icons.stars_rounded,
+                color: Colors.black,
+                size: 22.sp,
+              ),
             ),
             SizedBox(width: 12.w),
             Expanded(
@@ -474,7 +479,8 @@ class SubscriptionView extends GetView<SubscriptionController> {
   Widget _buildPlanCard(SubscriptionPlanModel plan, int index) {
     return Obx(() {
       final isSelected = controller.selectedPlanIndex.value == index;
-      final isActivePlan = controller.isSubscribed.value &&
+      final isActivePlan =
+          controller.isSubscribed.value &&
           (plan.productId == controller.activeProductId.value ||
               plan.id == controller.activeProductId.value);
       String priceStr = controller.getPlanPriceString(plan, index);
@@ -491,8 +497,8 @@ class SubscriptionView extends GetView<SubscriptionController> {
               color: isSelected
                   ? const Color(0xFF2DD4BF)
                   : (isActivePlan
-                      ? const Color(0xFF2DD4BF).withValues(alpha: 0.5)
-                      : Colors.white12),
+                        ? const Color(0xFF2DD4BF).withValues(alpha: 0.5)
+                        : Colors.white12),
               width: 1.5,
             ),
           ),
@@ -528,11 +534,19 @@ class SubscriptionView extends GetView<SubscriptionController> {
                         if (isActivePlan) ...[
                           SizedBox(width: 8.w),
                           Container(
-                            padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 6.w,
+                              vertical: 2.h,
+                            ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF2DD4BF).withValues(alpha: 0.2),
+                              color: const Color(
+                                0xFF2DD4BF,
+                              ).withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(4.r),
-                              border: Border.all(color: const Color(0xFF2DD4BF), width: 0.8),
+                              border: Border.all(
+                                color: const Color(0xFF2DD4BF),
+                                width: 0.8,
+                              ),
                             ),
                             child: Text(
                               'ACTIVE',
@@ -601,7 +615,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
             child: Text(
               'subscribe_now'.tr,
               style: TextStyle(
-                color: Colors.white,
+                color: Colors.black,
                 fontSize: 16.sp,
                 fontWeight: FontWeight.bold,
               ),
@@ -700,24 +714,30 @@ class SubscriptionView extends GetView<SubscriptionController> {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 12.h),
-            Obx(() => Text(
-              controller.errorMessage.value.isNotEmpty
-                  ? controller.errorMessage.value
-                  : 'Unable to load subscription products. Please ensure in-app products are active in the store console and your device supports Google Play / App Store billing.',
-              style: TextStyle(
-                color: Colors.white60,
-                fontSize: 13.sp,
-                height: 1.4,
+            Obx(
+              () => Text(
+                controller.errorMessage.value.isNotEmpty
+                    ? controller.errorMessage.value
+                    : 'Unable to load subscription products. Please ensure in-app products are active in the store console and your device supports Google Play / App Store billing.',
+                style: TextStyle(
+                  color: Colors.white60,
+                  fontSize: 13.sp,
+                  height: 1.4,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
-            )),
+            ),
             SizedBox(height: 28.h),
             SizedBox(
               width: 160.w,
               height: 46.h,
               child: ElevatedButton.icon(
                 onPressed: () => controller.fetchPlans(),
-                icon: Icon(Icons.refresh_rounded, size: 20.sp, color: Colors.black),
+                icon: Icon(
+                  Icons.refresh_rounded,
+                  size: 20.sp,
+                  color: Colors.black,
+                ),
                 label: Text(
                   'Try Again',
                   style: TextStyle(
