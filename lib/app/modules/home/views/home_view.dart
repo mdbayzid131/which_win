@@ -10,6 +10,8 @@ import 'package:which_win/data/models/race_model.dart';
 import 'package:which_win/data/models/meeting_model.dart';
 import 'package:which_win/data/repositories/race_repository.dart';
 import 'package:which_win/core/services/storage_service.dart';
+import 'package:which_win/core/services/user_service.dart';
+import 'package:which_win/app/modules/race_details/views/widgets/common/premium_lock_overlay.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -308,10 +310,16 @@ class HomeView extends GetView<HomeController> {
                     itemBuilder: (context, index) {
                       final race = races[index];
                       return GestureDetector(
-                        onTap: () => Get.toNamed(
-                          AppRoutes.RACE_DETAILS,
-                          arguments: race,
-                        ),
+                        onTap: () {
+                          if (!UserService.to.isPremium.value) {
+                            showPremiumPrompt(context);
+                          } else {
+                            Get.toNamed(
+                              AppRoutes.RACE_DETAILS,
+                              arguments: race,
+                            );
+                          }
+                        },
                         child: _buildLiveRaceCard(race),
                       );
                     },
@@ -1730,6 +1738,10 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
 
     return GestureDetector(
       onTap: () {
+        if (!UserService.to.isPremium.value) {
+          showPremiumPrompt(context);
+          return;
+        }
         if (raceModel.status == 'FINISHED') {
           Get.toNamed(AppRoutes.RACE_ANALYSIS, arguments: raceModel);
         } else {

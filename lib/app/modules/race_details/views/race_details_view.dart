@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:which_win/data/models/race_details_model.dart';
 import '../controllers/race_details_controller.dart';
-import 'widgets/common/premium_lock_overlay.dart';
 import 'widgets/race_details_app_bar.dart';
 import 'widgets/race_details_sub_tab_bar.dart';
 import 'widgets/race_selector_bar.dart';
@@ -89,24 +88,8 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       case 0:
         return _buildStatisticsMainView(context, details);
       case 1:
-        final isPremium = controller.isPremium.value;
-        if (!isPremium) {
-          return PremiumLockOverlay(
-            icon: Icons.auto_graph,
-            label: 'ai_win_prob_analysis'.tr,
-            description: 'premium_analysis_desc'.tr,
-          );
-        }
         return const AnalysisTabContent();
       case 2:
-        final isPremium = controller.isPremium.value;
-        if (!isPremium) {
-          return PremiumLockOverlay(
-            icon: Icons.bar_chart,
-            label: 'full_race_stats'.tr,
-            description: 'premium_stats_desc'.tr,
-          );
-        }
         return const StatisticsTabContent();
       case 3:
         return BulletinTabContent(details: details);

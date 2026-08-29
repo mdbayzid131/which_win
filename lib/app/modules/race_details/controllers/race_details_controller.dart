@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:which_win/core/services/api_checker.dart';
 import 'package:which_win/core/services/sse_service.dart';
-import 'package:which_win/core/services/user_service.dart';
 import 'package:which_win/core/utils/helpers.dart';
 import 'package:which_win/data/models/race_details_model.dart';
 import 'package:which_win/data/models/race_model.dart';
@@ -31,10 +30,6 @@ class RaceDetailsController extends GetxController {
   final expandedIndex = (-1).obs;
   final bulletinExpandedIndex = (-1).obs;
 
-  /// Whether the current user has an active premium subscription.
-  /// Loaded from local storage immediately on init (no network needed).
-  final isPremium = false.obs;
-
   /// True when the race is LIVE and SSE is actively connected.
   final isLive = false.obs;
 
@@ -45,7 +40,6 @@ class RaceDetailsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _loadPremiumStatus();
     if (Get.arguments is RaceModel) {
       race.value = Get.arguments;
       fetchRaceDetails();
@@ -57,12 +51,6 @@ class RaceDetailsController extends GetxController {
   void onClose() {
     _disconnectSse();
     super.onClose();
-  }
-
-  // ── PREMIUM STATUS ────────────────────────────────────────────────────────
-
-  Future<void> _loadPremiumStatus() async {
-    isPremium.value = UserService.to.isPremium.value;
   }
 
   // ── REST FETCH ────────────────────────────────────────────────────────────
@@ -78,9 +66,6 @@ class RaceDetailsController extends GetxController {
       if (response.statusCode == 200) {
         final raceDetailsResponse = RaceDetailsResponse.fromJson(response.data);
         raceDetails.value = raceDetailsResponse.data;
-
-        // Sync premium status from global UserService
-        isPremium.value = UserService.to.isPremium.value;
 
         // Connect SSE only for LIVE races
         final status = raceDetails.value?.status?.toUpperCase() ?? '';

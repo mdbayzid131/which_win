@@ -22,35 +22,27 @@ class OriginalHorseListView extends GetView<RaceDetailsController> {
         ),
       );
     }
-    return Obx(() {
-      final isPremium = controller.isPremium.value;
-      return ListView.builder(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-        itemCount: entries.length,
-        itemBuilder: (context, index) {
-          final entry = entries[index];
-          final score = entry.normalizedScore?.toInt() ?? 0;
+    return ListView.builder(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+      itemCount: entries.length,
+      itemBuilder: (context, index) {
+        final entry = entries[index];
+        final score = entry.normalizedScore?.toInt() ?? 0;
 
-          Color scoreColor = Colors.orange;
-          if (score >= 70) {
-            scoreColor = const Color(0xFF268060);
-          } else if (score < 50) {
-            scoreColor = Colors.red;
-          }
+        Color scoreColor = Colors.orange;
+        if (score >= 70) {
+          scoreColor = const Color(0xFF268060);
+        } else if (score < 50) {
+          scoreColor = Colors.red;
+        }
 
-          final card = TurkeyStyleHorseCard(
-            index: index,
-            entry: entry,
-            scoreColor: scoreColor,
-          );
-
-          if (!isPremium && index > 0) {
-            return LockedCard(card: card);
-          }
-          return card;
-        },
-      );
-    });
+        return TurkeyStyleHorseCard(
+          index: index,
+          entry: entry,
+          scoreColor: scoreColor,
+        );
+      },
+    );
   }
 }
 

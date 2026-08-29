@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:which_win/app/routes/app_pages.dart';
+import 'package:which_win/core/services/user_service.dart';
+import 'package:which_win/app/modules/race_details/views/widgets/common/premium_lock_overlay.dart';
 import 'package:which_win/data/models/race_model.dart';
 import '../controllers/race_bulletin_controller.dart';
 
@@ -108,6 +110,10 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
                 final raceModel = controller.raceList[index];
                 return GestureDetector(
                   onTap: () {
+                    if (!UserService.to.isPremium.value) {
+                      showPremiumPrompt(context);
+                      return;
+                    }
                     if (raceModel.status == 'FINISHED') {
                       Get.toNamed(
                         AppRoutes.RACE_ANALYSIS,
