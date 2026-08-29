@@ -12,4 +12,8 @@ class StorageConstants {
   static const String quickSetupCompleted = 'quick_setup_completed';
   static const String languageCode = 'language_code';
   static const String isPremium = 'is_premium';
+  static const String subscriptionPlan = 'active_subscription_plan_name';
+  static const String subscriptionEndDate = 'subscription_end_date';
+  static const String subscriptionStartDate = 'subscription_start_date';
+  static const String subscriptionId = 'subscription_id';
 }

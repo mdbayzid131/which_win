@@ -3,6 +3,7 @@ import 'package:which_win/core/controllers/internet_controller.dart';
 import 'package:which_win/core/services/connectivity_service.dart';
 import 'package:which_win/core/services/api_client.dart';
 import 'package:which_win/core/services/storage_service.dart';
+import 'package:which_win/core/services/user_service.dart';
 import 'package:which_win/data/repositories/auth_repository.dart';
 import 'package:which_win/data/repositories/race_repository.dart';
 import 'package:which_win/data/repositories/notification_repository.dart';
@@ -14,6 +15,7 @@ class InitialBinding extends Bindings {
   void dependencies() {
     // Initialize core services
     Get.put(StorageService(), permanent: true);
+    Get.put(UserService(), permanent: true);
     Get.put(ApiClient(), permanent: true);
 
     // Repositories

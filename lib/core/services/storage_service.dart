@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:which_win/config/constants/storage_constants.dart';
 
 class StorageService extends GetxService {
   //===========================> Get Data <========================
@@ -60,6 +61,11 @@ class StorageService extends GetxService {
   static Future<bool> containsKey(String key) async {
     final preferences = await SharedPreferences.getInstance();
     return preferences.containsKey(key);
+  }
+
+  //==============================> Premium Check <============================
+  static Future<bool> isPremiumUser() async {
+    return (await getBool(StorageConstants.isPremium)) ?? false;
   }
 }
 

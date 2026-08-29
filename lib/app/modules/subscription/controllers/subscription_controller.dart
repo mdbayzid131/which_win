@@ -5,8 +5,8 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:intl/intl.dart';
 import 'package:dio/dio.dart' as dio;
-import 'package:which_win/config/constants/storage_constants.dart';
 import 'package:which_win/core/services/storage_service.dart';
+import 'package:which_win/core/services/user_service.dart';
 import 'package:which_win/core/utils/device_helper.dart';
 import 'package:which_win/data/models/subscription_model.dart';
 import 'package:which_win/data/repositories/subscription_repository.dart';
@@ -47,9 +47,9 @@ class SubscriptionController extends GetxController {
   }
 
   Future<void> _checkActiveSubscription() async {
-    final bool savedIsPremium = await StorageService.getBool(StorageConstants.isPremium) ?? false;
+    final bool savedIsPremium = UserService.to.isPremium.value;
     final String savedProductId = await StorageService.getString('active_subscription_product_id');
-    final String savedPlanName = await StorageService.getString('active_subscription_plan_name');
+    final String savedPlanName = UserService.to.subscriptionPlan.value;
 
     isSubscribed.value = savedIsPremium;
     if (savedProductId.isNotEmpty) activeProductId.value = savedProductId;
@@ -588,7 +588,10 @@ class SubscriptionController extends GetxController {
               selectedPlanIndex.value = plans.indexOf(matchingPlan);
             }
 
-            await StorageService.setBool(StorageConstants.isPremium, true);
+            await UserService.to.updateSubscriptionData(
+              active: true,
+              plan: activePlanName.value,
+            );
             await StorageService.setString('active_subscription_product_id', productId);
             await StorageService.setString('active_subscription_plan_name', activePlanName.value);
           } else {

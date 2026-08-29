@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:which_win/config/constants/storage_constants.dart';
 import 'package:which_win/core/services/api_checker.dart';
 import 'package:which_win/core/services/sse_service.dart';
-import 'package:which_win/core/services/storage_service.dart';
+import 'package:which_win/core/services/user_service.dart';
 import 'package:which_win/core/utils/helpers.dart';
 import 'package:which_win/data/models/race_details_model.dart';
 import 'package:which_win/data/models/race_model.dart';
@@ -63,8 +62,7 @@ class RaceDetailsController extends GetxController {
   // ── PREMIUM STATUS ────────────────────────────────────────────────────────
 
   Future<void> _loadPremiumStatus() async {
-    final savedPremium = await StorageService.getBool(StorageConstants.isPremium) ?? false;
-    isPremium.value = savedPremium;
+    isPremium.value = UserService.to.isPremium.value;
   }
 
   // ── REST FETCH ────────────────────────────────────────────────────────────
@@ -81,9 +79,8 @@ class RaceDetailsController extends GetxController {
         final raceDetailsResponse = RaceDetailsResponse.fromJson(response.data);
         raceDetails.value = raceDetailsResponse.data;
 
-        // Sync premium status from local storage
-        final savedPremium = await StorageService.getBool(StorageConstants.isPremium) ?? false;
-        isPremium.value = savedPremium;
+        // Sync premium status from global UserService
+        isPremium.value = UserService.to.isPremium.value;
 
         // Connect SSE only for LIVE races
         final status = raceDetails.value?.status?.toUpperCase() ?? '';
