@@ -48,4 +48,14 @@ class UserService extends GetxService {
     await StorageService.setString(StorageConstants.subscriptionStartDate, startDate ?? '');
     await StorageService.setString(StorageConstants.subscriptionId, id ?? '');
   }
+
+  int get remainingDays {
+    if (subscriptionEndDate.value.isEmpty) return 0;
+    final end = DateTime.tryParse(subscriptionEndDate.value);
+    if (end == null) return 0;
+    final diff = end.difference(DateTime.now()).inDays;
+    return diff >= 0 ? diff : 0;
+  }
+
+  bool get isTrial => subscriptionPlan.value.toUpperCase() == 'TRIAL';
 }

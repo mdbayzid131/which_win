@@ -435,6 +435,7 @@ class HomeView extends GetView<HomeController> {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
+                _buildSubscriptionStatusCard(),
                 _buildDrawerItem(
                   Icons.emoji_events_outlined,
                   'races'.tr,
@@ -599,6 +600,149 @@ class HomeView extends GetView<HomeController> {
         ),
       ),
     );
+  }
+
+  Widget _buildSubscriptionStatusCard() {
+    return Obx(() {
+      final isPremium = UserService.to.isPremium.value;
+      final planName = UserService.to.subscriptionPlan.value;
+      final remainingDays = UserService.to.remainingDays;
+      final isTrial = UserService.to.isTrial;
+
+      String planTitle = 'FREE PLAN';
+      if (planName.isNotEmpty) {
+        planTitle = planName.toUpperCase();
+      }
+
+      String subtitleText = 'Upgrade for full access';
+      if (isPremium) {
+        if (isTrial) {
+          subtitleText = '$remainingDays days trial left';
+        } else {
+          subtitleText = 'Active PRO Subscription';
+        }
+      }
+
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        padding: EdgeInsets.all(14.w),
+        decoration: BoxDecoration(
+          color: const Color(0xFF1E222B),
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(
+            color: isPremium
+                ? const Color(0xFF2DD4BF).withValues(alpha: 0.4)
+                : Colors.white12,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: isPremium
+                  ? const Color(0xFF2DD4BF).withValues(alpha: 0.1)
+                  : Colors.black.withValues(alpha: 0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 42.w,
+              height: 42.w,
+              decoration: BoxDecoration(
+                color: isPremium
+                    ? const Color(0xFF2DD4BF).withValues(alpha: 0.15)
+                    : Colors.white10,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                isPremium
+                    ? Icons.workspace_premium_rounded
+                    : Icons.card_membership_rounded,
+                color: isPremium ? const Color(0xFF2DD4BF) : Colors.white60,
+                size: 22.sp,
+              ),
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        planTitle,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      if (isTrial) ...[
+                        SizedBox(width: 6.w),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 6.w,
+                            vertical: 2.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF2DD4BF).withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(4.r),
+                          ),
+                          child: Text(
+                            'TRIAL',
+                            style: TextStyle(
+                              color: const Color(0xFF2DD4BF),
+                              fontSize: 9.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  SizedBox(height: 3.h),
+                  Text(
+                    subtitleText,
+                    style: TextStyle(
+                      color: isPremium
+                          ? const Color(0xFF2DD4BF)
+                          : Colors.white54,
+                      fontSize: 11.sp,
+                      fontWeight: isPremium ? FontWeight.w600 : FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                Get.back();
+                Get.toNamed(AppRoutes.SUBSCRIPTION);
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF2DD4BF), Color(0xFF0D9488)],
+                  ),
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Text(
+                  isPremium && !isTrial ? 'Manage' : 'Upgrade',
+                  style: TextStyle(
+                    color: const Color(0xFF0F1419),
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildDrawerItem(

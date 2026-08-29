@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:which_win/app/routes/app_pages.dart';
+import 'package:which_win/core/services/user_service.dart';
 import 'package:which_win/data/models/subscription_model.dart';
 import '../controllers/subscription_controller.dart';
 
@@ -394,86 +395,106 @@ class SubscriptionView extends GetView<SubscriptionController> {
   }
 
   Widget _buildActiveSubscriptionCard() {
-    final planName = controller.activePlanName.value.isNotEmpty
-        ? controller.activePlanName.value
-        : 'PRO Subscription';
+    return Obx(() {
+      final rawPlanName = UserService.to.subscriptionPlan.value.isNotEmpty
+          ? UserService.to.subscriptionPlan.value
+          : (controller.activePlanName.value.isNotEmpty
+              ? controller.activePlanName.value
+              : 'PRO Subscription');
 
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24.w),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF00695C), Color(0xFF0F1419)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(
-            color: const Color(0xFF2DD4BF).withValues(alpha: 0.6),
-            width: 1.2,
-          ),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: EdgeInsets.all(8.w),
-              decoration: const BoxDecoration(
-                color: Color(0xFF2DD4BF),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.stars_rounded,
-                color: Colors.black,
-                size: 22.sp,
-              ),
+      final isTrial = UserService.to.isTrial;
+      final remainingDays = UserService.to.remainingDays;
+
+      final planName = isTrial ? '7-DAY FREE TRIAL' : rawPlanName.toUpperCase();
+      final subtitle = isTrial
+          ? '$remainingDays days trial left'
+          : 'Active Unlimited Access';
+
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 24.w),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF00695C), Color(0xFF0F1419)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            SizedBox(width: 12.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'CURRENT PLAN',
-                    style: TextStyle(
-                      color: const Color(0xFF2DD4BF),
-                      fontSize: 10.sp,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 0.8,
-                    ),
-                  ),
-                  SizedBox(height: 2.h),
-                  Text(
-                    planName,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(
+              color: const Color(0xFF2DD4BF).withValues(alpha: 0.6),
+              width: 1.2,
             ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-              decoration: BoxDecoration(
-                color: const Color(0xFF2DD4BF).withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(20.r),
-                border: Border.all(color: const Color(0xFF2DD4BF)),
-              ),
-              child: Text(
-                'ACTIVE',
-                style: TextStyle(
-                  color: const Color(0xFF2DD4BF),
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.bold,
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF2DD4BF),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.stars_rounded,
+                  color: Colors.black,
+                  size: 22.sp,
                 ),
               ),
-            ),
-          ],
+              SizedBox(width: 12.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'CURRENT PLAN',
+                      style: TextStyle(
+                        color: const Color(0xFF2DD4BF),
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.8,
+                      ),
+                    ),
+                    SizedBox(height: 2.h),
+                    Text(
+                      planName,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 2.h),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 11.sp,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF2DD4BF).withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(20.r),
+                  border: Border.all(color: const Color(0xFF2DD4BF)),
+                ),
+                child: Text(
+                  'ACTIVE',
+                  style: TextStyle(
+                    color: const Color(0xFF2DD4BF),
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget _buildPlanCard(SubscriptionPlanModel plan, int index) {
