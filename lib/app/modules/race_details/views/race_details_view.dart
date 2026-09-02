@@ -94,8 +94,8 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       case 3:
         return BulletinTabContent(details: details);
       default:
-        return const Center(
-          child: Text('Coming Soon', style: TextStyle(color: Colors.white60)),
+        return Center(
+          child: Text('coming_soon'.tr, style: const TextStyle(color: Colors.white60)),
         );
     }
   }
