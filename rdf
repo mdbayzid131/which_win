@@ -1,27 +1,75 @@
-I/flutter ( 6592): ┌ ➡️➡️➡️➡️ REQUEST ══════════════════════════════════════ ➡️➡️➡️➡️
-I/flutter ( 6592): │ GET https://goldentak-server.onrender.com/api/v1/race/cmt1drx2v00aogw2ryr5by7xh
-I/flutter ( 6592): │ Headers: {Content-Type: application/json, Authorization: ***}
-I/flutter ( 6592): └ ➡️➡️➡️➡️ REQUEST ══════════════════════════════════════ ➡️➡️➡️➡️
-2
-I/flutter ( 6592): 
-I/flutter ( 6592): ┌ ✅✅✅✅ RESPONSE ══════════════════════════════════════ ✅✅✅✅
-I/flutter ( 6592): │ [ GET 200] https://goldentak-server.onrender.com/api/v1/race/cmt1drx2v00aogw2ryr5by7xh
-I/flutter ( 6592): │ Data:
-I/flutter ( 6592): │   {
-I/flutter ( 6592): │     "success": true,
-I/flutter ( 6592): │     "message": "Race fetched successfully",
-I/flutter ( 6592): │     "isPremium": true,
-I/flutter ( 6592): │     "data": {
-I/flutter ( 6592): │       "id": "cmt1drx2v00aogw2ryr5by7xh",
-I/flutter ( 6592): │       "externalId": "rac_32295348618",
-I/flutter ( 6592): │       "meetingId": null,
-I/flutter ( 6592): │       "name": "Prix Au Dela Des Pistes (Prix Du Chateau De Bosmelet)",
-I/flutter ( 6592): │       "date": "2026-08-20T00:00:00.000Z",
-I/flutter ( 6592): │       "time": "2:50",
-I/flutter ( 6592): │       "location": "Deauville",
-I/flutter ( 6592): │       "country": "France",
-I/flutter ( 6592): │       "region": "fr",
-I/flutter ( 6592): │       "trackType": null,
-I/flutter ( 6592): │       "surface": "AW",
-I/flutter ( 6592): │       "distance": "12.5f",
-I/flutter ( 6592): │       "distanceF": "12.5",
+Restarted application in 615ms.
+[GETX] Instance "StorageService" has been created
+[GETX] Instance "StorageService" has been initialized
+[GETX] Instance "ApiClient" has been created
+[GETX] Instance "ApiClient" has been initialized
+[GETX] Instance "InternetController" has been created
+[GETX] Instance "InternetController" has been initialized
+[GETX] Instance "GetMaterialController" has been created
+[GETX] Instance "GetMaterialController" has been initialized
+[GETX] GOING TO ROUTE /splash-screen
+[GETX] Instance "AuthRepo" has been created
+[GETX] Instance "SplashScreenController" has been created
+[GETX] Instance "SplashScreenController" has been initialized
+flutter:
+flutter: 🔍🔍🔍 DEBUG: Device ID: ECB9132E-9078-4D7D-AA4D-25930BB8EA07
+flutter:
+flutter:
+flutter: ┌ ➡️➡️➡️➡️ REQUEST ══════════════════════════════════════ ➡️➡️➡️➡️
+flutter: │ POST https://goldentak-server.onrender.com/api/v1/auth/device-login
+flutter: │ Headers: {Content-Type: application/json}
+flutter: │ Body:
+flutter: │   {
+flutter: │     "deviceId": "ECB9132E-9078-4D7D-AA4D-25930BB8EA07"
+flutter: │   }
+flutter: └ ➡️➡️➡️➡️ REQUEST ══════════════════════════════════════ ➡️➡️➡️➡️
+flutter:
+flutter:
+flutter: ┌ ✅✅✅✅ RESPONSE ══════════════════════════════════════ ✅✅✅✅
+flutter: │ [ POST 200] https://goldentak-server.onrender.com/api/v1/auth/device-login
+flutter: │ Data:
+flutter: │   {
+flutter: │     "success": true,
+flutter: │     "message": "Device logged in successfully",
+flutter: │     "data": {
+flutter: │       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbXRkcmd4amcwMDBiZTkyOTR1NnhtOGh6IiwiZGV2aWNlSWQiOiJFQ0I5MTMyRS05MDc4LTREN0QtQUE0RC0yNTkzMEJCOEVBMDciLCJyb2xlIjoiVVNFUiIsInN1YnNjcmlwdGlvbiI6eyJwbGFuIjoiVFJJQUwiLCJpc0FjdGl2ZSI6dHJ1ZSwiZW5kRGF0ZSI6IjIwMjYtMDktMDFUMDI6Mjg6MTkuMjIwWiJ9LCJpYXQiOjE3ODc5NzA1MDAsImV4cCI6MTc4ODU3NTMwMH0.NVOUEdq3_p1XOdaehC1nqoeIuPJNoJsCZ-taKOS-YNk",
+flutter: │       "user": {
+flutter: │         "id": "cmtdrgxjg000be9294u6xm8hz",
+flutter: │         "deviceId": "ECB9132E-9078-4D7D-AA4D-25930BB8EA07",
+flutter: │         "email": null,
+flutter: │         "username": null,
+flutter: │         "passwordHash": null,
+flutter: │         "name": null,
+flutter: │         "phone": null,
+flutter: │         "avatarUrl": null,
+flutter: │         "role": "USER",
+flutter: │         "isVerified": false,
+flutter: │         "fcmToken": null,
+flutter: │         "platform": null,
+flutter: │         "language": "en",
+flutter: │         "createdAt": "2026-08-29T02:28:17.740Z",
+flutter: │         "updatedAt": "2026-08-29T02:28:17.740Z",
+flutter: │         "subscription": {
+flutter: │           "id": "cmtdrgyol000de9299f67q1lc",
+flutter: │           "userId": "cmtdrgxjg000be9294u6xm8hz",
+flutter: │           "plan": "TRIAL",
+flutter: │           "startDate": "2026-08-29T02:28:19.220Z",
+flutter: │           "endDate": "2026-09-01T02:28:19.220Z",
+flutter: │           "isActive": true,
+flutter: │           "googlePurchaseToken": null,
+flutter: │           "appleOriginalTransactionId": null,
+flutter: │           "createdAt": "2026-08-29T02:28:19.221Z",
+flutter: │           "updatedAt": "2026-08-29T02:28:19.221Z"
+flutter: │         }
+flutter: │       }
+flutter: │     }
+flutter: │   }
+flutter: └ ✅✅✅✅ RESPONSE ══════════════════════════════════════ ✅✅✅✅
+flutter:
+flutter:
+flutter: ℹ️ℹ️ℹ️ℹ INFO: Device login successful
+flutter:
+flutter:
+flutter: ℹ️ℹ️ℹ️ℹ INFO: Premium status saved: true
+flutter:
+[GETX] GOING TO ROUTE /home

@@ -143,10 +143,10 @@ void showPremiumPrompt(BuildContext context) {
     Container(
       padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E222B),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        color: const Color(0xFF0F1419),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
         border: Border.all(
-          color: const Color(0xFFE6A817).withValues(alpha: 0.2),
+          color: const Color(0xFF2DD4BF).withValues(alpha: 0.2),
         ),
       ),
       child: SafeArea(
@@ -158,23 +158,36 @@ void showPremiumPrompt(BuildContext context) {
               width: 40.w,
               height: 4.h,
               decoration: BoxDecoration(
-                color: Colors.white38,
+                color: Colors.white24,
                 borderRadius: BorderRadius.circular(2.r),
               ),
             ),
-            SizedBox(height: 20.h),
-            Icon(
-              Icons.workspace_premium_rounded,
-              color: const Color(0xFFE6A817),
-              size: 44.sp,
+            SizedBox(height: 24.h),
+            Container(
+              width: 64.w,
+              height: 64.w,
+              decoration: BoxDecoration(
+                color: const Color(0xFF2DD4BF).withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: const Color(0xFF2DD4BF).withValues(alpha: 0.3),
+                  width: 1.5,
+                ),
+              ),
+              child: Icon(
+                Icons.workspace_premium_rounded,
+                color: const Color(0xFF2DD4BF),
+                size: 32.sp,
+              ),
             ),
-            SizedBox(height: 12.h),
+            SizedBox(height: 16.h),
             Text(
               'Unlock Premium Access',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
+                letterSpacing: 0.3,
               ),
             ),
             SizedBox(height: 8.h),
@@ -182,9 +195,9 @@ void showPremiumPrompt(BuildContext context) {
               'Unlock advanced AI analytics, win probabilities,\nfair odds, and daily horse ratings.',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.white54,
+                color: Colors.white60,
                 fontSize: 13.sp,
-                height: 1.5,
+                height: 1.4,
               ),
             ),
             SizedBox(height: 24.h),
@@ -198,16 +211,23 @@ void showPremiumPrompt(BuildContext context) {
                 padding: EdgeInsets.symmetric(vertical: 14.h),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFFE6A817), Color(0xFFCC8800)],
+                    colors: [Color(0xFF2DD4BF), Color(0xFF0D9488)],
                   ),
-                  borderRadius: BorderRadius.circular(12.r),
+                  borderRadius: BorderRadius.circular(14.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF2DD4BF).withValues(alpha: 0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
                 child: Text(
                   'View Plans',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.black87,
-                    fontSize: 14.sp,
+                    color: const Color(0xFF0F1419),
+                    fontSize: 15.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -225,6 +245,7 @@ void showPremiumPrompt(BuildContext context) {
         ),
       ),
     ),
+    isScrollControlled: true,
   );
 }
 

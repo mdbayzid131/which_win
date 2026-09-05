@@ -5,6 +5,8 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:intl/intl.dart';
 import 'package:dio/dio.dart' as dio;
+import 'package:which_win/core/services/storage_service.dart';
+import 'package:which_win/core/services/user_service.dart';
 import 'package:which_win/core/utils/device_helper.dart';
 import 'package:which_win/data/models/subscription_model.dart';
 import 'package:which_win/data/repositories/subscription_repository.dart';
@@ -15,6 +17,11 @@ class SubscriptionController extends GetxController {
   final isLoading = false.obs;
   final selectedPlanIndex = 0.obs;
   final errorMessage = ''.obs;
+
+  // Active Subscription State
+  final isSubscribed = false.obs;
+  final activePlanName = ''.obs;
+  final activeProductId = ''.obs;
 
   // In-App Purchase properties
   final InAppPurchase _iap = InAppPurchase.instance;
@@ -34,8 +41,19 @@ class SubscriptionController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _checkActiveSubscription();
     _initializeIAP();
     fetchPlans();
+  }
+
+  Future<void> _checkActiveSubscription() async {
+    final bool savedIsPremium = UserService.to.isPremium.value;
+    final String savedProductId = await StorageService.getString('active_subscription_product_id');
+    final String savedPlanName = UserService.to.subscriptionPlan.value;
+
+    isSubscribed.value = savedIsPremium;
+    if (savedProductId.isNotEmpty) activeProductId.value = savedProductId;
+    if (savedPlanName.isNotEmpty) activePlanName.value = savedPlanName;
   }
 
   @override
@@ -270,6 +288,19 @@ class SubscriptionController extends GetxController {
 
     debugPrint('SubscriptionController: Populated ${localPlans.length} plans');
     plans.assignAll(localPlans);
+
+    // Auto select active plan index if user is currently subscribed
+    if (activeProductId.value.isNotEmpty) {
+      final activeIndex = plans.indexWhere(
+        (p) => p.productId == activeProductId.value || p.id == activeProductId.value,
+      );
+      if (activeIndex != -1) {
+        selectedPlanIndex.value = activeIndex;
+        if (plans[activeIndex].name != null) {
+          activePlanName.value = plans[activeIndex].name!;
+        }
+      }
+    }
   }
 
   void _addPlan(
@@ -475,56 +506,121 @@ class SubscriptionController extends GetxController {
     }
   }
 
+  // Track verified product IDs and completed transaction IDs in the current session
+  final Set<String> _verifiedProductIds = {};
+  final Set<String> _completedTransactionIds = {};
+
   Future<void> _listenToPurchaseUpdated(
     List<PurchaseDetails> purchaseDetailsList,
   ) async {
-    for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
-      debugPrint('SubscriptionController: Purchase stream updated: ProductID=${purchaseDetails.productID}, Status=${purchaseDetails.status}');
-      if (purchaseDetails.status == PurchaseStatus.pending) {
-        isLoading.value = true;
-      } else {
+    if (purchaseDetailsList.isEmpty) return;
+
+    bool newSuccessVerified = false;
+    bool hasError = false;
+    String lastErrorMessage = '';
+
+    // Group purchased/restored items by productID to select the single latest transaction per product
+    final Map<String, PurchaseDetails> latestPurchasesByProduct = {};
+
+    for (final PurchaseDetails pd in purchaseDetailsList) {
+      debugPrint('SubscriptionController: Stream item: ProductID=${pd.productID}, Status=${pd.status}, PurchaseID=${pd.purchaseID}');
+
+      final String transId = pd.purchaseID ?? pd.productID;
+
+      // Complete StoreKit purchase for all transactions so Apple clears them from queue
+      if (pd.pendingCompletePurchase && !_completedTransactionIds.contains(transId)) {
         try {
-          if (purchaseDetails.status == PurchaseStatus.error) {
-            Get.snackbar(
-              'Error',
-              'Payment failed: ${purchaseDetails.error?.message}',
+          await _iap.completePurchase(pd);
+          _completedTransactionIds.add(transId);
+          debugPrint('SubscriptionController: StoreKit transaction $transId completed.');
+        } catch (e) {
+          debugPrint('SubscriptionController: Error completing purchase $transId: $e');
+        }
+      }
+
+      if (pd.status == PurchaseStatus.error) {
+        hasError = true;
+        lastErrorMessage = pd.error?.message ?? 'Payment failed';
+      } else if (pd.status == PurchaseStatus.canceled) {
+        if (!Get.isSnackbarOpen) {
+          Get.snackbar(
+            'Cancelled',
+            'Purchase was cancelled by user.',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        }
+      } else if (pd.status == PurchaseStatus.purchased || pd.status == PurchaseStatus.restored) {
+        latestPurchasesByProduct[pd.productID] = pd;
+      }
+    }
+
+    // Turn off loader if no valid purchased/restored items to process (e.g., canceled or error)
+    if (latestPurchasesByProduct.isEmpty) {
+      isLoading.value = false;
+    } else {
+      // Validate only 1 transaction per product ID with backend
+      for (final entry in latestPurchasesByProduct.entries) {
+        final String productId = entry.key;
+        final PurchaseDetails pd = entry.value;
+
+        // Skip API call if this product ID was already verified in this session
+        if (_verifiedProductIds.contains(productId)) {
+          debugPrint('SubscriptionController: Product $productId already verified in session. Skipping API call.');
+          newSuccessVerified = true;
+          continue;
+        }
+
+        try {
+          isLoading.value = true;
+          final bool valid = await _validatePurchaseAndActivate(pd);
+          if (valid) {
+            _verifiedProductIds.add(productId);
+            newSuccessVerified = true;
+
+            isSubscribed.value = true;
+            activeProductId.value = productId;
+
+            final matchingPlan = plans.firstWhereOrNull(
+              (p) => p.productId == productId || p.id == productId,
             );
-          } else if (purchaseDetails.status == PurchaseStatus.canceled) {
-            Get.snackbar(
-              'Cancelled',
-              'Purchase was cancelled by user.',
-              snackPosition: SnackPosition.BOTTOM,
-            );
-          } else if (purchaseDetails.status == PurchaseStatus.purchased ||
-              purchaseDetails.status == PurchaseStatus.restored) {
-            final bool valid = await _validatePurchaseAndActivate(
-              purchaseDetails,
-            );
-            if (valid) {
-              Get.snackbar(
-                'Success',
-                'Your subscription is active!',
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: const Color(0xFF00695C),
-                colorText: Colors.white,
-              );
-            } else {
-              Get.snackbar('Error', 'Failed to verify purchase with backend.');
+            if (matchingPlan != null) {
+              activePlanName.value = matchingPlan.name ?? 'PRO Subscription';
+              selectedPlanIndex.value = plans.indexOf(matchingPlan);
             }
+
+            await UserService.to.updateSubscriptionData(
+              active: true,
+              plan: activePlanName.value,
+            );
+            await StorageService.setString('active_subscription_product_id', productId);
+            await StorageService.setString('active_subscription_plan_name', activePlanName.value);
+          } else {
+            hasError = true;
+            lastErrorMessage = 'Failed to verify purchase with backend.';
           }
         } catch (e) {
-          debugPrint('SubscriptionController: Error handling purchase update: $e');
+          debugPrint('SubscriptionController: Exception verifying $productId: $e');
         } finally {
           isLoading.value = false;
         }
-        if (purchaseDetails.pendingCompletePurchase) {
-          try {
-            await _iap.completePurchase(purchaseDetails);
-          } catch (e) {
-            debugPrint('SubscriptionController: Error completing purchase: $e');
-          }
-        }
       }
+    }
+
+    isLoading.value = false;
+
+    // Show feedback snackbar only once
+    if (newSuccessVerified) {
+      if (!Get.isSnackbarOpen) {
+        Get.snackbar(
+          'Success',
+          'Your subscription is active!',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const Color(0xFF00695C),
+          colorText: Colors.white,
+        );
+      }
+    } else if (hasError && !Get.isSnackbarOpen) {
+      Get.snackbar('Error', lastErrorMessage);
     }
   }
 
@@ -564,8 +660,10 @@ class SubscriptionController extends GetxController {
   }
 
   void restorePurchases() async {
+    if (isLoading.value) return;
     isLoading.value = true;
     try {
+      debugPrint('SubscriptionController: Requesting restorePurchases from Store...');
       await _iap.restorePurchases();
     } catch (e) {
       Get.snackbar('Error', 'Restore failed: $e');

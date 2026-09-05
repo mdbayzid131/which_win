@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:which_win/config/constants/storage_constants.dart';
 import 'package:which_win/core/services/api_checker.dart';
 import 'package:which_win/core/services/sse_service.dart';
-import 'package:which_win/core/services/storage_service.dart';
 import 'package:which_win/core/utils/helpers.dart';
 import 'package:which_win/data/models/race_details_model.dart';
 import 'package:which_win/data/models/race_model.dart';
@@ -32,10 +30,6 @@ class RaceDetailsController extends GetxController {
   final expandedIndex = (-1).obs;
   final bulletinExpandedIndex = (-1).obs;
 
-  /// Whether the current user has an active premium subscription.
-  /// Loaded from local storage immediately on init (no network needed).
-  final isPremium = false.obs;
-
   /// True when the race is LIVE and SSE is actively connected.
   final isLive = false.obs;
 
@@ -46,7 +40,6 @@ class RaceDetailsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _loadPremiumStatus();
     if (Get.arguments is RaceModel) {
       race.value = Get.arguments;
       fetchRaceDetails();
@@ -58,13 +51,6 @@ class RaceDetailsController extends GetxController {
   void onClose() {
     _disconnectSse();
     super.onClose();
-  }
-
-  // ── PREMIUM STATUS ────────────────────────────────────────────────────────
-
-  Future<void> _loadPremiumStatus() async {
-    // Forced to true for design/testing
-    isPremium.value = true;
   }
 
   // ── REST FETCH ────────────────────────────────────────────────────────────
@@ -80,10 +66,6 @@ class RaceDetailsController extends GetxController {
       if (response.statusCode == 200) {
         final raceDetailsResponse = RaceDetailsResponse.fromJson(response.data);
         raceDetails.value = raceDetailsResponse.data;
-
-        // Update isPremium from the server response if available (forced to true for design/testing)
-        isPremium.value = true;
-        await StorageService.setBool(StorageConstants.isPremium, true);
 
         // Connect SSE only for LIVE races
         final status = raceDetails.value?.status?.toUpperCase() ?? '';
@@ -151,7 +133,9 @@ class RaceDetailsController extends GetxController {
 
   void selectSiblingRace(RaceModel newRace) {
     if ((newRace.id != null && newRace.id == race.value?.id) ||
-        (newRace.name != null && newRace.name == race.value?.name)) return;
+        (newRace.name != null && newRace.name == race.value?.name)) {
+      return;
+    }
     race.value = newRace;
     raceDetails.value = null;
     raceStats.value = null;

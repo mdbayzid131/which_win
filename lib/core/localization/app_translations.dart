@@ -222,6 +222,8 @@ class AppTranslations extends Translations {
       'days_ago': 'days ago',
       'horse_label': 'Horse',
       'jockey_label': 'Jockey',
+      'no_data_available': 'No data available',
+      'coming_soon': 'Coming Soon',
     },
     'tr': {
       'filter_races': 'Yarışları Filtrele',
@@ -441,6 +443,8 @@ class AppTranslations extends Translations {
       'days_ago': 'gün önce',
       'horse_label': 'At',
       'jockey_label': 'Jokey',
+      'no_data_available': 'Veri bulunamadı',
+      'coming_soon': 'Çok Yakında',
     },
   };
 }

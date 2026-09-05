@@ -10,6 +10,8 @@ import 'package:which_win/data/models/race_model.dart';
 import 'package:which_win/data/models/meeting_model.dart';
 import 'package:which_win/data/repositories/race_repository.dart';
 import 'package:which_win/core/services/storage_service.dart';
+import 'package:which_win/core/services/user_service.dart';
+import 'package:which_win/app/modules/race_details/views/widgets/common/premium_lock_overlay.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -308,10 +310,16 @@ class HomeView extends GetView<HomeController> {
                     itemBuilder: (context, index) {
                       final race = races[index];
                       return GestureDetector(
-                        onTap: () => Get.toNamed(
-                          AppRoutes.RACE_DETAILS,
-                          arguments: race,
-                        ),
+                        onTap: () {
+                          if (!UserService.to.isPremium.value) {
+                            showPremiumPrompt(context);
+                          } else {
+                            Get.toNamed(
+                              AppRoutes.RACE_DETAILS,
+                              arguments: race,
+                            );
+                          }
+                        },
                         child: _buildLiveRaceCard(race),
                       );
                     },
@@ -370,55 +378,16 @@ class HomeView extends GetView<HomeController> {
         children: [
           // Drawer Header with Background Image
           Container(
-            height: 220.h,
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              // image: DecorationImage(
-              //   image: AssetImage(
-              //     'assets/images/premium_race_header.png',
-              //   ), // Premium generated background
-              //   fit: BoxFit.cover,
-              //   opacity: 0.7, // Slightly more visible for the premium image
-              color: Colors.transparent,
+            padding: EdgeInsets.only(
+              top: MediaQuery.of(context).padding.top + 4.h,
+              bottom: 4.h,
             ),
-            child: Container(
-              color: Colors.transparent,
-              // decoration: BoxDecoration(
-              //   gradient: LinearGradient(
-              //     begin: Alignment.topCenter,
-              //     end: Alignment.bottomCenter,
-              //     colors: [
-              //       Colors.black.withOpacity(0.2),
-              //       Colors.black.withOpacity(0.8),
-              //     ],
-              //   ),
-              // ),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width:
-                          280.w, // Increased width so the logo can grow larger
-                      height: 160.h, // Increased height to allow scaling
-                      // decoration: BoxDecoration(
-                      //   boxShadow: [
-                      //     BoxShadow(
-                      //       color: const Color(0xFF2DD4BF).withOpacity(0.1),
-                      //       blurRadius: 30,
-                      //       spreadRadius: 10,
-                      //     ),
-                      //   ],
-                      // ),
-                      child: Image.asset(
-                        logoPath,
-                        fit: BoxFit
-                            .cover, // Ensures the image scales up to fit the container
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            color: Colors.transparent,
+            child: Image.asset(
+              logoPath,
+              width: double.infinity,
+              height: 170.h,
+              fit: BoxFit.fitWidth,
             ),
           ),
           const Divider(color: Colors.white12, height: 1),
@@ -427,6 +396,7 @@ class HomeView extends GetView<HomeController> {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
+                _buildSubscriptionStatusCard(),
                 _buildDrawerItem(
                   Icons.emoji_events_outlined,
                   'races'.tr,
@@ -457,12 +427,12 @@ class HomeView extends GetView<HomeController> {
                   'privacy_policy'.tr,
                   () => Get.toNamed(AppRoutes.PRIVACY_POLICY),
                 ),
-                _buildDrawerItem(
-                  Icons.card_giftcard_outlined,
-                  'gift_a_friend'.tr,
-                  () => Get.toNamed(AppRoutes.GIFT_A_FRIEND),
-                  subtitle: 'gift_a_friend_subtitle'.tr,
-                ),
+                // _buildDrawerItem(
+                //   Icons.card_giftcard_outlined,
+                //   'gift_a_friend'.tr,
+                //   () => Get.toNamed(AppRoutes.GIFT_A_FRIEND),
+                //   subtitle: 'gift_a_friend_subtitle'.tr,
+                // ),
                 _buildDrawerItem(Icons.thumb_up_alt_outlined, 'rate_us'.tr, () {
                   Get.back();
                   _showRateUsDialog(context);
@@ -477,25 +447,27 @@ class HomeView extends GetView<HomeController> {
             ),
           ),
           // Drawer Footer
-          Obx(() => Padding(
-            padding: EdgeInsets.all(20.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${'version'.tr} ${controller.appVersion.value.isNotEmpty ? controller.appVersion.value : '...'}',
-                  style: TextStyle(color: Colors.white38, fontSize: 12.sp),
-                ),
-                SizedBox(height: 2.h),
-                Text(
-                  controller.deviceId.value.isNotEmpty
-                      ? controller.deviceId.value
-                      : '...',
-                  style: TextStyle(color: Colors.white24, fontSize: 10.sp),
-                ),
-              ],
+          Obx(
+            () => Padding(
+              padding: EdgeInsets.all(20.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${'version'.tr} ${controller.appVersion.value.isNotEmpty ? controller.appVersion.value : '...'}',
+                    style: TextStyle(color: Colors.white38, fontSize: 12.sp),
+                  ),
+                  SizedBox(height: 2.h),
+                  Text(
+                    controller.deviceId.value.isNotEmpty
+                        ? controller.deviceId.value
+                        : '...',
+                    style: TextStyle(color: Colors.white24, fontSize: 10.sp),
+                  ),
+                ],
+              ),
             ),
-          )),
+          ),
         ],
       ),
     );
@@ -506,7 +478,7 @@ class HomeView extends GetView<HomeController> {
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       child: GestureDetector(
         onTap: () async {
-          const url = 'https://www.whichwin.com';
+          const url = 'https://www.whichwin-football.com';
           final uri = Uri.parse(url);
           if (await canLaunchUrl(uri)) {
             await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -537,21 +509,12 @@ class HomeView extends GetView<HomeController> {
           child: Row(
             children: [
               // Football icon badge
-              Container(
+              SizedBox(
                 width: 44.w,
                 height: 44.w,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF2D9B83).withValues(alpha: 0.15),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: const Color(0xFF2D9B83).withValues(alpha: 0.4),
-                    width: 1.5,
-                  ),
-                ),
-                child: Icon(
-                  Icons.sports_soccer,
-                  color: const Color(0xFF2DD4BF),
-                  size: 24.sp,
+                child: Image.asset(
+                  'assets/200x200bb-75.webp',
+                  fit: BoxFit.cover,
                 ),
               ),
               SizedBox(width: 14.w),
@@ -571,7 +534,7 @@ class HomeView extends GetView<HomeController> {
                     ),
                     SizedBox(height: 3.h),
                     Text(
-                      'whichwin.com',
+                      'whichwin-football.com',
                       style: TextStyle(
                         color: const Color(0xFF2DD4BF),
                         fontSize: 12.sp,
@@ -598,6 +561,153 @@ class HomeView extends GetView<HomeController> {
         ),
       ),
     );
+  }
+
+  Widget _buildSubscriptionStatusCard() {
+    return Obx(() {
+      final isPremium = UserService.to.isPremium.value;
+      final planName = UserService.to.subscriptionPlan.value;
+      final remainingDays = UserService.to.remainingDays;
+      final isTrial = UserService.to.isTrial;
+
+      String planTitle = 'FREE PLAN';
+      if (planName.isNotEmpty) {
+        planTitle = planName.toUpperCase();
+      }
+
+      String subtitleText = 'Upgrade for full access';
+      if (isPremium) {
+        if (isTrial) {
+          subtitleText = '$remainingDays days trial left';
+        } else {
+          subtitleText = 'Active PRO Subscription';
+        }
+      }
+
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        padding: EdgeInsets.all(14.w),
+        decoration: BoxDecoration(
+          color: const Color(0xFF1E222B),
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(
+            color: isPremium
+                ? const Color(0xFF2DD4BF).withValues(alpha: 0.4)
+                : Colors.white12,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: isPremium
+                  ? const Color(0xFF2DD4BF).withValues(alpha: 0.1)
+                  : Colors.black.withValues(alpha: 0.2),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 42.w,
+              height: 42.w,
+              decoration: BoxDecoration(
+                color: isPremium
+                    ? const Color(0xFF2DD4BF).withValues(alpha: 0.15)
+                    : Colors.white10,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                isPremium
+                    ? Icons.workspace_premium_rounded
+                    : Icons.card_membership_rounded,
+                color: isPremium ? const Color(0xFF2DD4BF) : Colors.white60,
+                size: 22.sp,
+              ),
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        planTitle,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      if (isTrial) ...[
+                        SizedBox(width: 6.w),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 6.w,
+                            vertical: 2.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(
+                              0xFF2DD4BF,
+                            ).withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(4.r),
+                          ),
+                          child: Text(
+                            'TRIAL',
+                            style: TextStyle(
+                              color: const Color(0xFF2DD4BF),
+                              fontSize: 9.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  SizedBox(height: 3.h),
+                  Text(
+                    subtitleText,
+                    style: TextStyle(
+                      color: isPremium
+                          ? const Color(0xFF2DD4BF)
+                          : Colors.white54,
+                      fontSize: 11.sp,
+                      fontWeight: isPremium
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                Get.back();
+                Get.toNamed(AppRoutes.SUBSCRIPTION);
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF2DD4BF), Color(0xFF0D9488)],
+                  ),
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Text(
+                  isPremium && !isTrial ? 'Manage' : 'Upgrade',
+                  style: TextStyle(
+                    color: const Color(0xFF0F1419),
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildDrawerItem(
@@ -741,187 +851,6 @@ class HomeView extends GetView<HomeController> {
     });
   }
 
-  Widget _buildRaceCard(Map<String, dynamic> race) {
-    final bool isLive = race['isLive'] as bool;
-    final String country = race['country'] as String;
-    final String raceName = race['race'] as String;
-    final String flagCode = race['flag'] as String;
-    final String racesCount = race['racesCount'] as String;
-
-    return Container(
-      margin: EdgeInsets.only(bottom: 16.h),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0F1419),
-        borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(color: Colors.white12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Stack(
-        children: [
-          // Background subtle gradient
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Colors.white.withValues(alpha: 0.02), Colors.transparent],
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(16.w),
-            child: Row(
-              children: [
-                // Flag with premium styling
-                Container(
-                  width: 50.w,
-                  height: 50.w,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white24, width: 2),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.5),
-                        blurRadius: 10,
-                        spreadRadius: 1,
-                      ),
-                    ],
-                  ),
-                  child: ClipOval(
-                    child: Image.network(
-                      'https://flagcdn.com/w160/$flagCode.png',
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        color: Colors.grey[900],
-                        child: Icon(
-                          Icons.flag,
-                          color: Colors.white24,
-                          size: 20.sp,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 16.w),
-                // Details
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        country,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 17.sp,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      SizedBox(height: 4.h),
-                      Text(
-                        raceName,
-                        style: TextStyle(
-                          color: Colors.white38,
-                          fontSize: 14.sp,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Status/Info
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    if (isLive)
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 10.w,
-                          vertical: 4.h,
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF3D1C00), Color(0xFF2D1400)],
-                          ),
-                          borderRadius: BorderRadius.circular(6.r),
-                          border: Border.all(
-                            color: const Color(0xFF2DD4BF).withValues(alpha: 0.3),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 6.w,
-                              height: 6.w,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFF2DD4BF),
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            SizedBox(width: 6.w),
-                            Text(
-                              'LIVE',
-                              style: TextStyle(
-                                color: const Color(0xFF2DD4BF),
-                                fontSize: 11.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    else
-                      SizedBox(height: 22.h),
-                    SizedBox(height: 12.h),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10.w,
-                        vertical: 4.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(6.r),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            racesCount,
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(width: 4.w),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: Colors.blueAccent.withValues(alpha: 0.7),
-                            size: 10.sp,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildLiveRaceCard(RaceModel race) {
     final String country = race.country ?? 'Unknown';
     final String raceName = race.name ?? 'Race';
@@ -937,7 +866,10 @@ class HomeView extends GetView<HomeController> {
       decoration: BoxDecoration(
         color: const Color(0xFF0F1419),
         borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(color: Colors.red.withValues(alpha: 0.3), width: 1.5),
+        border: Border.all(
+          color: Colors.red.withValues(alpha: 0.3),
+          width: 1.5,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.red.withValues(alpha: 0.08),
@@ -957,7 +889,10 @@ class HomeView extends GetView<HomeController> {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Colors.red.withValues(alpha: 0.03), Colors.transparent],
+                  colors: [
+                    Colors.red.withValues(alpha: 0.03),
+                    Colors.transparent,
+                  ],
                 ),
               ),
             ),
@@ -1028,7 +963,9 @@ class HomeView extends GetView<HomeController> {
                       decoration: BoxDecoration(
                         color: Colors.red.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(6.r),
-                        border: Border.all(color: Colors.red.withValues(alpha: 0.6)),
+                        border: Border.all(
+                          color: Colors.red.withValues(alpha: 0.6),
+                        ),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -1099,7 +1036,9 @@ class HomeView extends GetView<HomeController> {
                           borderRadius: BorderRadius.circular(8.r),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFFF8F00).withValues(alpha: 0.3),
+                              color: const Color(
+                                0xFFFF8F00,
+                              ).withValues(alpha: 0.3),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -1129,7 +1068,6 @@ class HomeView extends GetView<HomeController> {
 
     Get.bottomSheet(
       Container(
-        height: 520.h,
         decoration: BoxDecoration(
           color: const Color(0xFF0F1419),
           borderRadius: BorderRadius.vertical(top: Radius.circular(32.r)),
@@ -1138,77 +1076,80 @@ class HomeView extends GetView<HomeController> {
         padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
         child: SafeArea(
           top: false,
-          child: Column(
-            children: [
-              // Handle
-              Container(
-                width: 40.w,
-                height: 4.h,
-                decoration: BoxDecoration(
-                  color: Colors.white12,
-                  borderRadius: BorderRadius.circular(2.r),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Handle
+                Container(
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: Colors.white12,
+                    borderRadius: BorderRadius.circular(2.r),
+                  ),
                 ),
-              ),
-              SizedBox(height: 24.h),
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Obx(
-                    () => Text(
-                      DateFormat(
-                        'MMMM yyyy',
-                      ).format(calendarController.focusedDate.value),
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () => calendarController.prevMonth(),
-                        icon: const Icon(
-                          Icons.chevron_left,
-                          color: Colors.white,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () => calendarController.nextMonth(),
-                        icon: const Icon(
-                          Icons.chevron_right,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(height: 16.h),
-              // Week Days
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map((day) {
-                  return SizedBox(
-                    width: 40.w,
-                    child: Center(
-                      child: Text(
-                        day,
+                SizedBox(height: 24.h),
+                // Header
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Obx(
+                      () => Text(
+                        DateFormat(
+                          'MMMM yyyy',
+                        ).format(calendarController.focusedDate.value),
                         style: TextStyle(
-                          color: Colors.white38,
-                          fontSize: 14.sp,
+                          color: Colors.white,
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                  );
-                }).toList(),
-              ),
-              SizedBox(height: 16.h),
-              // Calendar Grid
-              Expanded(
-                child: Obx(() {
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: () => calendarController.prevMonth(),
+                          icon: const Icon(
+                            Icons.chevron_left,
+                            color: Colors.white,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => calendarController.nextMonth(),
+                          icon: const Icon(
+                            Icons.chevron_right,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(height: 16.h),
+                // Week Days
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map((
+                    day,
+                  ) {
+                    return SizedBox(
+                      width: 40.w,
+                      child: Center(
+                        child: Text(
+                          day,
+                          style: TextStyle(
+                            color: Colors.white38,
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 16.h),
+                // Calendar Grid
+                Obx(() {
                   final focusedDate = calendarController.focusedDate.value;
                   final daysInMonth = DateTime(
                     focusedDate.year,
@@ -1222,6 +1163,7 @@ class HomeView extends GetView<HomeController> {
                   ).weekday;
 
                   return GridView.builder(
+                    shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
@@ -1284,31 +1226,32 @@ class HomeView extends GetView<HomeController> {
                     },
                   );
                 }),
-              ),
-              // Footer Action
-              SizedBox(
-                width: double.infinity,
-                height: 50.h,
-                child: ElevatedButton(
-                  onPressed: () => Get.back(),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF004D40),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r),
+                SizedBox(height: 20.h),
+                // Footer Action
+                SizedBox(
+                  width: double.infinity,
+                  height: 50.h,
+                  child: ElevatedButton(
+                    onPressed: () => Get.back(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF004D40),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
                     ),
-                  ),
-                  child: Text(
-                    'Close',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
+                    child: Text(
+                      'Close',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(height: 16.h),
-            ],
+                SizedBox(height: 16.h),
+              ],
+            ),
           ),
         ),
       ),
@@ -1487,7 +1430,8 @@ class HomeView extends GetView<HomeController> {
 
   String _getFlagCode(String country) {
     final c = country.trim().toLowerCase();
-    if (c == 'united kingdom' || c == 'uk' || c == 'great britain' || c == 'gb') return 'gb';
+    if (c == 'united kingdom' || c == 'uk' || c == 'great britain' || c == 'gb')
+      return 'gb';
     if (c == 'france' || c == 'fr') return 'fr';
     if (c == 'turkey' || c == 'tr' || c == 'türkiye') return 'tr';
     if (c == 'united states' || c == 'usa' || c == 'us') return 'us';
@@ -1653,7 +1597,8 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
 
   String _getFlagCode(String country) {
     final c = country.trim().toLowerCase();
-    if (c == 'united kingdom' || c == 'uk' || c == 'great britain' || c == 'gb') return 'gb';
+    if (c == 'united kingdom' || c == 'uk' || c == 'great britain' || c == 'gb')
+      return 'gb';
     if (c == 'france' || c == 'fr') return 'fr';
     if (c == 'turkey' || c == 'tr' || c == 'türkiye') return 'tr';
     if (c == 'united states' || c == 'usa' || c == 'us') return 'us';
@@ -1672,8 +1617,8 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
 
   @override
   Widget build(BuildContext context) {
-    final flagCode = _getFlagCode(widget.meeting.country ?? '');
-    final isLive = widget.meeting.isLive ?? false;
+    final flagCode = _getFlagCode(widget.meeting.country);
+    final isLive = widget.meeting.isLive;
 
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
@@ -1739,7 +1684,9 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.meeting.country ?? 'Unknown',
+                          widget.meeting.country.isEmpty
+                              ? 'Unknown'
+                              : widget.meeting.country,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 17.sp,
@@ -1749,7 +1696,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                         ),
                         SizedBox(height: 4.h),
                         Text(
-                          widget.meeting.location ?? '',
+                          widget.meeting.location,
                           style: TextStyle(
                             color: Colors.white70,
                             fontSize: 14.sp,
@@ -1899,6 +1846,10 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
 
     return GestureDetector(
       onTap: () {
+        if (!UserService.to.isPremium.value) {
+          showPremiumPrompt(context);
+          return;
+        }
         if (raceModel.status == 'FINISHED') {
           Get.toNamed(AppRoutes.RACE_ANALYSIS, arguments: raceModel);
         } else {
@@ -2001,7 +1952,9 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                           vertical: 2.h,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                          color: const Color(
+                            0xFF10B981,
+                          ).withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(4.r),
                         ),
                         child: Text(

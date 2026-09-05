@@ -60,15 +60,23 @@ class SubscriptionDevice {
   final String? id;
   final String? plan;
   final bool? isActive;
+  final String? startDate;
   final String? endDate;
 
-  SubscriptionDevice({this.id, this.plan, this.isActive, this.endDate});
+  SubscriptionDevice({
+    this.id,
+    this.plan,
+    this.isActive,
+    this.startDate,
+    this.endDate,
+  });
 
   factory SubscriptionDevice.fromJson(Map<String, dynamic> json) {
     return SubscriptionDevice(
       id: json['id']?.toString(),
       plan: json['plan']?.toString(),
       isActive: json['isActive'] as bool?,
+      startDate: json['startDate']?.toString(),
       endDate: json['endDate']?.toString(),
     );
   }

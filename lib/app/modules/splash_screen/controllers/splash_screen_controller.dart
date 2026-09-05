@@ -5,6 +5,7 @@ import 'package:which_win/app/routes/app_pages.dart';
 import 'package:which_win/config/constants/storage_constants.dart';
 import 'package:which_win/core/services/push_notification_service.dart';
 import 'package:which_win/core/services/storage_service.dart';
+import 'package:which_win/core/services/user_service.dart';
 import 'package:which_win/core/utils/device_helper.dart';
 import 'package:which_win/core/utils/helpers.dart';
 import 'package:which_win/data/models/device_login_response.dart';
@@ -35,10 +36,10 @@ class SplashScreenController extends GetxController {
       Helpers.debug('Device ID: $deviceId');
       await StorageService.setString(StorageConstants.userId, deviceId); // Store device ID as user ID for reference
 
-      // 2. Device Login
+      // 2. Device Login (Waits for API response before navigating to app)
       final response = await _authRepo.deviceLogin(deviceId);
       
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.statusCode == 200 || response.statusCode == 201) { 
         final loginResponse = DeviceLoginResponse.fromJson(response.data);
         
         if (loginResponse.data?.token != null) {
@@ -46,21 +47,34 @@ class SplashScreenController extends GetxController {
           await StorageService.setString(StorageConstants.bearerToken, loginResponse.data!.token!);
           Helpers.info('Device login successful');
 
-          // 3.2 Persist premium status locally for instant UI gating (forced to true for design/testing)
-          bool premiumActive = true;
-          await StorageService.setBool(StorageConstants.isPremium, premiumActive);
-          Helpers.info('Premium status saved: $premiumActive');
+          // Update global UserService reactive subscription state from device login response
+          final sub = loginResponse.data?.user?.subscription;
+          bool premiumActive = sub?.isActive ?? false;
+
+          await UserService.to.updateSubscriptionData(
+            active: premiumActive,
+            plan: sub?.plan,
+            endDate: sub?.endDate,
+            startDate: sub?.startDate,
+            id: sub?.id,
+          );
+
+          Helpers.info(
+            'Global UserService updated: isPremium=$premiumActive, plan=${sub?.plan}, endDate=${sub?.endDate}',
+          );
           
           // 3.1 Safely register push notification token with backend
-          _registerPushToken();
+          await _registerPushToken();
+        } else {
+          Helpers.error('Device login response missing token');
         }
       } else {
-        Helpers.error('Device login failed: ${response.statusMessage}');
+        Helpers.error('Device login failed with status: ${response.statusCode}');
       }
     } catch (e) {
       Helpers.error('Error during splash initialization: $e');
     } finally {
-      // 4. Navigate to Home
+      // 4. Navigate to Home only after login API response processing is finished
       _navigateToHome();
     }
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:which_win/core/utils/custom_snackbar.dart';
 import '../controllers/contact_controller.dart';
 
@@ -256,7 +257,7 @@ class ContactView extends GetView<ContactController> {
               : Text(
                   'Send',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
                   ),
@@ -330,7 +331,17 @@ class ContactView extends GetView<ContactController> {
     );
   }
 
-  void _openSocialLink(String platform) {
-    CustomSnackBar.success('Opening $platform support...');
+  Future<void> _openSocialLink(String platform) async {
+    if (platform == 'Instagram') {
+      const url = 'https://www.instagram.com/whichwin.horcerace/';
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        CustomSnackBar.error('Could not launch $url');
+      }
+    } else {
+      CustomSnackBar.success('Opening $platform support...');
+    }
   }
 }
