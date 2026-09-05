@@ -10,7 +10,6 @@ import 'widgets/tabs/prediction_tab_content.dart';
 import 'widgets/tabs/atlar_jokeyler_tab_content.dart';
 import 'widgets/tabs/bulletin_tab_content.dart';
 import 'widgets/tabs/kosu_analizi_tab_content.dart';
-import 'widgets/tabs/statistics_tab_content.dart';
 
 class RaceDetailsView extends GetView<RaceDetailsController> {
   const RaceDetailsView({super.key});
