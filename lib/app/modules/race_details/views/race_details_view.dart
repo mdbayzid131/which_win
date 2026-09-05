@@ -7,6 +7,7 @@ import 'widgets/race_details_app_bar.dart';
 import 'widgets/race_details_sub_tab_bar.dart';
 import 'widgets/race_selector_bar.dart';
 import 'widgets/tabs/analysis_tab_content.dart';
+import 'widgets/tabs/prediction_tab_content.dart';
 import 'widgets/tabs/atlar_jokeyler_tab_content.dart';
 import 'widgets/tabs/bulletin_tab_content.dart';
 import 'widgets/tabs/kosu_analizi_tab_content.dart';
@@ -102,12 +103,12 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
         final isPremium = controller.isPremium.value;
         if (!isPremium) {
           return PremiumLockOverlay(
-            icon: Icons.bar_chart,
-            label: 'full_race_stats'.tr,
-            description: 'premium_stats_desc'.tr,
+            icon: Icons.auto_awesome,
+            label: 'ai_prediction'.tr,
+            description: 'premium_predictions_desc'.tr,
           );
         }
-        return const StatisticsTabContent();
+        return const PredictionTabContent();
       case 3:
         return BulletinTabContent(details: details);
       default:
