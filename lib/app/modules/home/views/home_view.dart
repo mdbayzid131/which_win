@@ -455,14 +455,20 @@ class HomeView extends GetView<HomeController> {
                 children: [
                   Text(
                     '${'version'.tr} ${controller.appVersion.value.isNotEmpty ? controller.appVersion.value : '...'}',
-                    style: TextStyle(color: Colors.white38, fontSize: 12.sp),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                  SizedBox(height: 2.h),
+                  SizedBox(height: 4.h),
                   Text(
-                    controller.deviceId.value.isNotEmpty
-                        ? controller.deviceId.value
-                        : '...',
-                    style: TextStyle(color: Colors.white24, fontSize: 10.sp),
+                    'Token: ${controller.deviceId.value.isNotEmpty ? controller.deviceId.value : '...'}',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ],
               ),
@@ -478,7 +484,13 @@ class HomeView extends GetView<HomeController> {
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       child: GestureDetector(
         onTap: () async {
-          const url = 'https://www.whichwin-football.com';
+          // Redirect to Apple App Store on iOS or Google Play Store on Android
+          String url = 'https://play.google.com/store/apps/details?id=com.whichwin.football';
+          try {
+            if (GetPlatform.isIOS) {
+              url = 'https://apps.apple.com/app/which-win-football/id6475306634';
+            }
+          } catch (_) {}
           final uri = Uri.parse(url);
           if (await canLaunchUrl(uri)) {
             await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -524,7 +536,7 @@ class HomeView extends GetView<HomeController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Which Win Football',
+                      'which_win_football'.tr,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 15.sp,
@@ -534,10 +546,11 @@ class HomeView extends GetView<HomeController> {
                     ),
                     SizedBox(height: 3.h),
                     Text(
-                      'whichwin-football.com',
+                      'download_which_win_football'.tr,
                       style: TextStyle(
                         color: const Color(0xFF2DD4BF),
-                        fontSize: 12.sp,
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],

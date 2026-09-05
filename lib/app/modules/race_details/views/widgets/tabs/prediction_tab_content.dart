@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:which_win/app/modules/race_details/controllers/race_details_controller.dart';
-import 'package:which_win/data/models/race_details_model.dart';
 
 class PredictionTabContent extends GetView<RaceDetailsController> {
   const PredictionTabContent({super.key});
@@ -10,14 +9,57 @@ class PredictionTabContent extends GetView<RaceDetailsController> {
   @override
   Widget build(BuildContext context) {
     final details = controller.raceDetails.value;
-    final entries = details?.entries ?? [];
+    final rawEntries = [...(details?.entries ?? [])];
 
-    // Filter runners for each category tier
-    final minimumRunners = entries.where((e) => e.category == 'MINIMUM' || e.rank == 1).toList();
-    final smallRunners = entries.where((e) => e.category == 'SMALL' || e.category == 'MINIMUM' || (e.rank != null && e.rank! <= 2)).toList();
-    final mediumRunners = entries.where((e) => e.category == 'MEDIUM' || e.category == 'SMALL' || e.category == 'MINIMUM' || (e.rank != null && e.rank! <= 3)).toList();
-    final largeRunners = entries.where((e) => e.category == 'LARGE' || (e.rank != null && e.rank! <= 4)).toList();
-    final megaRunners = entries.where((e) => e.category == 'MEGA' || (e.rank != null && e.rank! <= 6)).toList();
+    // Sort entries strictly by rank / score descending
+    rawEntries.sort((a, b) {
+      final rankA = a.rank ?? 999;
+      final rankB = b.rank ?? 999;
+      if (rankA != rankB) return rankA.compareTo(rankB);
+      final scoreA = a.normalizedScore ?? a.rawScore ?? 0.0;
+      final scoreB = b.normalizedScore ?? b.rawScore ?? 0.0;
+      return scoreB.compareTo(scoreA);
+    });
+
+    // Extract qualifying runners with percentage calculation
+    // Rank 1 gets 100%, others proportional.
+    // 6-Horse Limit & 60% Floor Cutoff
+    final List<Map<String, dynamic>> eligibleRunners = [];
+    for (int i = 0; i < rawEntries.length; i++) {
+      final entry = rawEntries[i];
+      final rank = entry.rank ?? (i + 1);
+      final double score = (rank == 1)
+          ? 100.0
+          : (entry.normalizedScore != null
+              ? entry.normalizedScore!.clamp(0.0, 99.0)
+              : ((entry.winProb ?? 0.0) * 100).clamp(0.0, 99.0));
+
+      // Cut off under 60%
+      if (score >= 60.0) {
+        eligibleRunners.add({
+          'entry': entry,
+          'rank': rank,
+          'score': score,
+          'clothNo': entry.number ?? entry.draw ?? rank,
+          'name': entry.horse?.name ?? 'Unknown Horse',
+        });
+      }
+
+      // Max 6 horses total across all prediction tiers
+      if (eligibleRunners.length >= 6) break;
+    }
+
+    // Bucket into exact percentage tiers according to Excel Rules:
+    // MIN: 100% - 95%
+    // SMALL: 94% - 90%
+    // MEDIUM: 89% - 80%
+    // LARGE: 79% - 70%
+    // MEGA: 69% - 60%
+    final minRunners = eligibleRunners.where((r) => r['score'] >= 95.0).toList();
+    final smallRunners = eligibleRunners.where((r) => r['score'] >= 90.0 && r['score'] < 95.0).toList();
+    final mediumRunners = eligibleRunners.where((r) => r['score'] >= 80.0 && r['score'] < 90.0).toList();
+    final largeRunners = eligibleRunners.where((r) => r['score'] >= 70.0 && r['score'] < 80.0).toList();
+    final megaRunners = eligibleRunners.where((r) => r['score'] >= 60.0 && r['score'] < 70.0).toList();
 
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
@@ -87,49 +129,81 @@ class PredictionTabContent extends GetView<RaceDetailsController> {
           ),
           SizedBox(height: 16.h),
 
-          // ── 5 Category Prediction Cards ──────────────────────────────────
-          _buildCategoryCard(
+          // ── 5 Tier Prediction Cards (Rectangular & Vertically Expanding) ──
+          _buildTierCard(
             title: 'minimum'.tr,
-            subtitle: 'Tek / En Güvenilir Tercih',
+            band: '%100 - %95',
             badgeColor: const Color(0xFF10B981),
-            runners: minimumRunners,
+            runners: minRunners,
             icon: Icons.check_circle_outline,
           ),
           SizedBox(height: 10.h),
 
-          _buildCategoryCard(
+          _buildTierCard(
             title: 'small'.tr,
-            subtitle: 'Küçük Kupon Adayları',
+            band: '%94 - %90',
             badgeColor: const Color(0xFF38BDF8),
             runners: smallRunners,
             icon: Icons.filter_1_rounded,
           ),
           SizedBox(height: 10.h),
 
-          _buildCategoryCard(
+          _buildTierCard(
             title: 'medium'.tr,
-            subtitle: 'Orta Kupon Adayları',
+            band: '%89 - %80',
             badgeColor: const Color(0xFFE6A817),
             runners: mediumRunners,
             icon: Icons.filter_2_rounded,
           ),
           SizedBox(height: 10.h),
 
-          _buildCategoryCard(
+          _buildTierCard(
             title: 'large'.tr,
-            subtitle: 'Geniş / Büyük Kupon Adayları',
+            band: '%79 - %70',
             badgeColor: const Color(0xFFF97316),
-            runners: largeRunners.isNotEmpty ? largeRunners : mediumRunners,
+            runners: largeRunners,
             icon: Icons.filter_3_rounded,
           ),
           SizedBox(height: 10.h),
 
-          _buildCategoryCard(
+          _buildTierCard(
             title: 'mega'.tr,
-            subtitle: 'Mega / Sürpriz Kapsamı',
+            band: '%69 - %60',
             badgeColor: const Color(0xFFA855F7),
-            runners: megaRunners.isNotEmpty ? megaRunners : entries.take(5).toList(),
+            runners: megaRunners,
             icon: Icons.auto_awesome,
+          ),
+          SizedBox(height: 20.h),
+
+          // ── Mandatory Legal Warning / Disclaimer Banner ───────────────────
+          Container(
+            padding: EdgeInsets.all(14.w),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1E222B),
+              borderRadius: BorderRadius.circular(10.r),
+              border: Border.all(color: Colors.white12),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.info_outline,
+                  color: Colors.amber,
+                  size: 18.sp,
+                ),
+                SizedBox(width: 10.w),
+                Expanded(
+                  child: Text(
+                    'legal_disclaimer'.tr,
+                    style: TextStyle(
+                      color: Colors.white60,
+                      fontSize: 11.sp,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           SizedBox(height: 30.h),
         ],
@@ -137,28 +211,24 @@ class PredictionTabContent extends GetView<RaceDetailsController> {
     );
   }
 
-  Widget _buildCategoryCard({
+  Widget _buildTierCard({
     required String title,
-    required String subtitle,
+    required String band,
     required Color badgeColor,
-    required List<RaceEntry> runners,
+    required List<Map<String, dynamic>> runners,
     required IconData icon,
   }) {
-    final distinctRunners = <String, RaceEntry>{};
-    for (var r in runners) {
-      final key = r.horse?.name ?? r.id ?? '';
-      if (!distinctRunners.containsKey(key)) {
-        distinctRunners[key] = r;
-      }
-    }
-    final runnerList = distinctRunners.values.toList();
-
     return Container(
+      width: double.infinity,
       padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
         color: const Color(0xFF1E222B),
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: badgeColor.withValues(alpha: 0.3)),
+        border: Border.all(
+          color: runners.isNotEmpty
+              ? badgeColor.withValues(alpha: 0.35)
+              : Colors.white12,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,12 +236,12 @@ class PredictionTabContent extends GetView<RaceDetailsController> {
           Row(
             children: [
               Container(
-                padding: EdgeInsets.all(6.w),
+                padding: EdgeInsets.all(5.w),
                 decoration: BoxDecoration(
                   color: badgeColor.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(6.r),
                 ),
-                child: Icon(icon, color: badgeColor, size: 16.sp),
+                child: Icon(icon, color: badgeColor, size: 15.sp),
               ),
               SizedBox(width: 8.w),
               Text(
@@ -183,38 +253,46 @@ class PredictionTabContent extends GetView<RaceDetailsController> {
                   letterSpacing: 0.5,
                 ),
               ),
-              const Spacer(),
+              SizedBox(width: 6.w),
               Text(
-                '${runnerList.length} at',
+                '($band)',
                 style: TextStyle(
                   color: Colors.white38,
-                  fontSize: 11.sp,
+                  fontSize: 10.sp,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
+              const Spacer(),
+              if (runners.isNotEmpty)
+                Text(
+                  '${runners.length} at',
+                  style: TextStyle(
+                    color: Colors.white38,
+                    fontSize: 11.sp,
+                  ),
+                ),
             ],
           ),
           SizedBox(height: 10.h),
-          if (runnerList.isEmpty)
+          if (runners.isEmpty)
             Text(
-              'no_data_available'.tr,
-              style: TextStyle(color: Colors.white38, fontSize: 11.sp),
+              'Bu aralıkta uygun at bulunamadı',
+              style: TextStyle(color: Colors.white24, fontSize: 11.sp, fontStyle: FontStyle.italic),
             )
           else
             Wrap(
               spacing: 8.w,
               runSpacing: 8.h,
-              children: runnerList.map((entry) {
-                final clothNo = entry.number ?? entry.draw ?? entry.rank ?? 1;
-                final name = entry.horse?.name ?? 'Horse';
-                final percent = entry.normalizedScore?.toInt() ?? 
-                    (entry.rank == 1 ? 100 : (entry.winProb != null ? (entry.winProb! * 100).toInt() : 0));
+              children: runners.map((r) {
+                final clothNo = r['clothNo'];
+                final name = r['name'];
 
                 return Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 7.h),
                   decoration: BoxDecoration(
                     color: const Color(0xFF121418),
                     borderRadius: BorderRadius.circular(8.r),
-                    border: Border.all(color: Colors.white12),
+                    border: Border.all(color: badgeColor.withValues(alpha: 0.3)),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -234,22 +312,13 @@ class PredictionTabContent extends GetView<RaceDetailsController> {
                           ),
                         ),
                       ),
-                      SizedBox(width: 6.w),
+                      SizedBox(width: 8.w),
                       Text(
                         name,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(width: 6.w),
-                      Text(
-                        '$percent%',
-                        style: TextStyle(
-                          color: const Color(0xFF2DD4BF),
-                          fontSize: 11.sp,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],

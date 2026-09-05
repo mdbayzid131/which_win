@@ -248,6 +248,13 @@ class RaceResult {
   final int? position;
   final String? time;
   final double? earnings;
+  final String? btn;
+  final String? ovrBtn;
+  final String? or;
+  final String? rpr;
+  final String? sp;
+  final double? weight;
+  final int? number;
   final HorseModel? horse;
   final JockeyModel? jockey;
   final RaceModel? race;
@@ -257,6 +264,13 @@ class RaceResult {
     this.position,
     this.time,
     this.earnings,
+    this.btn,
+    this.ovrBtn,
+    this.or,
+    this.rpr,
+    this.sp,
+    this.weight,
+    this.number,
     this.horse,
     this.jockey,
     this.race,
@@ -268,6 +282,13 @@ class RaceResult {
       position: json['position'] != null ? int.tryParse(json['position'].toString()) : null,
       time: json['time']?.toString() ?? 'N/A',
       earnings: (json['earnings'] as num?)?.toDouble(),
+      btn: json['btn']?.toString() ?? json['ovrBtn']?.toString(),
+      ovrBtn: json['ovrBtn']?.toString(),
+      or: json['or']?.toString(),
+      rpr: json['rpr']?.toString(),
+      sp: json['sp']?.toString() ?? json['odds']?.toString(),
+      weight: (json['weight'] as num?)?.toDouble(),
+      number: json['number'] != null ? int.tryParse(json['number'].toString()) : null,
       horse: (json['horse'] != null && json['horse'] is Map<String, dynamic>)
           ? _parseHorseWithoutResults(Map<String, dynamic>.from(json['horse']))
           : null,
