@@ -6,10 +6,10 @@ import 'widgets/race_details_app_bar.dart';
 import 'widgets/race_details_sub_tab_bar.dart';
 import 'widgets/race_selector_bar.dart';
 import 'widgets/tabs/analysis_tab_content.dart';
+import 'widgets/tabs/prediction_tab_content.dart';
 import 'widgets/tabs/atlar_jokeyler_tab_content.dart';
 import 'widgets/tabs/bulletin_tab_content.dart';
 import 'widgets/tabs/kosu_analizi_tab_content.dart';
-import 'widgets/tabs/statistics_tab_content.dart';
 
 class RaceDetailsView extends GetView<RaceDetailsController> {
   const RaceDetailsView({super.key});
@@ -90,12 +90,12 @@ class RaceDetailsView extends GetView<RaceDetailsController> {
       case 1:
         return const AnalysisTabContent();
       case 2:
-        return const StatisticsTabContent();
+        return const PredictionTabContent();
       case 3:
         return BulletinTabContent(details: details);
       default:
-        return const Center(
-          child: Text('Coming Soon', style: TextStyle(color: Colors.white60)),
+        return Center(
+          child: Text('coming_soon'.tr, style: const TextStyle(color: Colors.white60)),
         );
     }
   }
