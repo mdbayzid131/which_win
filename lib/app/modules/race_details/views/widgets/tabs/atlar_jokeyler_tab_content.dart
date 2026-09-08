@@ -13,8 +13,8 @@ class OriginalHorseListView extends GetView<RaceDetailsController> {
 
   @override
   Widget build(BuildContext context) {
-    final entries = details?.entries ?? [];
-    if (entries.isEmpty) {
+    final rawEntries = details?.entries ?? [];
+    if (rawEntries.isEmpty) {
       return const Center(
         child: Text(
           'No horses registered',
@@ -22,6 +22,12 @@ class OriginalHorseListView extends GetView<RaceDetailsController> {
         ),
       );
     }
+    final entries = List<RaceEntry>.from(rawEntries)
+      ..sort((a, b) {
+        final aNum = a.number ?? 999;
+        final bNum = b.number ?? 999;
+        return aNum.compareTo(bNum);
+      });
     return ListView.builder(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       itemCount: entries.length,
@@ -53,9 +59,9 @@ class AtlarContent extends GetView<RaceDetailsController> {
 
   @override
   Widget build(BuildContext context) {
-    final entries = details?.entries ?? [];
+    final rawEntries = details?.entries ?? [];
 
-    if (entries.isEmpty) {
+    if (rawEntries.isEmpty) {
       return Center(
         child: Padding(
           padding: EdgeInsets.all(24.w),
@@ -66,6 +72,13 @@ class AtlarContent extends GetView<RaceDetailsController> {
         ),
       );
     }
+
+    final entries = List<RaceEntry>.from(rawEntries)
+      ..sort((a, b) {
+        final aNum = a.number ?? 999;
+        final bNum = b.number ?? 999;
+        return aNum.compareTo(bNum);
+      });
 
     return ListView.builder(
       padding: EdgeInsets.all(12.w),
