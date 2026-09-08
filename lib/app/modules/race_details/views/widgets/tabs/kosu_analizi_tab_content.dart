@@ -60,7 +60,9 @@ Widget buildEnIyiDereceTab(RaceDetailsController controller) {
       final jockeyName = entry.jockey?.name ?? 'N/A';
       final weight = entry.weight != null ? '${entry.weight} kg' : 'N/A';
       final hp = entry.horsePower?.toInt() ?? entry.normalizedScore?.toInt() ?? 0;
-      final pos = entry.rank != null ? '${entry.rank}' : '${index + 1}';
+      final pos = (entry.number != null && entry.number! > 0)
+          ? '${entry.number}'
+          : (entry.rank != null ? '${entry.rank}' : '${index + 1}');
 
       return Container(
         margin: EdgeInsets.only(bottom: 10.h),
@@ -323,7 +325,9 @@ Widget buildKimKiminleKostuTab(RaceDetailsController controller) {
       final horseName = entry.horse?.name ?? 'Horse ${index + 1}';
       final jockeyName = entry.jockey?.name ?? 'N/A';
       final weight = entry.weight != null ? '${entry.weight} kg' : 'N/A';
-      final pos = entry.rank != null ? '${entry.rank}' : '${index + 1}';
+      final pos = (entry.number != null && entry.number! > 0)
+          ? '${entry.number}'
+          : (entry.rank != null ? '${entry.rank}' : '${index + 1}');
 
       return Container(
         margin: EdgeInsets.only(bottom: 10.h),
@@ -403,7 +407,9 @@ Widget buildKimKimiGectiTab(RaceDetailsController controller) {
       final entry = entries[index];
       final horseName = entry.horse?.name ?? 'Horse ${index + 1}';
       final jockeyName = entry.jockey?.name ?? 'N/A';
-      final pos = entry.rank != null ? '${entry.rank}' : '${index + 1}';
+      final pos = (entry.number != null && entry.number! > 0)
+          ? '${entry.number}'
+          : (entry.rank != null ? '${entry.rank}' : '${index + 1}');
 
       return Container(
         margin: EdgeInsets.only(bottom: 10.h),

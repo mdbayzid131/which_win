@@ -24,8 +24,8 @@ class OriginalHorseListView extends GetView<RaceDetailsController> {
     }
     final entries = List<RaceEntry>.from(rawEntries)
       ..sort((a, b) {
-        final aNum = a.number ?? 999;
-        final bNum = b.number ?? 999;
+        final aNum = (a.number != null && a.number! > 0) ? a.number! : 999;
+        final bNum = (b.number != null && b.number! > 0) ? b.number! : 999;
         return aNum.compareTo(bNum);
       });
     return ListView.builder(
@@ -101,7 +101,9 @@ class AtlarContent extends GetView<RaceDetailsController> {
                                   entry.pedigreePower! > 0)
                               ? entry.pedigreePower!.toInt()
                               : 0)));
-        final pos = entry.number ?? entry.rank ?? (index + 1);
+        final pos = (entry.number != null && entry.number! > 0)
+            ? entry.number!
+            : ((entry.draw != null && entry.draw! > 0) ? entry.draw! : (index + 1));
 
         return Container(
           margin: EdgeInsets.only(bottom: 10.h),
@@ -167,9 +169,9 @@ class JokeylerContent extends GetView<RaceDetailsController> {
 
   @override
   Widget build(BuildContext context) {
-    final entries = details?.entries ?? [];
+    final rawEntries = details?.entries ?? [];
 
-    if (entries.isEmpty) {
+    if (rawEntries.isEmpty) {
       return Center(
         child: Padding(
           padding: EdgeInsets.all(24.w),
@@ -181,73 +183,119 @@ class JokeylerContent extends GetView<RaceDetailsController> {
       );
     }
 
-    return ListView.builder(
-      padding: EdgeInsets.all(12.w),
-      itemCount: entries.length,
-      itemBuilder: (context, index) {
-        final entry = entries[index];
-        final jockeyName =
-            entry.jockey?.name ?? '${'jockey_label'.tr} ${index + 1}';
-        final horseName = entry.horse?.name ?? 'N/A';
-        final String weight = Helpers.formatWeight(
-          entry.weight,
-          showBoth: true,
-        );
-        final pos = entry.number ?? entry.rank ?? (index + 1);
+    final sortedEntries = List<RaceEntry>.from(rawEntries)
+      ..sort((a, b) {
+        final aNum = (a.number != null && a.number! > 0)
+            ? a.number!
+            : ((a.draw != null && a.draw! > 0) ? a.draw! : 999);
+        final bNum = (b.number != null && b.number! > 0)
+            ? b.number!
+            : ((b.draw != null && b.draw! > 0) ? b.draw! : 999);
+        return aNum.compareTo(bNum);
+      });
 
-        return Container(
-          margin: EdgeInsets.only(bottom: 10.h),
-          padding: EdgeInsets.all(12.w),
-          decoration: BoxDecoration(
-            color: const Color(0xFF1E222B),
-            borderRadius: BorderRadius.circular(8.r),
-            border: Border.all(color: Colors.white12),
+    return Obx(() {
+      final subTab = controller.selectedJokeylerSubTab.value;
+      List<RaceEntry> displayList = sortedEntries;
+
+      if (subTab == 1) {
+        final appList = sortedEntries.where((e) {
+          final jName = e.jockey?.name?.toLowerCase() ?? '';
+          final hGear = e.headgear?.toLowerCase() ?? '';
+          return jName.startsWith('ap ') ||
+              jName.contains('(ap)') ||
+              hGear.contains('ap');
+        }).toList();
+        if (appList.isNotEmpty) {
+          displayList = appList;
+        }
+      }
+
+      if (displayList.isEmpty) {
+        return Center(
+          child: Padding(
+            padding: EdgeInsets.all(24.w),
+            child: Text(
+              'no_data_available'.tr,
+              style: TextStyle(color: Colors.white70, fontSize: 14.sp),
+            ),
           ),
-          child: Row(
-            children: [
-              Container(
-                width: 32.w,
-                height: 32.w,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF10B981),
-                  borderRadius: BorderRadius.circular(6.r),
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  '$pos',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.bold,
+        );
+      }
+
+      return ListView.builder(
+        padding: EdgeInsets.all(12.w),
+        itemCount: displayList.length,
+        itemBuilder: (context, index) {
+          final entry = displayList[index];
+          final jockeyName =
+              entry.jockey?.name ?? '${'jockey_label'.tr} ${index + 1}';
+          final horseName = entry.horse?.name ?? 'N/A';
+          final String weight = Helpers.formatWeight(
+            entry.weight,
+            showBoth: true,
+          );
+          final pos = (entry.number != null && entry.number! > 0)
+              ? entry.number!
+              : ((entry.draw != null && entry.draw! > 0) ? entry.draw! : (index + 1));
+
+          return Container(
+            margin: EdgeInsets.only(bottom: 10.h),
+            padding: EdgeInsets.all(12.w),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1E222B),
+              borderRadius: BorderRadius.circular(8.r),
+              border: Border.all(color: Colors.white12),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 32.w,
+                  height: 32.w,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF10B981),
+                    borderRadius: BorderRadius.circular(6.r),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    '$pos',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      jockeyName,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.bold,
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        jockeyName,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 2.h),
-                    Text(
-                      '${'horse_label'.tr}: $horseName · ${'weight_label'.tr}: $weight',
-                      style: TextStyle(color: Colors.white70, fontSize: 11.sp),
-                    ),
-                  ],
+                      SizedBox(height: 2.h),
+                      Text(
+                        '${'horse_label'.tr}: $horseName • ${'weight_label'.tr}: $weight',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 11.sp,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+              ],
+            ),
+          );
+        },
+      );
+    });
   }
 }
 
@@ -280,8 +328,12 @@ class TurkeyStyleHorseCard extends GetView<RaceDetailsController> {
     );
 
     // Left badge shows horse / saddle cloth number
-    final saddleNumber = entry.number ?? (index + 1);
-    final gateNumber = entry.draw ?? entry.number ?? (index + 1);
+    final saddleNumber = (entry.number != null && entry.number! > 0)
+        ? entry.number!
+        : (index + 1);
+    final gateNumber = (entry.draw != null && entry.draw! > 0)
+        ? entry.draw!
+        : saddleNumber;
 
     final earnings = horse?.totalEarnings;
     final earningsText = (earnings != null && earnings > 0)

@@ -95,7 +95,9 @@ class AnalysisTabContent extends GetView<RaceDetailsController> {
           ...List.generate(entries.length, (index) {
             final entry = entries[index];
             final rank = entry.rank ?? (index + 1);
-            final clothNo = entry.number ?? entry.draw ?? rank;
+            final clothNo = (entry.number != null && entry.number! > 0)
+            ? entry.number!
+            : ((entry.draw != null && entry.draw! > 0) ? entry.draw! : rank);
             final name = entry.horse?.name ?? 'unknown_horse'.tr;
             final rawScore = entry.rawScore ?? entry.horsePower ?? 0.0;
 

@@ -53,7 +53,9 @@ class PredictionTabContent extends GetView<RaceDetailsController> {
           'entry': entry,
           'rank': rank,
           'score': score,
-          'clothNo': entry.number ?? entry.draw ?? rank,
+          'clothNo': (entry.number != null && entry.number! > 0)
+            ? entry.number!
+            : ((entry.draw != null && entry.draw! > 0) ? entry.draw! : rank),
           'name': entry.horse?.name ?? 'Unknown Horse',
         });
       }

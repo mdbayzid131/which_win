@@ -63,6 +63,43 @@ class RaceDetailsData {
     this.results,
   });
 
+    static List<RaceEntry> _parseEntries(dynamic entriesJson) {
+    if (entriesJson is! List) return [];
+    final rawList = entriesJson
+        .map((x) => RaceEntry.fromJson(x as Map<String, dynamic>))
+        .toList();
+
+    final Set<int> usedNumbers = {};
+    for (final e in rawList) {
+      if (e.number != null && e.number! > 0) {
+        usedNumbers.add(e.number!);
+      }
+    }
+
+    final List<int> available = [];
+    for (int i = 1; i <= rawList.length; i++) {
+      if (!usedNumbers.contains(i)) {
+        available.add(i);
+      }
+    }
+
+    int availIdx = 0;
+    return rawList.map((e) {
+      if (e.number != null && e.number! > 0) {
+        return e;
+      }
+      int resolvedNum;
+      if (availIdx < available.length) {
+        resolvedNum = available[availIdx++];
+      } else if (e.draw != null && e.draw! > 0) {
+        resolvedNum = e.draw!;
+      } else {
+        resolvedNum = rawList.indexOf(e) + 1;
+      }
+      return e.copyWith(number: resolvedNum);
+    }).toList();
+  }
+
   factory RaceDetailsData.fromJson(Map<String, dynamic> json) {
     return RaceDetailsData(
       id: json['id']?.toString(),
@@ -84,9 +121,7 @@ class RaceDetailsData {
       fieldSize: json['fieldSize'] != null ? int.tryParse(json['fieldSize'].toString()) : null,
       ageBand: json['ageBand']?.toString(),
       hasPredictions: json['hasPredictions'] as bool?,
-      entries: json['entries'] != null
-          ? List<RaceEntry>.from(json['entries'].map((x) => RaceEntry.fromJson(x)))
-          : null,
+      entries: json['entries'] != null ? _parseEntries(json['entries']) : null,
       results: json['results'] != null
           ? List<RaceResult>.from(json['results'].map((x) => RaceResult.fromJson(x)))
           : null,
@@ -190,6 +225,104 @@ class RaceEntry {
     this.horse,
     this.jockey,
   });
+
+    RaceEntry copyWith({
+    String? id,
+    String? raceId,
+    String? horseId,
+    String? jockeyId,
+    String? jockeyName,
+    String? trainerName,
+    String? ownerName,
+    double? weight,
+    int? draw,
+    int? number,
+    String? form,
+    String? lastRun,
+    String? comment,
+    String? spotlight,
+    String? silkUrl,
+    String? headgear,
+    double? horsePower,
+    double? jockeyPower,
+    double? sirePower,
+    double? damPower,
+    double? damSirePower,
+    double? pedigreePower,
+    double? earningScore,
+    double? weightScore,
+    double? rawScore,
+    double? normalizedScore,
+    int? rank,
+    String? category,
+    double? winProb,
+    double? winOddsFair,
+    double? placeProb,
+    double? eachWayProb,
+    double? goingSuitabilityScore,
+    double? distanceSuitabilityScore,
+    double? courseSpecialistScore,
+    double? drawBiasScore,
+    double? jockeyFormScore,
+    double? trainerFormScore,
+    int? aiSelectionRank,
+    String? aiConfidence,
+    double? aiConfidenceScore,
+    String? aiAnalysis,
+    bool? hasValueEdge,
+    double? valueEdgePercent,
+    HorseModel? horse,
+    JockeyModel? jockey,
+  }) {
+    return RaceEntry(
+      id: id ?? this.id,
+      raceId: raceId ?? this.raceId,
+      horseId: horseId ?? this.horseId,
+      jockeyId: jockeyId ?? this.jockeyId,
+      jockeyName: jockeyName ?? this.jockeyName,
+      trainerName: trainerName ?? this.trainerName,
+      ownerName: ownerName ?? this.ownerName,
+      weight: weight ?? this.weight,
+      draw: draw ?? this.draw,
+      number: number ?? this.number,
+      form: form ?? this.form,
+      lastRun: lastRun ?? this.lastRun,
+      comment: comment ?? this.comment,
+      spotlight: spotlight ?? this.spotlight,
+      silkUrl: silkUrl ?? this.silkUrl,
+      headgear: headgear ?? this.headgear,
+      horsePower: horsePower ?? this.horsePower,
+      jockeyPower: jockeyPower ?? this.jockeyPower,
+      sirePower: sirePower ?? this.sirePower,
+      damPower: damPower ?? this.damPower,
+      damSirePower: damSirePower ?? this.damSirePower,
+      pedigreePower: pedigreePower ?? this.pedigreePower,
+      earningScore: earningScore ?? this.earningScore,
+      weightScore: weightScore ?? this.weightScore,
+      rawScore: rawScore ?? this.rawScore,
+      normalizedScore: normalizedScore ?? this.normalizedScore,
+      rank: rank ?? this.rank,
+      category: category ?? this.category,
+      winProb: winProb ?? this.winProb,
+      winOddsFair: winOddsFair ?? this.winOddsFair,
+      placeProb: placeProb ?? this.placeProb,
+      eachWayProb: eachWayProb ?? this.eachWayProb,
+      goingSuitabilityScore: goingSuitabilityScore ?? this.goingSuitabilityScore,
+      distanceSuitabilityScore: distanceSuitabilityScore ?? this.distanceSuitabilityScore,
+      courseSpecialistScore: courseSpecialistScore ?? this.courseSpecialistScore,
+      drawBiasScore: drawBiasScore ?? this.drawBiasScore,
+      jockeyFormScore: jockeyFormScore ?? this.jockeyFormScore,
+      trainerFormScore: trainerFormScore ?? this.trainerFormScore,
+      aiSelectionRank: aiSelectionRank ?? this.aiSelectionRank,
+      aiConfidence: aiConfidence ?? this.aiConfidence,
+      aiConfidenceScore: aiConfidenceScore ?? this.aiConfidenceScore,
+      aiAnalysis: aiAnalysis ?? this.aiAnalysis,
+      hasValueEdge: hasValueEdge ?? this.hasValueEdge,
+      valueEdgePercent: valueEdgePercent ?? this.valueEdgePercent,
+      horse: horse ?? this.horse,
+      jockey: jockey ?? this.jockey,
+    );
+  }
 
   factory RaceEntry.fromJson(Map<String, dynamic> json) {
     return RaceEntry(
