@@ -1,3 +1,4 @@
+import 'package:which_win/core/utils/helpers.dart';
 import 'package:which_win/core/controllers/language_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -1591,7 +1592,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
       if (response.statusCode == 200) {
         final raceResponse = RacesResponse.fromJson(response.data);
         setState(() {
-          _races = raceResponse.data ?? [];
+          _races = List<RaceModel>.from(Helpers.sortRacesChronologically(raceResponse.data ?? []));
         });
       }
     } catch (e) {
@@ -1824,15 +1825,22 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                 ),
               )
             else
-              ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
-                itemCount: _races.length,
-                separatorBuilder: (context, index) => SizedBox(height: 6.h),
-                itemBuilder: (context, idx) {
-                  final race = _races[idx];
-                  return _buildDropdownRaceItem(race, idx + 1);
+              Builder(
+                builder: (context) {
+                  final sortedList = List<RaceModel>.from(
+                    Helpers.sortRacesChronologically(_races),
+                  );
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+                    itemCount: sortedList.length,
+                    separatorBuilder: (context, index) => SizedBox(height: 6.h),
+                    itemBuilder: (context, idx) {
+                      final race = sortedList[idx];
+                      return _buildDropdownRaceItem(race, idx + 1);
+                    },
+                  );
                 },
               ),
           ],

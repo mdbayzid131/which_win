@@ -1,3 +1,4 @@
+import 'package:which_win/core/utils/helpers.dart';
 import 'package:get/get.dart';
 import 'package:which_win/core/services/api_checker.dart';
 import 'package:which_win/data/models/race_model.dart';
@@ -33,7 +34,7 @@ class RaceBulletinController extends GetxController {
 
       if (response.statusCode == 200) {
         final raceResponse = RacesResponse.fromJson(response.data);
-        raceList.assignAll(raceResponse.data ?? []);
+        raceList.assignAll(List<RaceModel>.from(Helpers.sortRacesChronologically(raceResponse.data ?? [])));
       }
     } catch (e) {
       // Error handled by ApiChecker

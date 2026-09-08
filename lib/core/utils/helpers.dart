@@ -9,6 +9,35 @@ enum SnackBarType { success, error, info, warning, secondary }
 /// ===================== HELPERS =====================
 /// Common utility functions used across the app.
 class Helpers {
+  /// Parse time string (e.g. "1:53", "13:53", "3:36", "5:51") into minutes from midnight
+  static int parseRaceMinutes(String? t) {
+    if (t == null || t.isEmpty) return 0;
+    final clean = t.trim().replaceAll(RegExp(r'[^\d:]'), '');
+    final parts = clean.split(':');
+    if (parts.isEmpty) return 0;
+    int h = int.tryParse(parts[0]) ?? 0;
+    final m = parts.length > 1 ? (int.tryParse(parts[1]) ?? 0) : 0;
+    // In horse racing, afternoon times like 1:53, 2:28, 3:36, 4:11, 5:51 are 13:53, 14:28, etc.
+    if (h > 0 && h < 8) h += 12;
+    return h * 60 + m;
+  }
+
+  /// Sorts a list of RaceModel items chronologically by race time
+  static List<dynamic> sortRacesChronologically(List<dynamic> list) {
+    final sorted = List<dynamic>.from(list);
+    sorted.sort((a, b) {
+      final aTime = a.time as String?;
+      final bTime = b.time as String?;
+      final aMin = parseRaceMinutes(aTime);
+      final bMin = parseRaceMinutes(bTime);
+      if (aMin != bMin) return aMin.compareTo(bMin);
+      final aName = (a.name as String?) ?? '';
+      final bName = (b.name as String?) ?? '';
+      return aName.compareTo(bName);
+    });
+    return sorted;
+  }
+
   Helpers._();
 
   // ──────────────────── TIME FORMATTING ────────────────────
