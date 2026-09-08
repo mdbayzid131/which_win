@@ -387,6 +387,21 @@ class SubscriptionController extends GetxController {
     return '$currencySymbol${plan.price ?? 0}';
   }
 
+  String getLocalizedPlanName(SubscriptionPlanModel plan, int index) {
+    final duration = plan.duration?.toUpperCase() ?? '';
+    final id = plan.id?.toLowerCase() ?? '';
+    final name = plan.name?.toLowerCase() ?? '';
+
+    if (duration.contains('WEEK') || id.contains('week') || name.contains('week') || index == 0) {
+      return 'plan_1_week'.tr;
+    } else if (duration.contains('MONTH') || id.contains('month') || name.contains('month') || index == 1) {
+      return 'plan_1_month'.tr;
+    } else if (duration.contains('YEAR') || id.contains('year') || name.contains('year') || index == 2) {
+      return 'plan_1_year'.tr;
+    }
+    return plan.name ?? '';
+  }
+
   // Helper to compute weekly breakdown for monthly/yearly plans
   String getWeeklySubtitle(SubscriptionPlanModel plan, int index) {
     final duration = plan.duration?.toUpperCase() ?? '';
@@ -398,10 +413,10 @@ class SubscriptionController extends GetxController {
 
     if (duration.contains('MONTH') || id.contains('monthly') || index == 1) {
       final weeklyRate = (price / 4.33).toStringAsFixed(2);
-      return '$symbol$weeklyRate / week';
+      return '$symbol$weeklyRate ${'per_week'.tr}';
     } else if (duration.contains('YEAR') || id.contains('yearly') || index == 2) {
       final weeklyRate = (price / 52.0).toStringAsFixed(2);
-      return '$symbol$weeklyRate / week';
+      return '$symbol$weeklyRate ${'per_week'.tr}';
     }
     return '';
   }

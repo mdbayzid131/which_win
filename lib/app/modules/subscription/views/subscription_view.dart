@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -6,11 +7,45 @@ import 'package:which_win/core/services/user_service.dart';
 import 'package:which_win/data/models/subscription_model.dart';
 import '../controllers/subscription_controller.dart';
 
-class SubscriptionView extends GetView<SubscriptionController> {
-  SubscriptionView({super.key});
+class SubscriptionView extends StatefulWidget {
+  const SubscriptionView({super.key});
 
+  @override
+  State<SubscriptionView> createState() => _SubscriptionViewState();
+}
+
+class _SubscriptionViewState extends State<SubscriptionView> {
+  final controller = Get.find<SubscriptionController>();
   final currentSlideIndex = 0.obs;
-  final PageController pageController = PageController();
+  late final PageController pageController;
+  Timer? _carouselTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    pageController = PageController();
+    _startCarouselTimer();
+  }
+
+  void _startCarouselTimer() {
+    _carouselTimer = Timer.periodic(const Duration(seconds: 4), (_) {
+      if (pageController.hasClients) {
+        final nextIndex = (currentSlideIndex.value + 1) % 5;
+        pageController.animateToPage(
+          nextIndex,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _carouselTimer?.cancel();
+    pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +69,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
                       Expanded(
                         child: Center(
                           child: Text(
-                            'Subscription'.tr,
+                            'subscription_title'.tr,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 20.sp,
@@ -209,78 +244,27 @@ class SubscriptionView extends GetView<SubscriptionController> {
   }
 
   Widget _buildCarouselSection(BuildContext context) {
+    final List<String> descriptions = [
+      'carousel_feat_1'.tr,
+      'carousel_feat_2'.tr,
+      'carousel_feat_3'.tr,
+      'carousel_feat_4'.tr,
+      'carousel_feat_5'.tr,
+    ];
+
     return Column(
       children: [
         SizedBox(
-          height: 200.h,
+          height: 190.h,
           child: PageView.builder(
             controller: pageController,
             onPageChanged: (index) => currentSlideIndex.value = index,
-            itemCount: 3,
+            itemCount: 5,
             itemBuilder: (context, index) {
-              if (index == 0) {
-                return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: _buildMockLeagueList(),
-                );
-              } else if (index == 1) {
-                return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12.r),
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: Image.asset(
-                            'assets/images/horse_racing_bg.png',
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        Container(color: Colors.black.withValues(alpha: 0.5)),
-                        Center(
-                          child: Icon(
-                            Icons.psychology_rounded,
-                            color: const Color(0xFF2DD4BF),
-                            size: 64.sp,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              } else {
-                return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(12.r),
-                      border: Border.all(color: Colors.white12),
-                    ),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.workspace_premium_rounded,
-                            color: Colors.amber[600],
-                            size: 56.sp,
-                          ),
-                          SizedBox(height: 10.h),
-                          Text(
-                            "AD-FREE EXPERIENCE",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              }
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                child: _buildCarouselSlide(index),
+              );
             },
           ),
         ),
@@ -288,42 +272,43 @@ class SubscriptionView extends GetView<SubscriptionController> {
         // Active description text below active slide
         Obx(() {
           final index = currentSlideIndex.value;
-          String desc = "";
-          if (index == 0) {
-            desc = "190 COUNTRIES COVERAGE 1500+ LEAGUE MATCHES";
-          } else if (index == 1) {
-            desc = "REAL-TIME ALERTS & AI HORSE RACING TIPS";
-          } else {
-            desc = "EXCLUSIVE AD-FREE PREVIEW & INSIGHTS";
-          }
+          final desc = index >= 0 && index < descriptions.length
+              ? descriptions[index]
+              : descriptions[0];
+
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 24.w),
-            child: Text(
-              desc,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14.sp,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.5,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 250),
+              child: Text(
+                desc.toUpperCase(),
+                key: ValueKey<String>(desc),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.6,
+                ),
               ),
             ),
           );
         }),
-        SizedBox(height: 16.h),
-        // Dots indicator
+        SizedBox(height: 14.h),
+        // Dots indicator (5 items)
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(3, (index) {
+          children: List.generate(5, (index) {
             return Obx(() {
               final isActive = currentSlideIndex.value == index;
-              return Container(
-                width: 8.w,
-                height: 8.w,
-                margin: EdgeInsets.symmetric(horizontal: 4.w),
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: isActive ? 18.w : 6.w,
+                height: 6.w,
+                margin: EdgeInsets.symmetric(horizontal: 3.w),
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isActive ? Colors.white : Colors.white24,
+                  borderRadius: BorderRadius.circular(4.r),
+                  color: isActive ? const Color(0xFF2DD4BF) : Colors.white24,
                 ),
               );
             });
@@ -333,62 +318,120 @@ class SubscriptionView extends GetView<SubscriptionController> {
     );
   }
 
-  Widget _buildMockLeagueList() {
-    return Container(
-      width: double.infinity,
-      height: 180.h,
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-      decoration: BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.white12),
-      ),
-      child: SingleChildScrollView(
-        physics: const NeverScrollableScrollPhysics(),
-        child: Column(
-          children: [
-            _buildMockLeagueRow("🇹🇷", "Türkiye - 1. Lig", "1"),
-            SizedBox(height: 6.h),
-            _buildMockLeagueRow("🇹🇷", "Türkiye - Süper Lig", "1"),
-            SizedBox(height: 6.h),
-            _buildMockLeagueRow("🇩🇪", "Almanya - Oberliga - Baden-W.", "1"),
-            SizedBox(height: 6.h),
-            _buildMockLeagueRow("🇩🇪", "Almanya - Oberliga - Bremen", "8"),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget _buildCarouselSlide(int index) {
+    String imagePath;
+    IconData iconData;
+    String badgeTag;
+    Color accentColor;
 
-  Widget _buildMockLeagueRow(String flag, String name, String count) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 5.h),
-      decoration: BoxDecoration(
-        color: const Color(0xFF121212),
-        borderRadius: BorderRadius.circular(8.r),
-      ),
-      child: Row(
+    switch (index) {
+      case 0:
+        imagePath = 'assets/images/premium_race_header.png';
+        iconData = Icons.all_inclusive_rounded;
+        badgeTag = 'UNLIMITED';
+        accentColor = const Color(0xFF2DD4BF);
+        break;
+      case 1:
+        imagePath = 'assets/images/horse_racing_bg.png';
+        iconData = Icons.psychology_rounded;
+        badgeTag = 'AI POWERED';
+        accentColor = const Color(0xFF10B981);
+        break;
+      case 2:
+        imagePath = 'assets/images/race_analysis_header.png';
+        iconData = Icons.insights_rounded;
+        badgeTag = 'ALGORITHM';
+        accentColor = const Color(0xFF38BDF8);
+        break;
+      case 3:
+        imagePath = 'assets/images/horse_racing_bg.png';
+        iconData = Icons.query_stats_rounded;
+        badgeTag = 'RISK %';
+        accentColor = const Color(0xFFFBBF24);
+        break;
+      case 4:
+      default:
+        imagePath = 'assets/images/race_analysis_header.png';
+        iconData = Icons.leaderboard_rounded;
+        badgeTag = 'HEAD-TO-HEAD';
+        accentColor = const Color(0xFFA78BFA);
+        break;
+    }
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(14.r),
+      child: Stack(
+        fit: StackFit.expand,
         children: [
-          Text(flag, style: TextStyle(fontSize: 14.sp)),
-          SizedBox(width: 8.w),
-          Expanded(
-            child: Text(
-              name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: 11.sp,
-                fontWeight: FontWeight.bold,
+          // Background Image
+          Image.asset(
+            imagePath,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1E293B)),
+          ),
+          // Dark Gradient Overlay
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.black.withValues(alpha: 0.75),
+                  Colors.black.withValues(alpha: 0.4),
+                  Colors.black.withValues(alpha: 0.8),
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
             ),
           ),
-          Text(
-            count,
-            style: TextStyle(color: Colors.white54, fontSize: 11.sp),
+          // Center Icon & Badge
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(12.r),
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.2),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: accentColor.withValues(alpha: 0.6),
+                      width: 1.5,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: accentColor.withValues(alpha: 0.35),
+                        blurRadius: 16,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    iconData,
+                    color: accentColor,
+                    size: 38.sp,
+                  ),
+                ),
+                SizedBox(height: 10.h),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 3.h),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.6),
+                    borderRadius: BorderRadius.circular(12.r),
+                    border: Border.all(color: Colors.white24, width: 0.8),
+                  ),
+                  child: Text(
+                    badgeTag,
+                    style: TextStyle(
+                      color: accentColor,
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          SizedBox(width: 4.w),
-          Icon(Icons.keyboard_arrow_down, color: Colors.white54, size: 14.sp),
         ],
       ),
     );
@@ -405,10 +448,10 @@ class SubscriptionView extends GetView<SubscriptionController> {
       final isTrial = UserService.to.isTrial;
       final remainingDays = UserService.to.remainingDays;
 
-      final planName = isTrial ? '7-DAY FREE TRIAL' : rawPlanName.toUpperCase();
+      final planName = isTrial ? '7_day_free_trial'.tr : rawPlanName.toUpperCase();
       final subtitle = isTrial
-          ? '$remainingDays days trial left'
-          : 'Active Unlimited Access';
+          ? '$remainingDays ${'days_trial_left'.tr}'
+          : 'active_unlimited_access'.tr;
 
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -446,7 +489,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'CURRENT PLAN',
+                      'current_plan_title'.tr,
                       style: TextStyle(
                         color: const Color(0xFF2DD4BF),
                         fontSize: 10.sp,
@@ -482,7 +525,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
                   border: Border.all(color: const Color(0xFF2DD4BF)),
                 ),
                 child: Text(
-                  'ACTIVE',
+                  'active_badge'.tr,
                   style: TextStyle(
                     color: const Color(0xFF2DD4BF),
                     fontSize: 10.sp,
@@ -506,6 +549,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
               plan.id == controller.activeProductId.value);
       String priceStr = controller.getPlanPriceString(plan, index);
       String subtitle = controller.getWeeklySubtitle(plan, index);
+      String localizedName = controller.getLocalizedPlanName(plan, index);
 
       return GestureDetector(
         onTap: () => controller.selectPlan(index),
@@ -543,7 +587,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
                     Row(
                       children: [
                         Text(
-                          plan.name ?? '',
+                          localizedName,
                           style: TextStyle(
                             color: isSelected
                                 ? const Color(0xFF2DD4BF)
@@ -570,7 +614,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
                               ),
                             ),
                             child: Text(
-                              'ACTIVE',
+                              'active_badge'.tr,
                               style: TextStyle(
                                 color: const Color(0xFF2DD4BF),
                                 fontSize: 9.sp,
@@ -614,7 +658,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
             padding: EdgeInsets.only(bottom: 16.h),
             child: Center(
               child: Text(
-                "Next Billing Date: $nextDate",
+                "${'next_billing_date'.tr} $nextDate",
                 style: TextStyle(color: Colors.white38, fontSize: 13.sp),
               ),
             ),
@@ -695,7 +739,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
         ),
         SizedBox(height: 12.h),
         Text(
-          'Recurring billing. Cancel anytime in your App Store / Google Play account settings at least 24 hours before the renewal date.',
+          'recurring_billing_desc'.tr,
           style: TextStyle(color: Colors.white38, fontSize: 10.sp, height: 1.3),
           textAlign: TextAlign.center,
         ),
