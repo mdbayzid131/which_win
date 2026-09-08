@@ -1,3 +1,4 @@
+import 'package:which_win/core/controllers/language_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -1470,42 +1471,45 @@ class HomeView extends GetView<HomeController> {
 
   void _showLanguageSelectionBottomSheet() {
     Get.bottomSheet(
-      Container(
-        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
-        decoration: BoxDecoration(
-          color: const Color(0xFF0F1419),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
-          border: Border.all(color: Colors.white12),
-        ),
-        child: SafeArea(
-          top: false,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Handle
-              Container(
-                width: 40.w,
-                height: 4.h,
-                decoration: BoxDecoration(
-                  color: Colors.white24,
-                  borderRadius: BorderRadius.circular(2.r),
+      Material(
+        color: Colors.transparent,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+          decoration: BoxDecoration(
+            color: const Color(0xFF0F1419),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+            border: Border.all(color: Colors.white12),
+          ),
+          child: SafeArea(
+            top: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Handle
+                Container(
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: Colors.white24,
+                    borderRadius: BorderRadius.circular(2.r),
+                  ),
                 ),
-              ),
-              SizedBox(height: 24.h),
-              Text(
-                'select_language'.tr,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.bold,
+                SizedBox(height: 24.h),
+                Text(
+                  'select_language'.tr,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              SizedBox(height: 24.h),
-              _buildLanguageOption('english'.tr, 'en', '🇺🇸'),
-              SizedBox(height: 12.h),
-              _buildLanguageOption('turkish'.tr, 'tr', '🇹🇷'),
-              SizedBox(height: 16.h),
-            ],
+                SizedBox(height: 24.h),
+                _buildLanguageOption('english'.tr, 'en', '🇬🇧'),
+                SizedBox(height: 12.h),
+                _buildLanguageOption('turkish'.tr, 'tr', '🇹🇷'),
+                SizedBox(height: 16.h),
+              ],
+            ),
           ),
         ),
       ),
@@ -1516,32 +1520,40 @@ class HomeView extends GetView<HomeController> {
     final currentLocale = Get.locale?.languageCode ?? 'en';
     final isSelected = currentLocale == langCode;
 
-    return ListTile(
-      onTap: () async {
-        await StorageService.setString('language_code', langCode);
-        Get.updateLocale(Locale(langCode));
-        Get.back();
-      },
-      leading: Text(flag, style: TextStyle(fontSize: 24.sp)),
-      title: Text(
-        title,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 16.sp,
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+    return Material(
+      color: Colors.transparent,
+      child: ListTile(
+        onTap: () async {
+          Get.back();
+          if (Get.isRegistered<LanguageController>()) {
+            await Get.find<LanguageController>().changeLanguage(langCode);
+          } else {
+            final controller = Get.put(LanguageController(), permanent: true);
+            await controller.changeLanguage(langCode);
+          }
+        },
+        leading: Text(flag, style: TextStyle(fontSize: 24.sp)),
+        title: Text(
+          title,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16.sp,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          ),
         ),
-      ),
-      trailing: isSelected
-          ? const Icon(Icons.check_circle, color: Color(0xFF2DD4BF))
-          : const Icon(Icons.circle_outlined, color: Colors.white24),
-      tileColor: isSelected
-          ? Colors.white.withValues(alpha: 0.05)
-          : Colors.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        side: BorderSide(
-          color: isSelected ? const Color(0xFF2DD4BF) : Colors.white10,
-          width: 1,
+        trailing: isSelected
+            ? const Icon(Icons.check_circle, color: Color(0xFF2DD4BF))
+            : const Icon(Icons.circle_outlined, color: Colors.white24),
+        tileColor: isSelected
+            ? Colors.white.withValues(alpha: 0.05)
+            : Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.r),
+          side: BorderSide(
+            color: isSelected
+                ? const Color(0xFF2DD4BF).withValues(alpha: 0.3)
+                : Colors.white10,
+          ),
         ),
       ),
     );

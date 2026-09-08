@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'dart:ui';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,7 +16,7 @@ class LanguageController extends GetxController {
     super.onInit();
   }
 
-  void changeLanguage(String langCode) async {
+  Future<void> changeLanguage(String langCode) async {
     Locale newLocale = Locale(langCode);
 
     locale.value = newLocale;
@@ -24,19 +25,24 @@ class LanguageController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(StorageConstants.languageCode, langCode);
     await prefs.setString(StorageConstants.language, langCode);
+    await StorageService.setString(StorageConstants.languageCode, langCode);
+    await StorageService.setString(StorageConstants.language, langCode);
 
     // Sync preference with backend if logged in
     try {
       if (Get.isRegistered<ApiClient>()) {
         final token = await StorageService.getString(StorageConstants.bearerToken);
         if (token.isNotEmpty) {
-          await Get.find<ApiClient>().patchData(
-            '${ApiConstants.baseUrl}/language',
+          final response = await Get.find<ApiClient>().patchData(
+            ApiConstants.language,
             {'language': langCode},
           );
+          debugPrint('[LanguageController] Language preference synced with backend: ${response.statusCode}');
         }
       }
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('[LanguageController] Failed to sync language preference: $e');
+    }
   }
 
   Future<void> loadLanguage() async {
@@ -45,7 +51,7 @@ class LanguageController extends GetxController {
     String? savedLang = prefs.getString(StorageConstants.languageCode) ??
         prefs.getString(StorageConstants.language);
 
-    if (savedLang != null) {
+    if (savedLang != null && savedLang.isNotEmpty) {
       locale.value = Locale(savedLang);
     } else {
       locale.value = const Locale('en');

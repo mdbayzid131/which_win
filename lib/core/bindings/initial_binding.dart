@@ -1,3 +1,4 @@
+import 'package:which_win/core/controllers/language_controller.dart';
 import 'package:get/get.dart';
 import 'package:which_win/core/controllers/internet_controller.dart';
 import 'package:which_win/core/services/connectivity_service.dart';
@@ -27,6 +28,7 @@ class InitialBinding extends Bindings {
     
     // Global controllers
     Get.put(InternetController(), permanent: true);
+    Get.put(LanguageController(), permanent: true);
 
     // Services init
     ConnectivityService.init();

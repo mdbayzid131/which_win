@@ -35,6 +35,7 @@ class ApiConstants {
   static const String contact = 'contact';
   static const String rating = 'rating';
   static const String legal = 'legal/'; // append {type}
+  static const String language = 'language';
 
   // Standard GetX Service refresh token
   static const String refreshToken = 'auth/refresh-token';
