@@ -101,24 +101,16 @@ class AnalysisTabContent extends GetView<RaceDetailsController> {
 
             // Excel Formula: Rank 1 gets 100%, others proportional = (HorseScore / TopScore) * 100
             double percentValue;
-            if (index == 0) {
-              percentValue = 100.0;
-            } else if (entry.normalizedScore != null &&
-                entry.normalizedScore! > 0) {
+            if (entry.normalizedScore != null && entry.normalizedScore! > 0) {
               percentValue = entry.normalizedScore!.clamp(0.0, 100.0);
             } else if (topFieldScore > 0 && rawScore > 0) {
-              percentValue = ((rawScore / topFieldScore) * 100.0).clamp(
-                0.0,
-                100.0,
-              );
+              percentValue = (index == 0)
+                  ? 100.0
+                  : ((rawScore / topFieldScore) * 100.0).clamp(0.0, 99.0);
             } else if (entry.winProb != null && entry.winProb! > 0) {
               percentValue = (entry.winProb! * 100.0).clamp(0.0, 100.0);
             } else {
-              percentValue =
-                  (100.0 -
-                          (index *
-                              (60.0 / (entries.isEmpty ? 1 : entries.length))))
-                      .clamp(15.0, 100.0);
+              percentValue = 0.0;
             }
 
             Color rankBgColor;

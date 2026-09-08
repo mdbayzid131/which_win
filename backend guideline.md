@@ -274,11 +274,392 @@ Which Win Horse Race Analysis Program is not a betting program, and all provided
 
 ---
 
+## ⚡ 6. API Performance & Payload Optimization Guidelines
+
+### ⚠️ Problem Statement
+Currently, backend endpoints (especially `GET /api/v1/race` and `GET /api/v1/race/:id`) are sending massive, un-optimized JSON responses (often exceeding **200 KB – 500 KB per request**).
+- **Major Issues Identified in Response Logs:**
+  1. **Dozens of `null` fields:** Sending 20+ empty/null keys per horse runner (`comment: null`, `spotlight: null`, `headgearRun: null`, `windSurgery: null`, `windSurgeryRun: null`, `trainerRtf: null`, `trainerLocation: null`, `speedRating: null`, `performanceRating: null`, `silkUrl: null`, `ts: null`, `courseId: null`, `goingDetailed: null`, `railMovements: null`, `stalls: null`, `weather: null`, `jumps: null`, `bigRace: null`, `isAbandoned: null`, `tip: null`, `verdict: null`, `winningTimeDetail: null`, `comments: null`, `nonRunners: null`, `aiConfidence: null`, `aiConfidenceScore: null`, `aiAnalysis: null`, `hasValueEdge: null`, `valueEdgePercent: null`, `bestTime: null`, `bestTimeLocation: null`).
+  2. **Severe Data Duplication:** Returning the same data in top-level entry strings AND in nested objects (e.g., `entry.jockeyName` + `entry.jockey.name`, `entry.trainerName` + `entry.trainer.name`, `entry.age` + `entry.horse.age`, `entry.colour` + `entry.horse.colour`).
+  3. **List API Over-fetching:** Returning full detailed relation graphs for dozens of races in list views instead of lightweight summary DTOs.
+  4. **Impact on Mobile App:** High network latency, heavy memory pressure, parsing lag in Flutter, and overall sluggish app performance.
+
+### 🎯 Optimization Goal
+- **Reduce Payload Size by 70% – 85%** (Target: `< 25 KB` for race details, `< 15 KB` for race list).
+- **Target Response Latency:** `< 200 ms` per API call.
+
+### 🔑 Golden Rule: UI Contract Keys vs. Unused Bloat
+> [!IMPORTANT]
+> 1. **Used UI Keys (Mandatory Contract):** If a field/key is used in the app's UI design (e.g., in `RESULT`, `PREDICTION`, `ANALYSIS`, `STATISTICS`, or `ATLAR/JOKEYLER` tabs), the backend **MUST always include the key in the JSON**, even if its value in the database is currently `null` (e.g., `"weight": null`, `"time": null`, `"btn": null`, `"or": null`, `"form": null`). This ensures that Flutter model deserialization and UI data binding remain 100% stable without missing-key runtime errors.
+> 2. **Completely Unused Fields (Must Omit):** Any database column or relation that is **NEVER used anywhere in the mobile app** (e.g., `spotlight`, `headgearRun`, `windSurgery`, `speedRating`, `silkUrl`, `weather`, `jumps`, `trainerRtf`, `aiConfidence`, etc.) MUST be completely excluded from the query/DTO.
+> 3. **No UI Disruption:** Flutter models are built with strict null-safety. As long as the contract keys in Section 7 are preserved, the UI will not break or change visually.
+
+---
+
+## 📋 7. Exact Frontend Data Requirements (Endpoint-by-Endpoint)
+
+The backend MUST ONLY send the fields specified below. Any other unneeded database columns or relations MUST be excluded via Prisma `select` or TypeORM projections.
+
+### 7.1 `GET /api/v1/race` (Race List / Calendar / Meetings)
+Used for the home race calendar and meeting list. **Do NOT send full entries or nested horse/jockey relations in this list endpoint.**
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "cmtruompe1tttqw0193lse7v5",
+      "name": "Prix Jean Bart",
+      "date": "2026-09-08T00:00:00.000Z",
+      "time": "12:55",
+      "location": "Auteuil",
+      "country": "France",
+      "region": "fr",
+      "surface": "Turf",
+      "distance": "18.0f",
+      "prize": "€44,100",
+      "raceType": "Hurdle",
+      "ageBand": "5yo+",
+      "fieldSize": 16,
+      "status": "UPCOMING", // "UPCOMING" | "LIVE" | "FINISHED"
+      "tahmin1X": "12",
+      "riskRate": 45,
+      "predictionMessage": "Kel Story & Titi De Paris are top picks",
+      "hasPredictions": true,
+      "isPremium": true
+    }
+  ]
+}
+```
+
+---
+
+### 7.2 `GET /api/v1/race/:id` (Race Details Screen - All 5 Tabs)
+Used on the Race Details page (`Atlar/Jokeyler`, `İstatistik`, `Analiz`, `Tahmin`, `Sonuç`).
+
+#### Clean & Lean Response Structure:
+```json
+{
+  "success": true,
+  "isPremium": true,
+  "data": {
+    "id": "cmtruompe1tttqw0193lse7v5",
+    "name": "Prix Jean Bart",
+    "date": "2026-09-08T00:00:00.000Z",
+    "time": "12:55",
+    "location": "Auteuil",
+    "country": "France",
+    "surface": "Turf",
+    "distance": "18.0f",
+    "prize": "€44,100",
+    "raceType": "Hurdle",
+    "ageBand": "5yo+",
+    "fieldSize": 16,
+    "status": "UPCOMING", // "UPCOMING" | "LIVE" | "FINISHED"
+    "tahmin1X": "12",
+    "riskRate": 45,
+    "predictionMessage": "Kel Story & Titi De Paris are top picks.",
+    "hasPredictions": true,
+
+    "entries": [
+      {
+        "id": "cmtruon2e1twoqw01bta57kfr",
+        "number": "14",
+        "draw": 0,
+        "weight": 143,
+        "form": "P6P057",
+        "headgear": "t",
+        "lastRun": "22",
+        "ofr": "120",
+        "or": "120",
+        "rpr": "125",
+        
+        "horsePower": 85.5,
+        "pedigreePower": 72.0,
+        "rawScore": 0.3296,
+        "normalizedScore": 100,
+        "rank": 1,
+        "category": "MINIMUM",
+        "winProb": 0.35,
+        "winOddsFair": 2.85,
+
+        "horse": {
+          "id": "cmtruon271twkqw013wqjccgh",
+          "name": "Kel Story",
+          "age": 6,
+          "colour": "b",
+          "sex": "gelding",
+          "sireName": "Jeu St Eloi",
+          "damName": "Une Histoire",
+          "damSireName": "Voix Du Nord",
+          "owner": "J Finch",
+          "trainer": "M Seror",
+          "country": "FR",
+          "totalEarnings": 12500,
+          "totalRaces": 12,
+          "wins": 3,
+          "seconds": 2,
+          "thirds": 1
+        },
+
+        "jockey": {
+          "id": "cmtruon2c1twmqw016oa2e94c",
+          "name": "Ludovic Philipperon",
+          "totalRides": 150,
+          "wins": 25,
+          "ridesLast30d": 20,
+          "winsLast30d": 4
+        },
+
+        "trainer": {
+          "id": "cmtqezxeg0nlwqw011qiip2rd",
+          "name": "M Seror",
+          "totalRuns": 120,
+          "wins": 18
+        }
+      }
+    ],
+
+    "results": [
+      // EMPTY [] if status != "FINISHED"
+      // Populated ONLY when race has finished:
+      {
+        "position": 1,
+        "number": 14,
+        "weight": 143,
+        "time": "3:45.20",
+        "btn": "KAZANDI", // or "2 BOY" / "1.5L"
+        "sp": "3.50",
+        "or": "120",
+        "horse": {
+          "id": "cmtruon271twkqw013wqjccgh",
+          "name": "Kel Story"
+        },
+        "jockey": {
+          "name": "Ludovic Philipperon"
+        }
+      }
+    ]
+  }
+}
+```
+
+---
+
+### 7.3 `GET /api/v1/race/:id/statistics` (Statistics Tab)
+```json
+{
+  "success": true,
+  "data": {
+    "earnings": [
+      { "horseName": "Kel Story", "amount": "€12,500", "percentage": 45 }
+    ],
+    "origin": [
+      { "country": "FR", "percentage": 60 },
+      { "country": "IRE", "percentage": 40 }
+    ],
+    "distance": [
+      { "label": "18.0f", "detail": "3 Wins", "percentage": 75 }
+    ],
+    "track": [
+      { "surface": "Turf", "detail": "Soft", "percentage": 80 }
+    ]
+  }
+}
+```
+
+---
+
+### 7.4 `GET /api/v1/horse/:id` (Horse Profile Screen)
+```json
+{
+  "success": true,
+  "data": {
+    "id": "cmtruon271twkqw013wqjccgh",
+    "name": "Kel Story",
+    "age": 6,
+    "colour": "b",
+    "sex": "gelding",
+    "sireName": "Jeu St Eloi",
+    "damName": "Une Histoire",
+    "damSireName": "Voix Du Nord",
+    "owner": "J Finch",
+    "trainer": "M Seror",
+    "country": "FR",
+    "totalEarnings": 12500,
+    "totalRaces": 12,
+    "wins": 3,
+    "seconds": 2,
+    "thirds": 1,
+    "recentRaces": [
+      {
+        "date": "2026-08-15",
+        "location": "Auteuil",
+        "distance": "18.0f",
+        "track": "Turf",
+        "rank": 1,
+        "time": "3:42.10",
+        "jockeyName": "Ludovic Philipperon",
+        "weight": 143,
+        "hpScore": 85
+      }
+    ]
+  }
+}
+```
+
+---
+
+## 🚫 8. Fields to Exclude / Omit from Backend Payloads
+
+Do **NOT** send the following fields unless explicitly required by a specific endpoint:
+
+| Category | Fields to Omit / Exclude |
+| :--- | :--- |
+| **Empty / Unused Entry Metadata** | `comment`, `spotlight`, `headgearRun`, `windSurgery`, `windSurgeryRun`, `trainerRtf`, `trainerLocation`, `speedRating`, `performanceRating`, `silkUrl`, `ts`, `aiSelectionRank`, `aiConfidence`, `aiConfidenceScore`, `aiAnalysis`, `hasValueEdge`, `valueEdgePercent` |
+| **Empty / Unused Race Metadata** | `courseId`, `goingDetailed`, `railMovements`, `stalls`, `weather`, `jumps`, `bigRace`, `isAbandoned`, `tip`, `verdict`, `winningTimeDetail`, `comments`, `nonRunners`, `ratingBand`, `raceClass`, `sexRestriction`, `distanceRound` |
+| **Duplicate Top-level Strings** | `jockeyName`, `trainerName`, `ownerName`, `weightStr`, `sexCode`, `colour`, `age` (These already exist inside `horse`, `jockey`, and `trainer` objects). |
+| **Empty Stats in Horse/Jockey** | `bestTime: null`, `bestTimeLocation: null`, `fourths: 0` |
+
+---
+
+## 🛠️ 9. Recommended Backend Implementation (Prisma / NestJS)
+
+### A. Prisma `select` Projection Example
+Instead of doing `include: { entries: { include: { horse: true, jockey: true, trainer: true } } }` (which fetches and returns all 60+ database columns), use exact `select` projections:
+
+```typescript
+// race.service.ts
+async getRaceDetails(raceId: string) {
+  return this.prisma.race.findUnique({
+    where: { id: raceId },
+    select: {
+      id: true,
+      name: true,
+      date: true,
+      time: true,
+      location: true,
+      country: true,
+      surface: true,
+      distance: true,
+      prize: true,
+      raceType: true,
+      ageBand: true,
+      fieldSize: true,
+      status: true,
+      tahmin1X: true,
+      riskRate: true,
+      predictionMessage: true,
+      hasPredictions: true,
+      entries: {
+        select: {
+          id: true,
+          number: true,
+          draw: true,
+          weight: true,
+          form: true,
+          headgear: true,
+          lastRun: true,
+          or: true,
+          rpr: true,
+          horsePower: true,
+          pedigreePower: true,
+          rawScore: true,
+          normalizedScore: true,
+          rank: true,
+          category: true,
+          winProb: true,
+          winOddsFair: true,
+          horse: {
+            select: {
+              id: true,
+              name: true,
+              age: true,
+              colour: true,
+              sex: true,
+              sireName: true,
+              damName: true,
+              damSireName: true,
+              owner: true,
+              trainer: true,
+              country: true,
+              totalEarnings: true,
+              totalRaces: true,
+              wins: true,
+              seconds: true,
+              thirds: true,
+            },
+          },
+          jockey: {
+            select: {
+              id: true,
+              name: true,
+              totalRides: true,
+              wins: true,
+              ridesLast30d: true,
+              winsLast30d: true,
+            },
+          },
+          trainer: {
+            select: {
+              id: true,
+              name: true,
+              totalRuns: true,
+              wins: true,
+            },
+          },
+        },
+      },
+      results: {
+        select: {
+          position: true,
+          number: true,
+          weight: true,
+          time: true,
+          btn: true,
+          sp: true,
+          or: true,
+          horse: { select: { id: true, name: true } },
+          jockey: { select: { name: true } },
+        },
+      },
+    },
+  });
+}
+```
+
+### B. Enable HTTP Compression Middleware (Gzip / Brotli)
+In `main.ts` (NestJS / Express), enable response compression:
+
+```typescript
+import * as compression from 'compression';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.use(compression()); // Compresses JSON payloads by 80%+ over the wire
+  // ...
+  await app.listen(process.env.PORT || 5001);
+}
+bootstrap();
+```
+
+---
+
 ## 🎯 Summary Checklist for Backend Developer
+
+### 🌐 Localization Support
 - [ ] Implement `Accept-Language` header recognition across all APIs (`en`/`tr`).
 - [ ] Create/Update endpoint to save device language preference (`/api/v1/device/language`).
 - [ ] Return localized content for **Terms & Conditions** (`/api/v1/terms-conditions`) matching Section 4.
 - [ ] Return localized content for **Privacy Policy** (`/api/v1/privacy-policy`) matching Section 5.
 - [ ] Return localized in-app **Notifications** list (`/api/v1/notifications`).
 - [ ] Dispatch **Push Notifications (FCM)** in the user's selected language (`en`/`tr`).
-- [ ] Always provide English (`en`) as the default fallback if Turkish is unavailable.
+
+### ⚡ Performance & Payload Optimization
+- [ ] Apply strict Prisma `select` projections on `GET /api/v1/race` to return only summary fields (no nested entries).
+- [ ] Apply strict Prisma `select` projections on `GET /api/v1/race/:id` matching Section 7.2.
+- [ ] Strip out all 20+ `null` and unused fields listed in Section 8.
+- [ ] Return empty array `results: []` when race is not yet `FINISHED`.
+- [ ] Enable `compression()` middleware in NestJS/Express `main.ts`.
+- [ ] Ensure API response payload size is `< 30 KB` and latency is `< 200 ms`.
+

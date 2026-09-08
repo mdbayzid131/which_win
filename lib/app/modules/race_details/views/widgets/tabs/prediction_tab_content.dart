@@ -35,16 +35,16 @@ class PredictionTabContent extends GetView<RaceDetailsController> {
       final rawScore = entry.rawScore ?? entry.horsePower ?? 0.0;
 
       double score;
-      if (i == 0) {
-        score = 100.0;
-      } else if (entry.normalizedScore != null && entry.normalizedScore! > 0) {
-        score = entry.normalizedScore!.clamp(0.0, 99.0);
+      if (entry.normalizedScore != null && entry.normalizedScore! > 0) {
+        score = entry.normalizedScore!.clamp(0.0, 100.0);
       } else if (topFieldScore > 0 && rawScore > 0) {
-        score = ((rawScore / topFieldScore) * 100.0).clamp(0.0, 99.0);
+        score = (i == 0)
+            ? 100.0
+            : ((rawScore / topFieldScore) * 100.0).clamp(0.0, 99.0);
       } else if (entry.winProb != null && entry.winProb! > 0) {
-        score = (entry.winProb! * 100.0).clamp(0.0, 99.0);
+        score = (entry.winProb! * 100.0).clamp(0.0, 100.0);
       } else {
-        score = (100.0 - (i * 7.0)).clamp(60.0, 99.0);
+        score = 0.0;
       }
 
       // Cut off under 60%

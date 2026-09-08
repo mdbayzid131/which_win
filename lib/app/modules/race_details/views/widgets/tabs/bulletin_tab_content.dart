@@ -14,87 +14,82 @@ class BulletinTabContent extends GetView<RaceDetailsController> {
   Widget build(BuildContext context) {
     final results = details.results ?? [];
     final entries = details.entries ?? [];
-    final isFinished =
-        details.status?.toUpperCase() == 'FINISHED' || results.isNotEmpty;
 
-    if (isFinished && results.isNotEmpty) {
-      // Sort results strictly by finishing position
-      final sortedResults = [...results];
-      sortedResults.sort(
-        (a, b) => (a.position ?? 999).compareTo(b.position ?? 999),
-      );
-
-      return ListView.builder(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-        itemCount: sortedResults.length,
-        itemBuilder: (context, index) {
-          final result = sortedResults[index];
-          // Match corresponding entry if available for fallback data
-          final matchingEntry = entries.firstWhereOrNull(
-            (e) =>
-                e.horseId == result.horse?.id ||
-                e.horse?.name?.toLowerCase() ==
-                    result.horse?.name?.toLowerCase(),
-          );
-
-          return ResultHorseCard(
-            result: result,
-            matchingEntry: matchingEntry,
-            fallbackIndex: index,
-          );
-        },
-      );
-    }
-
-    if (entries.isEmpty && results.isEmpty) {
+    if (results.isEmpty) {
       return Center(
-        child: Text(
-          'no_horses_registered'.tr,
-          style: const TextStyle(color: Colors.white60),
+        child: Padding(
+          padding: EdgeInsets.all(32.w),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: EdgeInsets.all(16.w),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF181B22),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white10),
+                ),
+                child: Icon(
+                  Icons.emoji_events_outlined,
+                  color: const Color(0xFFD4AF37),
+                  size: 36.sp,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                'race_not_resulted_yet'.tr == 'race_not_resulted_yet'
+                    ? (Get.locale?.languageCode == 'tr'
+                        ? 'Yarış Henüz Sonuçlanmadı'
+                        : 'Race Not Resulted Yet')
+                    : 'race_not_resulted_yet'.tr,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 6.h),
+              Text(
+                'results_will_appear_after_finish'.tr ==
+                        'results_will_appear_after_finish'
+                    ? (Get.locale?.languageCode == 'tr'
+                        ? 'Resmi sonuçlar yarış tamamlandıktan sonra burada görüntülenecektir.'
+                        : 'Official results will appear here once the race is completed.')
+                    : 'results_will_appear_after_finish'.tr,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white54,
+                  fontSize: 12.sp,
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
 
-    final sortedEntries = [...entries];
-    sortedEntries.sort((a, b) {
-      final aDraw = a.number ?? a.draw ?? 999;
-      final bDraw = b.number ?? b.draw ?? 999;
-      return aDraw.compareTo(bDraw);
-    });
+    // Sort results strictly by finishing position from API
+    final sortedResults = [...results];
+    sortedResults.sort(
+      (a, b) => (a.position ?? 999).compareTo(b.position ?? 999),
+    );
 
     return ListView.builder(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-      itemCount: sortedEntries.length,
+      itemCount: sortedResults.length,
       itemBuilder: (context, index) {
-        final entry = sortedEntries[index];
-        final matchingResult = results.firstWhereOrNull(
-          (r) =>
-              r.horse?.id == entry.horseId ||
-              r.horse?.name?.toLowerCase() == entry.horse?.name?.toLowerCase(),
+        final result = sortedResults[index];
+        final matchingEntry = entries.firstWhereOrNull(
+          (e) =>
+              e.horseId == result.horse?.id ||
+              e.horse?.name?.toLowerCase() ==
+                  result.horse?.name?.toLowerCase(),
         );
 
-        if (matchingResult != null) {
-          return ResultHorseCard(
-            result: matchingResult,
-            matchingEntry: entry,
-            fallbackIndex: index,
-          );
-        }
-
         return ResultHorseCard(
-          result: RaceResult(
-            position: index + 1,
-            number: entry.number ?? entry.draw ?? (index + 1),
-            horse: entry.horse,
-            jockey: entry.jockey,
-            weight: entry.weight,
-            time: null,
-            btn: null,
-            sp: entry.winOddsFair != null
-                ? entry.winOddsFair!.toStringAsFixed(2)
-                : null,
-          ),
-          matchingEntry: entry,
+          result: result,
+          matchingEntry: matchingEntry,
           fallbackIndex: index,
         );
       },

@@ -66,6 +66,15 @@ class ApiClient extends GetxService {
       options.headers['Authorization'] = 'Bearer $_bearerToken';
     }
 
+    String currentLang = await StorageService.getString(StorageConstants.languageCode);
+    if (currentLang.isEmpty) {
+      currentLang = await StorageService.getString(StorageConstants.language);
+    }
+    if (currentLang.isEmpty) {
+      currentLang = Get.locale?.languageCode ?? 'en';
+    }
+    options.headers['Accept-Language'] = currentLang;
+
     AppLogger.request(options);
     return handler.next(options);
   }
