@@ -87,16 +87,20 @@ class AtlarContent extends GetView<RaceDetailsController> {
         final entry = entries[index];
         final horseName = entry.horse?.name ?? 'Horse ${index + 1}';
         final jockeyName = entry.jockey?.name ?? 'N/A';
-        final String weight = Helpers.formatWeight(entry.weight, showBoth: true);
+        final String weight = Helpers.formatWeight(
+          entry.weight,
+          showBoth: true,
+        );
         final hp = (entry.horsePower != null && entry.horsePower! > 0)
             ? entry.horsePower!.toInt()
             : ((entry.normalizedScore != null && entry.normalizedScore! > 0)
-                ? entry.normalizedScore!.toInt()
-                : ((entry.rawScore != null && entry.rawScore! > 0)
-                    ? entry.rawScore!.toInt()
-                    : ((entry.pedigreePower != null && entry.pedigreePower! > 0)
-                        ? entry.pedigreePower!.toInt()
-                        : 0)));
+                  ? entry.normalizedScore!.toInt()
+                  : ((entry.rawScore != null && entry.rawScore! > 0)
+                        ? entry.rawScore!.toInt()
+                        : ((entry.pedigreePower != null &&
+                                  entry.pedigreePower! > 0)
+                              ? entry.pedigreePower!.toInt()
+                              : 0)));
         final pos = entry.number ?? entry.rank ?? (index + 1);
 
         return Container(
@@ -181,9 +185,13 @@ class JokeylerContent extends GetView<RaceDetailsController> {
       itemCount: entries.length,
       itemBuilder: (context, index) {
         final entry = entries[index];
-        final jockeyName = entry.jockey?.name ?? '${'jockey_label'.tr} ${index + 1}';
+        final jockeyName =
+            entry.jockey?.name ?? '${'jockey_label'.tr} ${index + 1}';
         final horseName = entry.horse?.name ?? 'N/A';
-        final String weight = Helpers.formatWeight(entry.weight, showBoth: true);
+        final String weight = Helpers.formatWeight(
+          entry.weight,
+          showBoth: true,
+        );
         final pos = entry.number ?? entry.rank ?? (index + 1);
 
         return Container(
@@ -265,7 +273,10 @@ class TurkeyStyleHorseCard extends GetView<RaceDetailsController> {
     final sex = horse?.sex ?? 'k';
 
     // Format weight displaying both KG and LBS (e.g. "59 kg (130 lbs)")
-    final String weightText = Helpers.formatWeight(entry.weight, showBoth: true);
+    final String weightText = Helpers.formatWeight(
+      entry.weight,
+      showBoth: true,
+    );
 
     // Left badge shows horse / saddle cloth number
     final saddleNumber = entry.number ?? (index + 1);
@@ -283,12 +294,12 @@ class TurkeyStyleHorseCard extends GetView<RaceDetailsController> {
     final int hpVal = (entry.horsePower != null && entry.horsePower! > 0)
         ? entry.horsePower!.toInt()
         : ((entry.normalizedScore != null && entry.normalizedScore! > 0)
-            ? entry.normalizedScore!.toInt()
-            : ((entry.rawScore != null && entry.rawScore! > 0)
-                ? entry.rawScore!.toInt()
-                : ((entry.pedigreePower != null && entry.pedigreePower! > 0)
-                    ? entry.pedigreePower!.toInt()
-                    : 0)));
+              ? entry.normalizedScore!.toInt()
+              : ((entry.rawScore != null && entry.rawScore! > 0)
+                    ? entry.rawScore!.toInt()
+                    : ((entry.pedigreePower != null && entry.pedigreePower! > 0)
+                          ? entry.pedigreePower!.toInt()
+                          : 0)));
 
     final equipmentText = entry.headgear ?? '';
     final bool isApprentice = jockeyName.toLowerCase().startsWith('ap ');
@@ -443,10 +454,14 @@ class TurkeyStyleHorseCard extends GetView<RaceDetailsController> {
                             vertical: 4.h,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                            color: const Color(
+                              0xFF10B981,
+                            ).withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(6.r),
                             border: Border.all(
-                              color: const Color(0xFF10B981).withValues(alpha: 0.5),
+                              color: const Color(
+                                0xFF10B981,
+                              ).withValues(alpha: 0.5),
                             ),
                           ),
                           child: Text(
