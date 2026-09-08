@@ -55,62 +55,62 @@ class NotificationsView extends GetView<NotificationsController> {
         top: false,
         bottom: true,
         child: Obx(() {
-        if (controller.isLoading.value && controller.notificationList.isEmpty) {
-          return const Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2DD4BF)),
-            ),
-          );
-        }
+          if (controller.isLoading.value && controller.notificationList.isEmpty) {
+            return const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2DD4BF)),
+              ),
+            );
+          }
 
-        if (controller.notificationList.isEmpty) {
+          if (controller.notificationList.isEmpty) {
+            return RefreshIndicator(
+              onRefresh: () => controller.fetchNotifications(isRefresh: true),
+              color: const Color(0xFF2DD4BF),
+              backgroundColor: const Color(0xFF0F1419),
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  SizedBox(height: 200.h),
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.notifications_off_outlined, color: Colors.white24, size: 64.sp),
+                        SizedBox(height: 16.h),
+                        Text(
+                          'no_notifications'.tr,
+                          style: TextStyle(color: Colors.white38, fontSize: 16.sp),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
           return RefreshIndicator(
-            onRefresh: () => controller.fetchNotifications(isRefresh: true),
+            onRefresh: () => controller.fetchNotifications(isRefresh: false),
             color: const Color(0xFF2DD4BF),
             backgroundColor: const Color(0xFF0F1419),
-            child: ListView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              children: [
-                SizedBox(height: 200.h),
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.notifications_off_outlined, color: Colors.white24, size: 64.sp),
-                      SizedBox(height: 16.h),
-                      Text(
-                        'no_notifications'.tr,
-                        style: TextStyle(color: Colors.white38, fontSize: 16.sp),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+            child: ListView.builder(
+              padding: EdgeInsets.all(16.w),
+              itemCount: controller.notificationList.length,
+              itemBuilder: (context, index) {
+                final notificationModel = controller.notificationList[index];
+                return _buildNotificationCard(notificationModel);
+              },
             ),
           );
-        }
-
-        return RefreshIndicator(
-          onRefresh: () => controller.fetchNotifications(isRefresh: false),
-          color: const Color(0xFF2DD4BF),
-          backgroundColor: const Color(0xFF0F1419),
-          child: ListView.builder(
-            padding: EdgeInsets.all(16.w),
-            itemCount: controller.notificationList.length,
-            itemBuilder: (context, index) {
-              final notificationModel = controller.notificationList[index];
-              return _buildNotificationCard(notificationModel);
-            },
-          ),
-        );
-      }),
-    ),
+        }),
+      ),
     );
   }
 
   Widget _buildNotificationCard(NotificationModel notificationModel) {
     final isRead = notificationModel.isRead ?? true;
-    
+
     String timeString = '';
     if (notificationModel.createdAt != null) {
       try {
@@ -179,7 +179,7 @@ class NotificationsView extends GetView<NotificationsController> {
                         children: [
                           Expanded(
                             child: Text(
-                              notificationModel.title ?? '',
+                              notificationModel.displayTitle,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -195,7 +195,7 @@ class NotificationsView extends GetView<NotificationsController> {
                       ),
                       SizedBox(height: 8.h),
                       Text(
-                        notificationModel.message ?? '',
+                        notificationModel.displayMessage,
                         style: TextStyle(
                           color: isRead ? Colors.white70 : Colors.white,
                           fontSize: 14.sp,

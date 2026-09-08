@@ -2,6 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'dart:ui';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:which_win/app/modules/notifications/controllers/notifications_controller.dart';
+import 'package:which_win/app/modules/privacy_policy/controllers/privacy_policy_controller.dart';
+import 'package:which_win/app/modules/terms_conditions/controllers/terms_conditions_controller.dart';
 import 'package:which_win/config/constants/api_constants.dart';
 import 'package:which_win/config/constants/storage_constants.dart';
 import 'package:which_win/core/services/api_client.dart';
@@ -27,6 +30,17 @@ class LanguageController extends GetxController {
     await prefs.setString(StorageConstants.language, langCode);
     await StorageService.setString(StorageConstants.languageCode, langCode);
     await StorageService.setString(StorageConstants.language, langCode);
+
+    // Refresh active controllers
+    if (Get.isRegistered<TermsConditionsController>()) {
+      Get.find<TermsConditionsController>().fetchTerms();
+    }
+    if (Get.isRegistered<PrivacyPolicyController>()) {
+      Get.find<PrivacyPolicyController>().fetchPrivacyPolicy();
+    }
+    if (Get.isRegistered<NotificationsController>()) {
+      Get.find<NotificationsController>().fetchNotifications(isRefresh: true);
+    }
 
     // Sync preference with backend if logged in
     try {
