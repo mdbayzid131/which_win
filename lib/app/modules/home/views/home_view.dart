@@ -435,10 +435,12 @@ class HomeView extends GetView<HomeController> {
             ],
           ),
           const Divider(color: Colors.white12, height: 1),
-          // Drawer Items
+          // Drawer Items & Scrollable Footer
           Expanded(
             child: ListView(
-              padding: EdgeInsets.zero,
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).padding.bottom + 24.h,
+              ),
               children: [
                 _buildSubscriptionStatusCard(),
                 _buildDrawerItem(
@@ -471,12 +473,6 @@ class HomeView extends GetView<HomeController> {
                   'privacy_policy'.tr,
                   () => Get.toNamed(AppRoutes.PRIVACY_POLICY),
                 ),
-                // _buildDrawerItem(
-                //   Icons.card_giftcard_outlined,
-                //   'gift_a_friend'.tr,
-                //   () => Get.toNamed(AppRoutes.GIFT_A_FRIEND),
-                //   subtitle: 'gift_a_friend_subtitle'.tr,
-                // ),
                 _buildDrawerItem(Icons.thumb_up_alt_outlined, 'rate_us'.tr, () {
                   Get.back();
                   _showRateUsDialog(context);
@@ -486,35 +482,40 @@ class HomeView extends GetView<HomeController> {
                   'language'.tr,
                   () => _showLanguageSelectionBottomSheet(),
                 ),
+                SizedBox(height: 12.h),
+                const Divider(color: Colors.white12, height: 1),
+                SizedBox(height: 12.h),
+                // Drawer Footer (Scrollable)
+                Obx(
+                  () => Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${'version'.tr} ${controller.appVersion.value.isNotEmpty ? controller.appVersion.value : '...'}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                        SizedBox(height: 4.h),
+                        Text(
+                          'Token: ${controller.deviceId.value.isNotEmpty ? controller.deviceId.value : '...'}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
-            ),
-          ),
-          // Drawer Footer
-          Obx(
-            () => Padding(
-              padding: EdgeInsets.all(20.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${'version'.tr} ${controller.appVersion.value.isNotEmpty ? controller.appVersion.value : '...'}',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    'Token: ${controller.deviceId.value.isNotEmpty ? controller.deviceId.value : '...'}',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 11.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
             ),
           ),
         ],
