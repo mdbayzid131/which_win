@@ -63,6 +63,7 @@ class HomeView extends GetView<HomeController> {
           ),
         ),
         actions: [
+          _buildFootballAppButton(),
           // LIVE filter button — pulses red when active
           Obx(() {
             final isLive = controller.isLiveFilterActive.value;
@@ -485,7 +486,6 @@ class HomeView extends GetView<HomeController> {
                   'language'.tr,
                   () => _showLanguageSelectionBottomSheet(),
                 ),
-                _buildWhichWinFootballItem(),
               ],
             ),
           ),
@@ -522,103 +522,48 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  Widget _buildWhichWinFootballItem() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-      child: GestureDetector(
-        onTap: () async {
-          // Redirect to Apple App Store on iOS or Google Play Store on Android
-          String url =
-              'https://play.google.com/store/apps/details?id=com.whichwin.football';
-          try {
-            if (GetPlatform.isIOS) {
-              url =
-                  'https://apps.apple.com/app/which-win-football/id6475306634';
-            }
-          } catch (_) {}
-          final uri = Uri.parse(url);
-          if (await canLaunchUrl(uri)) {
-            await launchUrl(uri, mode: LaunchMode.externalApplication);
-          }
-        },
+  Widget _buildFootballAppButton() {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: _openFootballAppStore,
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 10.h),
+        alignment: Alignment.center,
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+          width: 28.w,
+          height: 28.w,
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF1A3A2A), Color(0xFF0D2E1F)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(14.r),
-            border: Border.all(
-              color: const Color(0xFF2D9B83).withValues(alpha: 0.5),
-              width: 1.5,
-            ),
+            shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF2D9B83).withValues(alpha: 0.12),
-                blurRadius: 12,
+                color: const Color(0xFF10B981).withValues(alpha: 0.35),
+                blurRadius: 8,
                 spreadRadius: 1,
-                offset: const Offset(0, 4),
               ),
             ],
           ),
-          child: Row(
-            children: [
-              // Football icon badge
-              SizedBox(
-                width: 44.w,
-                height: 44.w,
-                child: Image.asset(
-                  'assets/200x200bb-75.webp',
-                  fit: BoxFit.cover,
-                ),
-              ),
-              SizedBox(width: 14.w),
-              // Text info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'which_win_football'.tr,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.3,
-                      ),
-                    ),
-                    SizedBox(height: 3.h),
-                    Text(
-                      'download_which_win_football'.tr,
-                      style: TextStyle(
-                        color: const Color(0xFF2DD4BF),
-                        fontSize: 11.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Arrow with external link icon
-              Container(
-                padding: EdgeInsets.all(6.w),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF2D9B83).withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: Icon(
-                  Icons.open_in_new_rounded,
-                  color: const Color(0xFF2DD4BF),
-                  size: 18.sp,
-                ),
-              ),
-            ],
+          child: ClipOval(
+            child: Image.asset('assets/200x200bb-75.webp', fit: BoxFit.cover),
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _openFootballAppStore() async {
+    // Redirect to Apple App Store on iOS or Google Play Store on Android
+    String url =
+        'https://play.google.com/store/apps/details?id=com.whichwin&pcampaignid=web_share';
+    try {
+      if (GetPlatform.isIOS) {
+        url =
+            'https://apps.apple.com/us/app/which-win-football-predictions/id1537357866';
+      }
+    } catch (_) {}
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
   }
 
   Widget _buildSubscriptionStatusCard() {
