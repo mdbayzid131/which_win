@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:which_win/app/modules/race_details/controllers/race_details_controller.dart';
+import 'package:which_win/core/utils/helpers.dart';
 import 'package:which_win/data/models/race_details_model.dart';
 
 class BulletinTabContent extends GetView<RaceDetailsController> {
@@ -13,12 +14,15 @@ class BulletinTabContent extends GetView<RaceDetailsController> {
   Widget build(BuildContext context) {
     final results = details.results ?? [];
     final entries = details.entries ?? [];
-    final isFinished = details.status?.toUpperCase() == 'FINISHED' || results.isNotEmpty;
+    final isFinished =
+        details.status?.toUpperCase() == 'FINISHED' || results.isNotEmpty;
 
     if (isFinished && results.isNotEmpty) {
       // Sort results strictly by finishing position
       final sortedResults = [...results];
-      sortedResults.sort((a, b) => (a.position ?? 999).compareTo(b.position ?? 999));
+      sortedResults.sort(
+        (a, b) => (a.position ?? 999).compareTo(b.position ?? 999),
+      );
 
       return ListView.builder(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
@@ -27,7 +31,10 @@ class BulletinTabContent extends GetView<RaceDetailsController> {
           final result = sortedResults[index];
           // Match corresponding entry if available for fallback data
           final matchingEntry = entries.firstWhereOrNull(
-            (e) => e.horseId == result.horse?.id || e.horse?.name?.toLowerCase() == result.horse?.name?.toLowerCase(),
+            (e) =>
+                e.horseId == result.horse?.id ||
+                e.horse?.name?.toLowerCase() ==
+                    result.horse?.name?.toLowerCase(),
           );
 
           return ResultHorseCard(
@@ -39,7 +46,7 @@ class BulletinTabContent extends GetView<RaceDetailsController> {
       );
     }
 
-    if (entries.isEmpty) {
+    if (entries.isEmpty && results.isEmpty) {
       return Center(
         child: Text(
           'no_horses_registered'.tr,
@@ -60,8 +67,34 @@ class BulletinTabContent extends GetView<RaceDetailsController> {
       itemCount: sortedEntries.length,
       itemBuilder: (context, index) {
         final entry = sortedEntries[index];
-        return BulletinHorseCard(
-          entry: entry,
+        final matchingResult = results.firstWhereOrNull(
+          (r) =>
+              r.horse?.id == entry.horseId ||
+              r.horse?.name?.toLowerCase() == entry.horse?.name?.toLowerCase(),
+        );
+
+        if (matchingResult != null) {
+          return ResultHorseCard(
+            result: matchingResult,
+            matchingEntry: entry,
+            fallbackIndex: index,
+          );
+        }
+
+        return ResultHorseCard(
+          result: RaceResult(
+            position: index + 1,
+            number: entry.number ?? entry.draw ?? (index + 1),
+            horse: entry.horse,
+            jockey: entry.jockey,
+            weight: entry.weight,
+            time: null,
+            btn: null,
+            sp: entry.winOddsFair != null
+                ? entry.winOddsFair!.toStringAsFixed(2)
+                : null,
+          ),
+          matchingEntry: entry,
           fallbackIndex: index,
         );
       },
@@ -84,45 +117,68 @@ class ResultHorseCard extends GetView<RaceDetailsController> {
   @override
   Widget build(BuildContext context) {
     final position = result.position ?? (fallbackIndex + 1);
-    final horseName = result.horse?.name ?? matchingEntry?.horse?.name ?? 'Unknown Horse';
-    final clothNumber = result.number ?? matchingEntry?.number ?? matchingEntry?.draw ?? position;
+    final horseName =
+        result.horse?.name ?? matchingEntry?.horse?.name ?? 'Unknown Horse';
+    final clothNumber =
+        result.number ??
+        matchingEntry?.number ??
+        matchingEntry?.draw ??
+        position;
 
-    final jockeyName = result.jockey?.name ?? matchingEntry?.jockeyName ?? 'N/A';
-    final hp = result.or ?? result.rpr ?? (matchingEntry?.horsePower != null ? matchingEntry!.horsePower!.toStringAsFixed(0) : '-');
-    final weight = result.weight != null
-        ? '${result.weight!.toStringAsFixed(0)} kg'
-        : (matchingEntry?.weight != null ? '${matchingEntry!.weight!.toStringAsFixed(0)} kg' : 'N/A');
-    final timeStr = (result.time != null && result.time!.isNotEmpty && result.time != 'N/A')
+    final jockeyName =
+        result.jockey?.name ?? matchingEntry?.jockeyName ?? 'N/A';
+    final hp =
+        result.or ??
+        result.rpr ??
+        (matchingEntry?.horsePower != null
+            ? matchingEntry!.horsePower!.toStringAsFixed(0)
+            : '-');
+    final weight = Helpers.formatWeight(
+      result.weight ?? matchingEntry?.weight,
+      showBoth: true,
+    );
+    final timeStr =
+        (result.time != null && result.time!.isNotEmpty && result.time != 'N/A')
         ? result.time!
         : '-';
-    final margin = result.btn ?? result.ovrBtn ?? (position == 1 ? 'KAZANDI' : '-');
-    final odds = result.sp ?? matchingEntry?.winOddsFair?.toStringAsFixed(2) ?? '-';
+    final margin =
+        result.btn ?? result.ovrBtn ?? (position == 1 ? 'KAZANDI' : '-');
+    final odds =
+        result.sp ?? matchingEntry?.winOddsFair?.toStringAsFixed(2) ?? '-';
 
     Color posBgColor;
     Color posTextColor = Colors.black;
     if (position == 1) {
-      posBgColor = const Color(0xFFE6A817);
+      posBgColor = const Color(0xFFD4AF37);
     } else if (position == 2) {
       posBgColor = const Color(0xFF94A3B8);
     } else if (position == 3) {
-      posBgColor = const Color(0xFFCD7F32);
+      posBgColor = const Color(0xFFA86D3C);
       posTextColor = Colors.white;
     } else {
-      posBgColor = const Color(0xFF282E3A);
-      posTextColor = Colors.white70;
+      posBgColor = const Color(0xFF252A36);
+      posTextColor = Colors.white60;
     }
 
+    final activeHorse = result.horse ?? matchingEntry?.horse;
+    final age = activeHorse?.age != null ? '${activeHorse!.age}yo' : '';
+    final color = activeHorse?.color ?? '';
+    final sex = activeHorse?.sex ?? '';
+
     return Obx(() {
-      final isExpanded = controller.bulletinExpandedIndex.value == fallbackIndex;
+      final isExpanded =
+          controller.bulletinExpandedIndex.value == fallbackIndex;
 
       return Container(
-        margin: EdgeInsets.only(bottom: 12.h),
+        margin: EdgeInsets.only(bottom: 10.h),
         decoration: BoxDecoration(
-          color: const Color(0xFF1E222B),
+          color: const Color(0xFF181B22),
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color: isExpanded ? const Color(0xFFE6A817) : Colors.white12,
-            width: isExpanded ? 1.2 : 1.0,
+            color: isExpanded
+                ? const Color(0xFFD4AF37).withOpacity(0.4)
+                : Colors.white10,
+            width: isExpanded ? 1.1 : 1.0,
           ),
         ),
         child: Column(
@@ -131,13 +187,13 @@ class ResultHorseCard extends GetView<RaceDetailsController> {
               onTap: () => controller.toggleBulletinExpand(fallbackIndex),
               behavior: HitTestBehavior.opaque,
               child: Padding(
-                padding: EdgeInsets.all(14.w),
+                padding: EdgeInsets.all(12.w),
                 child: Row(
                   children: [
                     // Position Badge
                     Container(
-                      width: 28.w,
-                      height: 28.w,
+                      width: 26.w,
+                      height: 26.w,
                       decoration: BoxDecoration(
                         color: posBgColor,
                         shape: BoxShape.circle,
@@ -147,25 +203,30 @@ class ResultHorseCard extends GetView<RaceDetailsController> {
                         '$position',
                         style: TextStyle(
                           color: posTextColor,
-                          fontSize: 12.sp,
+                          fontSize: 11.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                     SizedBox(width: 8.w),
 
-                    // Cloth Number Badge
+                    // Cloth Number Badge (Sleek Dark Chip)
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 2.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 7.w,
+                        vertical: 2.h,
+                      ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                        color: const Color(0xFF252A36),
                         borderRadius: BorderRadius.circular(6.r),
-                        border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.4)),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.08),
+                        ),
                       ),
                       child: Text(
                         'No: $clothNumber',
                         style: TextStyle(
-                          color: const Color(0xFF2DD4BF),
+                          color: Colors.white70,
                           fontSize: 11.sp,
                           fontWeight: FontWeight.bold,
                         ),
@@ -173,23 +234,42 @@ class ResultHorseCard extends GetView<RaceDetailsController> {
                     ),
                     SizedBox(width: 10.w),
 
-                    // Horse Name
+                    // Horse Name & Subtitle
                     Expanded(
-                      child: Text(
-                        horseName.toUpperCase(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            horseName.toUpperCase(),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: 2.h),
+                          Text(
+                            '$age $color $sex · $weight · ${'jockey_label'.tr}: $jockeyName'
+                                .trim()
+                                .replaceAll(RegExp(r'\s+'), ' '),
+                            style: TextStyle(
+                              color: Colors.white54,
+                              fontSize: 11.sp,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                       ),
                     ),
 
                     Icon(
-                      isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                      color: Colors.white54,
+                      isExpanded
+                          ? Icons.keyboard_arrow_up_rounded
+                          : Icons.keyboard_arrow_down_rounded,
+                      color: Colors.white38,
                       size: 20.sp,
                     ),
                   ],
@@ -200,24 +280,34 @@ class ResultHorseCard extends GetView<RaceDetailsController> {
             // Expanded Detail Grid: JOKEY | HP | KG | DERECE | FARK | ORAN
             if (isExpanded)
               Container(
-                padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 14.h),
-                decoration: const BoxDecoration(
-                  border: Border(top: BorderSide(color: Colors.white10)),
+                padding: EdgeInsets.fromLTRB(12.w, 0, 12.w, 12.h),
+                decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(color: Colors.white.withOpacity(0.06)),
+                  ),
                 ),
                 child: Column(
                   children: [
                     SizedBox(height: 10.h),
                     Row(
                       children: [
-                        _buildResultStatCell('jockey_short'.tr, jockeyName, flex: 3),
+                        _buildResultStatCell(
+                          'jockey_short'.tr,
+                          jockeyName,
+                          flex: 3,
+                        ),
                         _buildResultStatCell('hp_short'.tr, hp, flex: 1),
                         _buildResultStatCell('kg_short'.tr, weight, flex: 2),
                       ],
                     ),
-                    SizedBox(height: 8.h),
+                    SizedBox(height: 6.h),
                     Row(
                       children: [
-                        _buildResultStatCell('derece_label'.tr, timeStr, flex: 3),
+                        _buildResultStatCell(
+                          'derece_label'.tr,
+                          timeStr,
+                          flex: 3,
+                        ),
                         _buildResultStatCell('fark_label'.tr, margin, flex: 2),
                         _buildResultStatCell('oran_label'.tr, odds, flex: 1),
                       ],
@@ -236,11 +326,11 @@ class ResultHorseCard extends GetView<RaceDetailsController> {
       flex: flex,
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 2.w),
-        padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 6.h),
+        padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 6.h),
         decoration: BoxDecoration(
           color: const Color(0xFF121418),
           borderRadius: BorderRadius.circular(6.r),
-          border: Border.all(color: Colors.white10),
+          border: Border.all(color: Colors.white.withOpacity(0.05)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -248,9 +338,9 @@ class ResultHorseCard extends GetView<RaceDetailsController> {
             Text(
               label,
               style: TextStyle(
-                color: const Color(0xFFE6A817),
+                color: Colors.white38,
                 fontSize: 9.sp,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w600,
               ),
             ),
             SizedBox(height: 2.h),
@@ -266,175 +356,6 @@ class ResultHorseCard extends GetView<RaceDetailsController> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class BulletinHorseCard extends GetView<RaceDetailsController> {
-  final RaceEntry entry;
-  final int fallbackIndex;
-
-  const BulletinHorseCard({
-    super.key,
-    required this.entry,
-    required this.fallbackIndex,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final horse = entry.horse;
-    final horseName = horse?.name ?? 'Unknown Horse';
-    final jockeyName = entry.jockeyName ?? 'Unknown Jockey';
-    final age = horse?.age != null ? '${horse!.age}yo' : 'N/A';
-    final color = horse?.color ?? 'd';
-    final sex = horse?.sex ?? 'k';
-    final weightText = entry.weight != null
-        ? '${entry.weight!.toStringAsFixed(0)} kg'
-        : 'N/A';
-
-    final horseNumber = entry.number ?? entry.draw ?? (fallbackIndex + 1);
-
-    final totalRaces = horse?.totalRaces ?? 0;
-    final wins = horse?.wins ?? 0;
-    final seconds = horse?.seconds ?? 0;
-    final thirds = horse?.thirds ?? 0;
-
-    final winRate = totalRaces > 0
-        ? (wins / totalRaces * 100).toStringAsFixed(1)
-        : '0';
-    final placeRate = totalRaces > 0
-        ? ((wins + seconds + thirds) / totalRaces * 100).toStringAsFixed(1)
-        : '0';
-
-    return Obx(() {
-      final isExpanded = controller.bulletinExpandedIndex.value == fallbackIndex;
-
-      return Container(
-        margin: EdgeInsets.only(bottom: 12.h),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1E222B),
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(
-            color: isExpanded ? const Color(0xFFE6A817) : Colors.white24,
-            width: isExpanded ? 1.2 : 1.0,
-          ),
-        ),
-        child: Column(
-          children: [
-            GestureDetector(
-              onTap: () => controller.toggleBulletinExpand(fallbackIndex),
-              behavior: HitTestBehavior.opaque,
-              child: Padding(
-                padding: EdgeInsets.all(14.w),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 32.w,
-                      height: 32.w,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF1E222B),
-                        borderRadius: BorderRadius.circular(8.r),
-                        border: Border.all(
-                          color: const Color(0xFF2D9B83).withValues(alpha: 0.3),
-                        ),
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        '$horseNumber',
-                        style: TextStyle(
-                          color: const Color(0xFFE6A817),
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 12.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            horseName.toUpperCase(),
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 13.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 3.h),
-                          Text(
-                            '$age $color $sex · $weightText · ${'jockey_label'.tr}: $jockeyName',
-                            style: TextStyle(
-                              color: Colors.white60,
-                              fontSize: 11.sp,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Icon(
-                      isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                      color: Colors.white54,
-                      size: 20.sp,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            if (isExpanded)
-              Container(
-                padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
-                decoration: const BoxDecoration(
-                  border: Border(top: BorderSide(color: Colors.white10)),
-                ),
-                child: Column(
-                  children: [
-                    SizedBox(height: 12.h),
-                    Row(
-                      children: [
-                        _buildInfoColumn('starts_stat'.tr, '$totalRaces'),
-                        _buildInfoColumn('wins_stat'.tr, '$wins'),
-                        _buildInfoColumn('seconds_stat'.tr, '$seconds'),
-                        _buildInfoColumn('thirds_stat'.tr, '$thirds'),
-                      ],
-                    ),
-                    SizedBox(height: 12.h),
-                    Row(
-                      children: [
-                        _buildInfoColumn('win_rate_stat'.tr, '%$winRate'),
-                        _buildInfoColumn('place_rate_stat'.tr, '%$placeRate'),
-                        _buildInfoColumn('form_stat'.tr, entry.form ?? 'N/A'),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-          ],
-        ),
-      );
-    });
-  }
-
-  Widget _buildInfoColumn(String label, String value) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(color: Colors.white38, fontSize: 10.sp),
-          ),
-          SizedBox(height: 2.h),
-          Text(
-            value,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 12.sp,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
       ),
     );
   }

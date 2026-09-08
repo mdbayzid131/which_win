@@ -21,10 +21,17 @@ class AnalysisTabContent extends GetView<RaceDetailsController> {
       final rankA = a.rank ?? 999;
       final rankB = b.rank ?? 999;
       if (rankA != rankB) return rankA.compareTo(rankB);
-      final scoreA = a.normalizedScore ?? a.rawScore ?? 0.0;
-      final scoreB = b.normalizedScore ?? b.rawScore ?? 0.0;
+      final scoreA = a.normalizedScore ?? a.rawScore ?? a.horsePower ?? 0.0;
+      final scoreB = b.normalizedScore ?? b.rawScore ?? b.horsePower ?? 0.0;
       return scoreB.compareTo(scoreA);
     });
+
+    // Find max score in the field for proportional percentage (Excel formula)
+    double topFieldScore = 0.0;
+    for (final e in entries) {
+      final s = e.rawScore ?? e.horsePower ?? (e.normalizedScore ?? 0.0);
+      if (s > topFieldScore) topFieldScore = s;
+    }
 
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
@@ -33,11 +40,11 @@ class AnalysisTabContent extends GetView<RaceDetailsController> {
         children: [
           Container(
             width: double.infinity,
-            padding: EdgeInsets.all(16.w),
+            padding: EdgeInsets.all(14.w),
             decoration: BoxDecoration(
-              color: const Color(0xFF1E222B),
+              color: const Color(0xFF181B22),
               borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: Colors.white24),
+              border: Border.all(color: Colors.white10),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,8 +52,8 @@ class AnalysisTabContent extends GetView<RaceDetailsController> {
                 Row(
                   children: [
                     Icon(
-                      Icons.insights,
-                      color: const Color(0xFF10B981),
+                      Icons.auto_graph_rounded,
+                      color: const Color(0xFFD4AF37),
                       size: 18.sp,
                     ),
                     SizedBox(width: 8.w),
@@ -62,32 +69,29 @@ class AnalysisTabContent extends GetView<RaceDetailsController> {
                     ),
                   ],
                 ),
-                SizedBox(height: 12.h),
+                SizedBox(height: 10.h),
                 Wrap(
                   spacing: 8.w,
                   runSpacing: 8.h,
                   children: [
                     buildAnalysisTag(
-                      '${'track_bias'.tr}: $trackType',
-                      const Color(0xFF1A4D40),
-                      const Color(0xFF5FBFAA),
+                      label: 'track_bias'.tr,
+                      value: trackType,
                     ),
                     buildAnalysisTag(
-                      '${'dist'.tr}: $distance',
-                      const Color(0xFF1A5276),
-                      const Color(0xFF7FBFCF),
+                      label: 'dist'.tr,
+                      value: distance,
                     ),
                     buildAnalysisTag(
-                      '${'field'.tr}: $runnersCount',
-                      const Color(0xFF3D2066),
-                      const Color(0xFFA070B0),
+                      label: 'field'.tr,
+                      value: '$runnersCount',
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 14.h),
           ...List.generate(entries.length, (index) {
             final entry = entries[index];
             final rank = entry.rank ?? (index + 1);
@@ -95,46 +99,52 @@ class AnalysisTabContent extends GetView<RaceDetailsController> {
             final name = entry.horse?.name ?? 'unknown_horse'.tr;
             final rawScore = entry.rawScore ?? entry.horsePower ?? 0.0;
 
-            // Single 100% benchmark: Rank 1 is guaranteed 100%, others proportional
-            final double percentValue = (rank == 1)
-                ? 100.0
-                : (entry.normalizedScore != null
-                    ? entry.normalizedScore!.clamp(0.0, 99.0)
-                    : ((entry.winProb ?? 0.0) * 100).clamp(0.0, 99.0));
+            // Excel Formula: Rank 1 gets 100%, others proportional = (HorseScore / TopScore) * 100
+            double percentValue;
+            if (index == 0) {
+              percentValue = 100.0;
+            } else if (entry.normalizedScore != null &&
+                entry.normalizedScore! > 0) {
+              percentValue = entry.normalizedScore!.clamp(0.0, 100.0);
+            } else if (topFieldScore > 0 && rawScore > 0) {
+              percentValue = ((rawScore / topFieldScore) * 100.0).clamp(
+                0.0,
+                100.0,
+              );
+            } else if (entry.winProb != null && entry.winProb! > 0) {
+              percentValue = (entry.winProb! * 100.0).clamp(0.0, 100.0);
+            } else {
+              percentValue =
+                  (100.0 -
+                          (index *
+                              (60.0 / (entries.isEmpty ? 1 : entries.length))))
+                      .clamp(15.0, 100.0);
+            }
 
             Color rankBgColor;
             Color rankTextColor = Colors.white;
-            bool isCustomBadge = true;
 
             if (rank == 1) {
-              rankBgColor = const Color(0xFFE6A817);
+              rankBgColor = const Color(0xFFD4AF37);
               rankTextColor = const Color(0xFF121418);
             } else if (rank == 2) {
               rankBgColor = const Color(0xFF94A3B8);
               rankTextColor = const Color(0xFF121418);
             } else if (rank == 3) {
-              rankBgColor = const Color(0xFFCD7F32);
+              rankBgColor = const Color(0xFFA86D3C);
+              rankTextColor = Colors.white;
             } else {
-              rankBgColor = const Color(0xFF282E3A);
-              isCustomBadge = false;
+              rankBgColor = const Color(0xFF252A36);
+              rankTextColor = Colors.white60;
             }
 
-            List<Color> barColors;
+            Color barColor;
             if (percentValue >= 80) {
-              barColors = [
-                const Color(0xFF2D9B83),
-                const Color(0xFF20C997),
-              ];
+              barColor = const Color(0xFF10B981);
             } else if (percentValue >= 50) {
-              barColors = [
-                const Color(0xFFE6A817),
-                const Color(0xFFFFC107),
-              ];
+              barColor = const Color(0xFFD4AF37);
             } else {
-              barColors = [
-                const Color(0xFFD94E4E),
-                const Color(0xFFFF6B6B),
-              ];
+              barColor = const Color(0xFF64748B);
             }
 
             return buildAnalysisItem(
@@ -147,11 +157,10 @@ class AnalysisTabContent extends GetView<RaceDetailsController> {
               percentText: '${percentValue.toInt()}%',
               rankBgColor: rankBgColor,
               rankTextColor: rankTextColor,
-              isCustomBadge: isCustomBadge,
-              barColors: barColors,
+              barColor: barColor,
             );
           }),
-          SizedBox(height: 16.h),
+          SizedBox(height: 14.h),
           Text(
             'prob_computed_disclaimer'.tr,
             style: TextStyle(
@@ -167,21 +176,34 @@ class AnalysisTabContent extends GetView<RaceDetailsController> {
   }
 }
 
-Widget buildAnalysisTag(String text, Color bgColor, Color textColor) {
+Widget buildAnalysisTag({required String label, required String value}) {
   return Container(
-    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+    padding: EdgeInsets.symmetric(horizontal: 9.w, vertical: 4.h),
     decoration: BoxDecoration(
-      color: bgColor.withValues(alpha: 0.2),
-      borderRadius: BorderRadius.circular(4.r),
-      border: Border.all(color: bgColor.withValues(alpha: 0.4)),
+      color: const Color(0xFF252A36),
+      borderRadius: BorderRadius.circular(6.r),
+      border: Border.all(color: Colors.white.withOpacity(0.06)),
     ),
-    child: Text(
-      text,
-      style: TextStyle(
-        color: textColor,
-        fontSize: 10.sp,
-        fontWeight: FontWeight.bold,
-      ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          '$label: ',
+          style: TextStyle(
+            color: Colors.white38,
+            fontSize: 10.sp,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            color: Colors.white70,
+            fontSize: 10.sp,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     ),
   );
 }
@@ -196,18 +218,15 @@ Widget buildAnalysisItem({
   required String percentText,
   required Color rankBgColor,
   required Color rankTextColor,
-  required bool isCustomBadge,
-  required List<Color> barColors,
+  required Color barColor,
 }) {
   return Container(
-    margin: EdgeInsets.only(bottom: 12.h),
-    padding: EdgeInsets.all(14.w),
+    margin: EdgeInsets.only(bottom: 10.h),
+    padding: EdgeInsets.all(12.w),
     decoration: BoxDecoration(
-      color: const Color(0xFF1E222B),
+      color: const Color(0xFF181B22),
       borderRadius: BorderRadius.circular(12.r),
-      border: Border.all(
-        color: isCustomBadge ? rankBgColor.withValues(alpha: 0.4) : Colors.white12,
-      ),
+      border: Border.all(color: Colors.white10),
     ),
     child: Column(
       children: [
@@ -220,7 +239,6 @@ Widget buildAnalysisItem({
               decoration: BoxDecoration(
                 color: rankBgColor,
                 shape: BoxShape.circle,
-                border: isCustomBadge ? null : Border.all(color: Colors.white30),
               ),
               alignment: Alignment.center,
               child: Text(
@@ -238,14 +256,14 @@ Widget buildAnalysisItem({
             Container(
               padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 2.h),
               decoration: BoxDecoration(
-                color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                color: const Color(0xFF252A36),
                 borderRadius: BorderRadius.circular(6.r),
-                border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.4)),
+                border: Border.all(color: Colors.white.withOpacity(0.08)),
               ),
               child: Text(
                 'No: $clothNumber',
                 style: TextStyle(
-                  color: const Color(0xFF2DD4BF),
+                  color: Colors.white70,
                   fontSize: 11.sp,
                   fontWeight: FontWeight.bold,
                 ),
@@ -281,15 +299,18 @@ Widget buildAnalysisItem({
                         if (category != null && category.isNotEmpty) ...[
                           SizedBox(width: 6.w),
                           Container(
-                            padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 5.w,
+                              vertical: 1.h,
+                            ),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.08),
+                              color: const Color(0xFF252A36),
                               borderRadius: BorderRadius.circular(3.r),
                             ),
                             child: Text(
                               category.tr.toUpperCase(),
                               style: TextStyle(
-                                color: const Color(0xFFE6A817),
+                                color: const Color(0xFFD4AF37),
                                 fontSize: 9.sp,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -306,8 +327,8 @@ Widget buildAnalysisItem({
             Text(
               percentText,
               style: TextStyle(
-                color: barColors.last,
-                fontSize: 15.sp,
+                color: Colors.white,
+                fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -315,25 +336,28 @@ Widget buildAnalysisItem({
         ),
         SizedBox(height: 10.h),
 
-        // Progress Bar
+        // Progress Bar (Sleek Minimalist Track)
         Stack(
           children: [
             Container(
-              height: 5.h,
+              height: 4.h,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.white12,
-                borderRadius: BorderRadius.circular(3.r),
+                color: Colors.white.withOpacity(0.06),
+                borderRadius: BorderRadius.circular(2.r),
               ),
             ),
             LayoutBuilder(
               builder: (context, constraints) {
                 return Container(
-                  height: 5.h,
-                  width: (constraints.maxWidth * probability).clamp(0.0, constraints.maxWidth),
+                  height: 4.h,
+                  width: (constraints.maxWidth * probability).clamp(
+                    0.0,
+                    constraints.maxWidth,
+                  ),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: barColors),
-                    borderRadius: BorderRadius.circular(3.r),
+                    color: barColor,
+                    borderRadius: BorderRadius.circular(2.r),
                   ),
                 );
               },

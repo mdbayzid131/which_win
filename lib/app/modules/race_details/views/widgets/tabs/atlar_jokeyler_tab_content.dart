@@ -114,18 +114,19 @@ class AtlarContent extends GetView<RaceDetailsController> {
           child: Row(
             children: [
               Container(
-                width: 32.w,
-                height: 32.w,
+                width: 30.w,
+                height: 30.w,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981),
+                  color: const Color(0xFF252A36),
                   borderRadius: BorderRadius.circular(6.r),
+                  border: Border.all(color: Colors.white.withOpacity(0.08)),
                 ),
                 alignment: Alignment.center,
                 child: Text(
                   '$pos',
                   style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 14.sp,
+                    color: const Color(0xFFD4AF37),
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
