@@ -528,6 +528,7 @@ class TurkeyStyleHorseCard extends GetView<RaceDetailsController> {
                           horseName,
                           hpVal,
                           controller,
+                          entry: entry,
                         );
                       },
                       child: Text(

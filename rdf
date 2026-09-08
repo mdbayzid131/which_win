@@ -1,75 +1,1164 @@
-Restarted application in 615ms.
-[GETX] Instance "StorageService" has been created
-[GETX] Instance "StorageService" has been initialized
-[GETX] Instance "ApiClient" has been created
-[GETX] Instance "ApiClient" has been initialized
-[GETX] Instance "InternetController" has been created
-[GETX] Instance "InternetController" has been initialized
-[GETX] Instance "GetMaterialController" has been created
-[GETX] Instance "GetMaterialController" has been initialized
-[GETX] GOING TO ROUTE /splash-screen
-[GETX] Instance "AuthRepo" has been created
-[GETX] Instance "SplashScreenController" has been created
-[GETX] Instance "SplashScreenController" has been initialized
-flutter:
-flutter: 🔍🔍🔍 DEBUG: Device ID: ECB9132E-9078-4D7D-AA4D-25930BB8EA07
-flutter:
-flutter:
-flutter: ┌ ➡️➡️➡️➡️ REQUEST ══════════════════════════════════════ ➡️➡️➡️➡️
-flutter: │ POST https://goldentak-server.onrender.com/api/v1/auth/device-login
-flutter: │ Headers: {Content-Type: application/json}
-flutter: │ Body:
-flutter: │   {
-flutter: │     "deviceId": "ECB9132E-9078-4D7D-AA4D-25930BB8EA07"
-flutter: │   }
-flutter: └ ➡️➡️➡️➡️ REQUEST ══════════════════════════════════════ ➡️➡️➡️➡️
-flutter:
-flutter:
-flutter: ┌ ✅✅✅✅ RESPONSE ══════════════════════════════════════ ✅✅✅✅
-flutter: │ [ POST 200] https://goldentak-server.onrender.com/api/v1/auth/device-login
-flutter: │ Data:
-flutter: │   {
-flutter: │     "success": true,
-flutter: │     "message": "Device logged in successfully",
-flutter: │     "data": {
-flutter: │       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbXRkcmd4amcwMDBiZTkyOTR1NnhtOGh6IiwiZGV2aWNlSWQiOiJFQ0I5MTMyRS05MDc4LTREN0QtQUE0RC0yNTkzMEJCOEVBMDciLCJyb2xlIjoiVVNFUiIsInN1YnNjcmlwdGlvbiI6eyJwbGFuIjoiVFJJQUwiLCJpc0FjdGl2ZSI6dHJ1ZSwiZW5kRGF0ZSI6IjIwMjYtMDktMDFUMDI6Mjg6MTkuMjIwWiJ9LCJpYXQiOjE3ODc5NzA1MDAsImV4cCI6MTc4ODU3NTMwMH0.NVOUEdq3_p1XOdaehC1nqoeIuPJNoJsCZ-taKOS-YNk",
-flutter: │       "user": {
-flutter: │         "id": "cmtdrgxjg000be9294u6xm8hz",
-flutter: │         "deviceId": "ECB9132E-9078-4D7D-AA4D-25930BB8EA07",
-flutter: │         "email": null,
-flutter: │         "username": null,
-flutter: │         "passwordHash": null,
-flutter: │         "name": null,
-flutter: │         "phone": null,
-flutter: │         "avatarUrl": null,
-flutter: │         "role": "USER",
-flutter: │         "isVerified": false,
-flutter: │         "fcmToken": null,
-flutter: │         "platform": null,
-flutter: │         "language": "en",
-flutter: │         "createdAt": "2026-08-29T02:28:17.740Z",
-flutter: │         "updatedAt": "2026-08-29T02:28:17.740Z",
-flutter: │         "subscription": {
-flutter: │           "id": "cmtdrgyol000de9299f67q1lc",
-flutter: │           "userId": "cmtdrgxjg000be9294u6xm8hz",
-flutter: │           "plan": "TRIAL",
-flutter: │           "startDate": "2026-08-29T02:28:19.220Z",
-flutter: │           "endDate": "2026-09-01T02:28:19.220Z",
-flutter: │           "isActive": true,
-flutter: │           "googlePurchaseToken": null,
-flutter: │           "appleOriginalTransactionId": null,
-flutter: │           "createdAt": "2026-08-29T02:28:19.221Z",
-flutter: │           "updatedAt": "2026-08-29T02:28:19.221Z"
-flutter: │         }
-flutter: │       }
-flutter: │     }
-flutter: │   }
-flutter: └ ✅✅✅✅ RESPONSE ══════════════════════════════════════ ✅✅✅✅
-flutter:
-flutter:
-flutter: ℹ️ℹ️ℹ️ℹ INFO: Device login successful
-flutter:
-flutter:
-flutter: ℹ️ℹ️ℹ️ℹ INFO: Premium status saved: true
-flutter:
-[GETX] GOING TO ROUTE /home
+[GETX] OPEN BOTTOMSHEET 839973210
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6864 time=60236489864529 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+I/flutter (11085):
+I/flutter (11085): ┌ ➡️➡️➡️➡️ REQUEST ══════════════════════════════════════ ➡️➡️➡️➡️
+I/flutter (11085): │ GET https://api.whichwin-horserace.com/api/v1/horse/cmtruon271twkqw013wqjccgh
+I/flutter (11085): │ Headers: {Content-Type: application/json, Authorization: ***}
+I/flutter (11085): └ ➡️➡️➡️➡️ REQUEST ══════════════════════════════════════ ➡️➡️➡️➡️
+I/flutter (11085):
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=4/6865 time=60236518731953 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=0/6866 time=60236539617260 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=1/6867 time=60236555926337 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=2/6868 time=60236572707260 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6869 time=60236589733799 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=4/6870 time=60236606242683 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=0/6871 time=60236622922068 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=1/6872 time=60236639343491 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=2/6873 time=60236655782799 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6874 time=60236672476337 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=4/6875 time=60236688900722 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=0/6876 time=60236703213799 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=1/6877 time=60236720245799 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=2/6878 time=60236736663260 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6879 time=60236753329991 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=4/6880 time=60236767548260 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=0/6881 time=60236784357683 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=1/6882 time=60236801198914 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=2/6883 time=60236817610183 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6884 time=60236835348183 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=4/6885 time=60236852521491 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=0/6886 time=60236867777722 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=1/6887 time=60236884570837 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=2/6888 time=60236901012568 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6889 time=60236920721529 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=4/6890 time=60236938948606 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=0/6891 time=60236953895260 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=1/6892 time=60236971751760 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=2/6893 time=60236989604798 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6894 time=60237006220068 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=4/6895 time=60237023701606 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=0/6896 time=60237039803414 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=1/6897 time=60237057245260 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=2/6898 time=60237073072375 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6899 time=60237086788798 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=4/6900 time=60237104353875 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=0/6901 time=60237121491568 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=1/6902 time=60237133718991 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=2/6903 time=60237151000721 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6904 time=60237166947414 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=4/6905 time=60237184334414 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=0/6906 time=60237200399683 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=1/6907 time=60237216978375 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=2/6908 time=60237233769375 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6909 time=60237250405875 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=4/6910 time=60237266923952 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=0/6911 time=60237283726106 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=1/6912 time=60237300382183 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=2/6913 time=60237320526414 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6914 time=60237337130990 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=4/6915 time=60237353602913 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=0/6916 time=60237370027337 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=1/6917 time=60237386780183 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=2/6918 time=60237403998413 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6919 time=60237419967760 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=4/6920 time=60237436945298 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=0/6921 time=60237453366375 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=1/6922 time=60237470181260 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=2/6923 time=60237487055029 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6924 time=60237503458298 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=4/6925 time=60237520445529 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=0/6926 time=60237536814760 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=1/6927 time=60237550852606 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=2/6928 time=60237567251067 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6929 time=60237583946529 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=4/6930 time=60237600276836 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=0/6931 time=60237617131375 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=1/6932 time=60237634080952 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=2/6933 time=60237650353259 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6934 time=60237669914990 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=4/6935 time=60237686634106 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=0/6936 time=60237703727029 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=1/6937 time=60237719948567 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=2/6938 time=60237737341990 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6939 time=60237753527606 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=4/6940 time=60237770900798 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=0/6941 time=60237787018605 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=1/6942 time=60237803928759 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=2/6943 time=60237834119067 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6944 time=60237851964875 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=4/6945 time=60237869186567 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=0/6946 time=60237886114452 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=1/6947 time=60237902628221 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=2/6948 time=60237919223336 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6949 time=60237935329798 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=4/6950 time=60237953668952 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=0/6951 time=60237969190221 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=1/6952 time=60237983569644 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=2/6953 time=60238000328721 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6954 time=60238017132375 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=4/6955 time=60238033556336 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=0/6956 time=60238050335528 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=1/6957 time=60238066931451 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=2/6958 time=60238083988951 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6959 time=60238100281874 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=4/6960 time=60238119953221 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=0/6961 time=60238136738490 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=1/6962 time=60238153342605 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=2/6963 time=60238170599259 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6964 time=60238187252721 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=4/6965 time=60238203892413 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=0/6966 time=60238219922836 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=1/6967 time=60238236705259 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=2/6968 time=60238254124797 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6969 time=60238270516682 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=4/6970 time=60238286781259 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=0/6971 time=60238303709874 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=1/6972 time=60238320382451 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+I/flutter (11085):
+I/flutter (11085): ┌ ✅✅✅✅ RESPONSE ══════════════════════════════════════ ✅✅✅✅
+I/flutter (11085): │ [ GET 200] https://api.whichwin-horserace.com/api/v1/horse/cmtruon271twkqw013wqjccgh
+I/flutter (11085): │ Data:
+I/flutter (11085): │   {
+I/flutter (11085): │     "success": true,
+I/flutter (11085): │     "message": "Horse fetched successfully",
+I/flutter (11085): │     "data": {
+I/flutter (11085): │       "id": "cmtruon271twkqw013wqjccgh",
+I/flutter (11085): │       "externalId": "hrs_34915146",
+I/flutter (11085): │       "name": "Kel Story",
+I/flutter (11085): │       "age": 6,
+I/flutter (11085): │       "colour": "b",
+I/flutter (11085): │       "sex": "gelding",
+I/flutter (11085): │       "sexCode": null,
+I/flutter (11085): │       "dob": null,
+I/flutter (11085): │       "breeder": null,
+I/flutter (11085): │       "country": "FR",
+I/flutter (11085): │       "region": null,
+I/flutter (11085): │       "sireName": "Jeu St Eloi",
+I/flutter (11085): │       "damName": "Une Histoire",
+I/flutter (11085): │       "damSireName": "Voix Du Nord",
+I/flutter (11085): │       "owner": "J Finch",
+I/flutter (11085): │       "trainer": "M Seror",
+I/flutter (11085): │       "sireRegion": null,
+I/flutter (11085): │       "damRegion": null,
+I/flutter (11085): │       "damSireRegion": null,
+I/flutter (11085): │       "sireId": null,
+I/flutter (11085): │       "damId": null,
+I/flutter (11085): │       "damSireId": null,
+I/flutter (11085): │       "sireModelId": "cmtqf02ab0o9uqw01ii92djjw",
+I/flutter (11085): │       "damModelId": "cmtruon211twiqw01ngk831wp",
+I/flutter (11085): │       "damSireModelId": "cmtp9iwgo004lqw01i3vqqds1",
+I/flutter (11085): │       "totalRaces": 0,
+I/flutter (11085): │       "wins": 0,
+I/flutter (11085): │       "seconds": 0,
+I/flutter (11085): │       "thirds": 0,
+I/flutter (11085): │       "fourths": 0,
+I/flutter (11085): │       "totalEarnings": 0,
+I/flutter (11085): │       "runsLast30d": 0,
+I/flutter (11085): │       "winsLast30d": 0,
+I/flutter (11085): │       "runsLast90d": 0,
+I/flutter (11085): │       "winsLast90d": 0,
+I/flutter (11085): │       "sirePower": null,
+I/flutter (11085): │       "sirePlaceRate": null,
+I/flutter (11085): │       "damPower": null,
+I/flutter (11085): │       "damPlaceRate": null,
+I/flutter (11085): │       "damSirePower": null,
+I/flutter (11085): │       "damSirePlaceRate": null,
+I/flutter (11085): │       "distanceAnalysis": null,
+I/flutter (11085): │       "goingAnalysis": null,
+I/flutter (11085): │       "courseAnalysis": null,
+I/flutter (11085): │       "classAnalysis": null,
+I/flutter (11085): │       "seasonAnalysis": null,
+I/flutter (11085): │       "bestTime": null,
+I/flutter (11085): │       "bestTimeLocation": null,
+I/flutter (11085): │       "lastRaceDate": null,
+I/flutter (11085): │       "enrichedAt": null,
+I/flutter (11085): │       "enrichedSource": null,
+I/flutter (11085): │       "createdAt": "2026-09-07T23:07:02.719Z",
+I/flutter (11085): │       "updatedAt": "2026-09-07T23:07:02.719Z",
+I/flutter (11085): │       "results": [],
+I/flutter (11085): │       "sireModel": {
+I/flutter (11085): │         "id": "cmtqf02ab0o9uqw01ii92djjw",
+I/flutter (11085): │         "externalId": "sir_6006707",
+I/flutter (11085): │         "name": "Jeu St Eloi",
+I/flutter (11085): │         "totalOffspring": 0,
+I/flutter (11085): │         "wins": 0,
+I/flutter (11085): │         "seconds": 0,
+I/flutter (11085): │         "thirds": 0,
+I/flutter (11085): │         "fourths": 0,
+I/flutter (11085): │         "winRate": null,
+I/flutter (11085): │         "placeRate": null,
+I/flutter (11085): │         "power": null,
+I/flutter (11085): │         "distanceAnalysis": null,
+I/flutter (11085): │         "classAnalysis": null,
+I/flutter (11085): │         "enrichedAt": null,
+I/flutter (11085): │         "createdAt": "2026-09-06T23:00:15.635Z",
+I/flutter (11085): │         "updatedAt": "2026-09-06T23:00:15.635Z"
+I/flutter (11085): │       },
+I/flutter (11085): │       "damModel": {
+I/flutter (11085): │         "id": "cmtruon211twiqw01ngk831wp",
+I/flutter (11085): │         "externalId": "dam_5766215",
+I/flutter (11085): │         "name": "Une Histoire",
+I/flutter (11085): │         "totalProgeny": 0,
+I/flutter (11085): │         "wins": 0,
+I/flutter (11085): │         "seconds": 0,
+I/flutter (11085): │         "thirds": 0,
+I/flutter (11085): │         "fourths": 0,
+I/flutter (11085): │         "winRate": null,
+I/flutter (11085): │         "placeRate": null,
+I/flutter (11085): │         "power": null,
+I/flutter (11085): │         "distanceAnalysis": null,
+I/flutter (11085): │         "classAnalysis": null,
+I/flutter (11085): │         "enrichedAt": null,
+I/flutter (11085): │         "createdAt": "2026-09-07T23:07:02.714Z",
+I/flutter (11085): │         "updatedAt": "2026-09-07T23:07:02.714Z"
+I/flutter (11085): │       },
+I/flutter (11085): │       "damSireModel": {
+I/flutter (11085): │         "id": "cmtp9iwgo004lqw01i3vqqds1",
+I/flutter (11085): │         "externalId": "dsi_4079796",
+I/flutter (11085): │         "name": "Voix Du Nord",
+I/flutter (11085): │         "totalOffspring": 100,
+I/flutter (11085): │         "wins": 0,
+I/flutter (11085): │         "seconds": 0,
+I/flutter (11085): │         "thirds": 0,
+I/flutter (11085): │         "fourths": 0,
+I/flutter (11085): │         "winRate": 0,
+I/flutter (11085): │         "placeRate": 0,
+I/flutter (11085): │         "power": 0,
+I/flutter (11085): │         "distanceAnalysis": {
+I/flutter (11085): │           "id": "dsi_4079796",
+I/flutter (11085): │           "query": [
+I/flutter (11085): │             [
+I/flutter (11085): │               "damsire_id",
+I/flutter (11085): │               "dsi_4079796"
+I/flutter (11085): │             ]
+I/flutter (11085): │           ],
+I/flutter (11085): │           "damsire": "Voix Du Nord",
+I/flutter (11085): │           "distances": [
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 14,
+I/flutter (11085): │               "2nd": 19,
+I/flutter (11085): │               "3rd": 11,
+I/flutter (11085): │               "4th": 8,
+I/flutter (11085): │               "a/e": 0.8,
+I/flutter (11085): │               "1_pl": -51.08,
+I/flutter (11085): │               "dist": "2m2f",
+I/flutter (11085): │               "win_%": 0.13,
+I/flutter (11085): │               "dist_f": "18f",
+I/flutter (11085): │               "dist_m": "3599",
+I/flutter (11085): │               "dist_y": "3936",
+I/flutter (11085): │               "runners": 106
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 19,
+I/flutter (11085): │               "2nd": 9,
+I/flutter (11085): │               "3rd": 7,
+I/flutter (11085): │               "4th": 3,
+I/flutter (11085): │               "a/e": 1.49,
+I/flutter (11085): │               "1_pl": 27.42,
+I/flutter (11085): │               "dist": "2m",
+I/flutter (11085): │               "win_%": 0.27,
+I/flutter (11085): │               "dist_f": "16f",
+I/flutter (11085): │               "dist_m": "3219",
+I/flutter (11085): │               "dist_y": "3520",
+I/flutter (11085): │               "runners": 70
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 7,
+I/flutter (11085): │               "2nd": 9,
+I/flutter (11085): │               "3rd": 12,
+I/flutter (11085): │               "4th": 6,
+I/flutter (11085): │               "a/e": 0.7,
+I/flutter (11085): │               "1_pl": -5.42,
+I/flutter (11085): │               "dist": "2m1½f",
+I/flutter (11085): │               "win_%": 0.11,
+I/flutter (11085): │               "dist_f": "17.5f",
+I/flutter (11085): │               "dist_m": "3500.0",
+I/flutter (11085): │               "dist_y": "3849",
+I/flutter (11085): │               "runners": 61
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 9,
+I/flutter (11085): │               "2nd": 9,
+I/flutter (11085): │               "3rd": 9,
+I/flutter (11085): │               "4th": 4,
+I/flutter (11085): │               "a/e": 0.97,
+I/flutter (11085): │               "1_pl": -21.13,
+I/flutter (11085): │               "dist": "2m6f",
+I/flutter (11085): │               "win_%": 0.16,
+I/flutter (11085): │               "dist_f": "22f",
+I/flutter (11085): │               "dist_m": "4426",
+I/flutter (11085): │               "dist_y": "4840",
+I/flutter (11085): │               "runners": 57
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 13,
+I/flutter (11085): │               "2nd": 5,
+I/flutter (11085): │               "3rd": 3,
+I/flutter (11085): │               "4th": 3,
+I/flutter (11085): │               "a/e": 1.38,
+I/flutter (11085): │               "1_pl": -1.56,
+I/flutter (11085): │               "dist": "2m3½f",
+I/flutter (11085): │               "win_%": 0.25,
+I/flutter (11085): │               "dist_f": "19.5f",
+I/flutter (11085): │               "dist_m": "3900",
+I/flutter (11085): │               "dist_y": "4265",
+I/flutter (11085): │               "runners": 51
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 6,
+I/flutter (11085): │               "2nd": 7,
+I/flutter (11085): │               "3rd": 4,
+I/flutter (11085): │               "4th": 2,
+I/flutter (11085): │               "a/e": 0.92,
+I/flutter (11085): │               "1_pl": -2.12,
+I/flutter (11085): │               "dist": "2m½f",
+I/flutter (11085): │               "win_%": 0.16,
+I/flutter (11085): │               "dist_f": "16.5f",
+I/flutter (11085): │               "dist_m": "3271",
+I/flutter (11085): │               "dist_y": "3577",
+I/flutter (11085): │               "runners": 37
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 4,
+I/flutter (11085): │               "2nd": 7,
+I/flutter (11085): │               "3rd": 7,
+I/flutter (11085): │               "4th": 2,
+I/flutter (11085): │               "a/e": 0.61,
+I/flutter (11085): │               "1_pl": -22.44,
+I/flutter (11085): │               "dist": "2m4f",
+I/flutter (11085): │               "win_%": 0.11,
+I/flutter (11085): │               "dist_f": "20f",
+I/flutter (11085): │               "dist_m": "4023",
+I/flutter (11085): │               "dist_y": "4400",
+I/flutter (11085): │               "runners": 36
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 1,
+I/flutter (11085): │               "2nd": 2,
+I/flutter (11085): │               "3rd": 1,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 0.52,
+I/flutter (11085): │               "1_pl": -31.6,
+I/flutter (11085): │               "dist": "1m1½f",
+I/flutter (11085): │               "win_%": 0.03,
+I/flutter (11085): │               "dist_f": "9.5f",
+I/flutter (11085): │               "dist_m": "1900.0",
+I/flutter (11085): │               "dist_y": "2090",
+I/flutter (11085): │               "runners": 36
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 5,
+I/flutter (11085): │               "2nd": 3,
+I/flutter (11085): │               "3rd": 5,
+I/flutter (11085): │               "4th": 2,
+I/flutter (11085): │               "a/e": 0.8,
+I/flutter (11085): │               "1_pl": 11.6,
+I/flutter (11085): │               "dist": "2m1f",
+I/flutter (11085): │               "win_%": 0.15,
+I/flutter (11085): │               "dist_f": "17f",
+I/flutter (11085): │               "dist_m": "3459",
+I/flutter (11085): │               "dist_y": "3783",
+I/flutter (11085): │               "runners": 33
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 2,
+I/flutter (11085): │               "2nd": 4,
+I/flutter (11085): │               "3rd": 4,
+I/flutter (11085): │               "4th": 2,
+I/flutter (11085): │               "a/e": 0.5,
+I/flutter (11085): │               "1_pl": -20,
+I/flutter (11085): │               "dist": "2m3f",
+I/flutter (11085): │               "win_%": 0.08,
+I/flutter (11085): │               "dist_f": "19f",
+I/flutter (11085): │               "dist_m": "3799",
+I/flutter (11085): │               "dist_y": "4155",
+I/flutter (11085): │               "runners": 26
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 2,
+I/flutter (11085): │               "2nd": 4,
+I/flutter (11085): │               "3rd": 3,
+I/flutter (11085): │               "4th": 2,
+I/flutter (11085): │               "a/e": 0.54,
+I/flutter (11085): │               "1_pl": 1.38,
+I/flutter (11085): │               "dist": "2m5f",
+I/flutter (11085): │               "win_%": 0.08,
+I/flutter (11085): │               "dist_f": "21f",
+I/flutter (11085): │               "dist_m": "4179",
+I/flutter (11085): │               "dist_y": "4570",
+I/flutter (11085): │               "runners": 24
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 1,
+I/flutter (11085): │               "2nd": 2,
+I/flutter (11085): │               "3rd": 1,
+I/flutter (11085): │               "4th": 2,
+I/flutter (11085): │               "a/e": 0.65,
+I/flutter (11085): │               "1_pl": -3.5,
+I/flutter (11085): │               "dist": "1m4½f",
+I/flutter (11085): │               "win_%": 0.05,
+I/flutter (11085): │               "dist_f": "12.5f",
+I/flutter (11085): │               "dist_m": "2500.0",
+I/flutter (11085): │               "dist_y": "2750",
+I/flutter (11085): │               "runners": 21
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 4,
+I/flutter (11085): │               "2nd": 3,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 3,
+I/flutter (11085): │               "a/e": 1.06,
+I/flutter (11085): │               "1_pl": -9.67,
+I/flutter (11085): │               "dist": "2m5½f",
+I/flutter (11085): │               "win_%": 0.2,
+I/flutter (11085): │               "dist_f": "21.5f",
+I/flutter (11085): │               "dist_m": "4300.0",
+I/flutter (11085): │               "dist_y": "4730",
+I/flutter (11085): │               "runners": 20
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 5,
+I/flutter (11085): │               "2nd": 1,
+I/flutter (11085): │               "3rd": 3,
+I/flutter (11085): │               "4th": 3,
+I/flutter (11085): │               "a/e": 1.61,
+I/flutter (11085): │               "1_pl": 26.12,
+I/flutter (11085): │               "dist": "3m",
+I/flutter (11085): │               "win_%": 0.25,
+I/flutter (11085): │               "dist_f": "24f",
+I/flutter (11085): │               "dist_m": "4828",
+I/flutter (11085): │               "dist_y": "5280",
+I/flutter (11085): │               "runners": 20
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 3,
+I/flutter (11085): │               "2nd": 4,
+I/flutter (11085): │               "3rd": 3,
+I/flutter (11085): │               "4th": 1,
+I/flutter (11085): │               "a/e": 1.07,
+I/flutter (11085): │               "1_pl": 0.6,
+I/flutter (11085): │               "dist": "2m4½f",
+I/flutter (11085): │               "win_%": 0.16,
+I/flutter (11085): │               "dist_f": "20.5f",
+I/flutter (11085): │               "dist_m": "4138",
+I/flutter (11085): │               "dist_y": "4525",
+I/flutter (11085): │               "runners": 19
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 1,
+I/flutter (11085): │               "2nd": 2,
+I/flutter (11085): │               "3rd": 1,
+I/flutter (11085): │               "4th": 2,
+I/flutter (11085): │               "a/e": 0.68,
+I/flutter (11085): │               "1_pl": -10.7,
+I/flutter (11085): │               "dist": "1m2½f",
+I/flutter (11085): │               "win_%": 0.07,
+I/flutter (11085): │               "dist_f": "10.5f",
+I/flutter (11085): │               "dist_m": "2100.0",
+I/flutter (11085): │               "dist_y": "2310",
+I/flutter (11085): │               "runners": 15
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 3,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 1,
+I/flutter (11085): │               "4th": 1,
+I/flutter (11085): │               "a/e": 1.69,
+I/flutter (11085): │               "1_pl": 20.3,
+I/flutter (11085): │               "dist": "2m7½f",
+I/flutter (11085): │               "win_%": 0.23,
+I/flutter (11085): │               "dist_f": "23.5f",
+I/flutter (11085): │               "dist_m": "4772",
+I/flutter (11085): │               "dist_y": "5219",
+I/flutter (11085): │               "runners": 13
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 1,
+I/flutter (11085): │               "2nd": 2,
+I/flutter (11085): │               "3rd": 1,
+I/flutter (11085): │               "4th": 1,
+I/flutter (11085): │               "a/e": 1.1,
+I/flutter (11085): │               "1_pl": 1.2,
+I/flutter (11085): │               "dist": "1m",
+I/flutter (11085): │               "win_%": 0.08,
+I/flutter (11085): │               "dist_f": "8f",
+I/flutter (11085): │               "dist_m": "1600.0",
+I/flutter (11085): │               "dist_y": "1760",
+I/flutter (11085): │               "runners": 13
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 3,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 2,
+I/flutter (11085): │               "4th": 1,
+I/flutter (11085): │               "a/e": 2.1,
+I/flutter (11085): │               "1_pl": 7.5,
+I/flutter (11085): │               "dist": "1m5½f",
+I/flutter (11085): │               "win_%": 0.25,
+I/flutter (11085): │               "dist_f": "13.5f",
+I/flutter (11085): │               "dist_m": "2700.0",
+I/flutter (11085): │               "dist_y": "2970",
+I/flutter (11085): │               "runners": 12
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 3,
+I/flutter (11085): │               "2nd": 4,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 1.46,
+I/flutter (11085): │               "1_pl": 5.5,
+I/flutter (11085): │               "dist": "3m2f",
+I/flutter (11085): │               "win_%": 0.25,
+I/flutter (11085): │               "dist_f": "26f",
+I/flutter (11085): │               "dist_m": "5201",
+I/flutter (11085): │               "dist_y": "5688",
+I/flutter (11085): │               "runners": 12
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 1,
+I/flutter (11085): │               "2nd": 2,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 0.44,
+I/flutter (11085): │               "1_pl": -8.75,
+I/flutter (11085): │               "dist": "1m7½f",
+I/flutter (11085): │               "win_%": 0.09,
+I/flutter (11085): │               "dist_f": "15.5f",
+I/flutter (11085): │               "dist_m": "3118",
+I/flutter (11085): │               "dist_y": "3410",
+I/flutter (11085): │               "runners": 11
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 2,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 2,
+I/flutter (11085): │               "a/e": 1.54,
+I/flutter (11085): │               "1_pl": -2.4,
+I/flutter (11085): │               "dist": "1m7f",
+I/flutter (11085): │               "win_%": 0.18,
+I/flutter (11085): │               "dist_f": "15f",
+I/flutter (11085): │               "dist_m": "3000.0",
+I/flutter (11085): │               "dist_y": "3300",
+I/flutter (11085): │               "runners": 11
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 1,
+I/flutter (11085): │               "2nd": 2,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 1,
+I/flutter (11085): │               "a/e": 0.9,
+I/flutter (11085): │               "1_pl": -4,
+I/flutter (11085): │               "dist": "1m2f",
+I/flutter (11085): │               "win_%": 0.09,
+I/flutter (11085): │               "dist_f": "10f",
+I/flutter (11085): │               "dist_m": "2000",
+I/flutter (11085): │               "dist_y": "2187",
+I/flutter (11085): │               "runners": 11
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 1,
+I/flutter (11085): │               "2nd": 1,
+I/flutter (11085): │               "3rd": 1,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 1.07,
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=2/6973 time=60238401013913 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) queueBuffer: slot=3/6974 time=60238410133220 dataSpace=142671872 validHdrMetadataTypes=0x0 crop=[0,0,0,0] transform=0 scale=SCALE_TO_WINDOW
+D/BufferQueueProducer(11085): [SurfaceView[com.whichwin.horseracing/com.whichwin.horseracing.MainActivity]#1(BLAST Consumer)1](id:2b4d00000001,api:1,p:11085,c:11085) addAndGetFrameTimestamps
+I/flutter (11085): │               "1_pl": -3.9,
+I/flutter (11085): │               "dist": "1m4f",
+I/flutter (11085): │               "win_%": 0.1,
+I/flutter (11085): │               "dist_f": "12f",
+I/flutter (11085): │               "dist_m": "2399",
+I/flutter (11085): │               "dist_y": "2624",
+I/flutter (11085): │               "runners": 10
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 0,
+I/flutter (11085): │               "2nd": 1,
+I/flutter (11085): │               "3rd": 2,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 0,
+I/flutter (11085): │               "1_pl": -7,
+I/flutter (11085): │               "dist": "2m7f",
+I/flutter (11085): │               "win_%": 0,
+I/flutter (11085): │               "dist_f": "23f",
+I/flutter (11085): │               "dist_m": "4590",
+I/flutter (11085): │               "dist_y": "5020",
+I/flutter (11085): │               "runners": 7
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 1,
+I/flutter (11085): │               "2nd": 1,
+I/flutter (11085): │               "3rd": 1,
+I/flutter (11085): │               "4th": 2,
+I/flutter (11085): │               "a/e": 0.71,
+I/flutter (11085): │               "1_pl": -3,
+I/flutter (11085): │               "dist": "3m1f",
+I/flutter (11085): │               "win_%": 0.14,
+I/flutter (11085): │               "dist_f": "25f",
+I/flutter (11085): │               "dist_m": "5029",
+I/flutter (11085): │               "dist_y": "5500",
+I/flutter (11085): │               "runners": 7
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 0,
+I/flutter (11085): │               "2nd": 1,
+I/flutter (11085): │               "3rd": 3,
+I/flutter (11085): │               "4th": 1,
+I/flutter (11085): │               "a/e": 0,
+I/flutter (11085): │               "1_pl": -6,
+I/flutter (11085): │               "dist": "3m2½f",
+I/flutter (11085): │               "win_%": 0,
+I/flutter (11085): │               "dist_f": "26.5f",
+I/flutter (11085): │               "dist_m": "5294",
+I/flutter (11085): │               "dist_y": "5790",
+I/flutter (11085): │               "runners": 6
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 2,
+I/flutter (11085): │               "2nd": 2,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 1.78,
+I/flutter (11085): │               "1_pl": 2.5,
+I/flutter (11085): │               "dist": "3m1½f",
+I/flutter (11085): │               "win_%": 0.33,
+I/flutter (11085): │               "dist_f": "25.5f",
+I/flutter (11085): │               "dist_m": "5111",
+I/flutter (11085): │               "dist_y": "5589",
+I/flutter (11085): │               "runners": 6
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 0,
+I/flutter (11085): │               "2nd": 1,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 0,
+I/flutter (11085): │               "1_pl": -6,
+I/flutter (11085): │               "dist": "3m½f",
+I/flutter (11085): │               "win_%": 0,
+I/flutter (11085): │               "dist_f": "24.5f",
+I/flutter (11085): │               "dist_m": "4910",
+I/flutter (11085): │               "dist_y": "5370",
+I/flutter (11085): │               "runners": 6
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 0,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 1,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 0,
+I/flutter (11085): │               "1_pl": -5,
+I/flutter (11085): │               "dist": "2m2½f",
+I/flutter (11085): │               "win_%": 0,
+I/flutter (11085): │               "dist_f": "18.5f",
+I/flutter (11085): │               "dist_m": "3712",
+I/flutter (11085): │               "dist_y": "4059",
+I/flutter (11085): │               "runners": 5
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 1,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 1,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 1.19,
+I/flutter (11085): │               "1_pl": -2.38,
+I/flutter (11085): │               "dist": "2m6½f",
+I/flutter (11085): │               "win_%": 0.2,
+I/flutter (11085): │               "dist_f": "22.5f",
+I/flutter (11085): │               "dist_m": "4527",
+I/flutter (11085): │               "dist_y": "4951",
+I/flutter (11085): │               "runners": 5
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 0,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 0,
+I/flutter (11085): │               "1_pl": -4,
+I/flutter (11085): │               "dist": "7f",
+I/flutter (11085): │               "win_%": 0,
+I/flutter (11085): │               "dist_f": "7f",
+I/flutter (11085): │               "dist_m": "1400.0",
+I/flutter (11085): │               "dist_y": "1540",
+I/flutter (11085): │               "runners": 4
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 1,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 2.76,
+I/flutter (11085): │               "1_pl": -0.8,
+I/flutter (11085): │               "dist": "7½f",
+I/flutter (11085): │               "win_%": 0.25,
+I/flutter (11085): │               "dist_f": "7.5f",
+I/flutter (11085): │               "dist_m": "1500.0",
+I/flutter (11085): │               "dist_y": "1650",
+I/flutter (11085): │               "runners": 4
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 0,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 0,
+I/flutter (11085): │               "1_pl": -3,
+I/flutter (11085): │               "dist": "3m6f",
+I/flutter (11085): │               "win_%": 0,
+I/flutter (11085): │               "dist_f": "30f",
+I/flutter (11085): │               "dist_m": "6000.0",
+I/flutter (11085): │               "dist_y": "6600",
+I/flutter (11085): │               "runners": 3
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 0,
+I/flutter (11085): │               "2nd": 2,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 0,
+I/flutter (11085): │               "1_pl": -3,
+I/flutter (11085): │               "dist": "3m5½f",
+I/flutter (11085): │               "win_%": 0,
+I/flutter (11085): │               "dist_f": "29.5f",
+I/flutter (11085): │               "dist_m": "5885",
+I/flutter (11085): │               "dist_y": "6436",
+I/flutter (11085): │               "runners": 3
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 0,
+I/flutter (11085): │               "2nd": 1,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 0,
+I/flutter (11085): │               "1_pl": -3,
+I/flutter (11085): │               "dist": "1m3½f",
+I/flutter (11085): │               "win_%": 0,
+I/flutter (11085): │               "dist_f": "11.5f",
+I/flutter (11085): │               "dist_m": "2313",
+I/flutter (11085): │               "dist_y": "2530",
+I/flutter (11085): │               "runners": 3
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 1,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 3.86,
+I/flutter (11085): │               "1_pl": 2.6,
+I/flutter (11085): │               "dist": "1m3f",
+I/flutter (11085): │               "win_%": 0.5,
+I/flutter (11085): │               "dist_f": "11f",
+I/flutter (11085): │               "dist_m": "2200.0",
+I/flutter (11085): │               "dist_y": "2475",
+I/flutter (11085): │               "runners": 2
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 0,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 2,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 0,
+I/flutter (11085): │               "1_pl": -2,
+I/flutter (11085): │               "dist": "3m4½f",
+I/flutter (11085): │               "win_%": 0,
+I/flutter (11085): │               "dist_f": "28.5f",
+I/flutter (11085): │               "dist_m": "5721",
+I/flutter (11085): │               "dist_y": "6256",
+I/flutter (11085): │               "runners": 2
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 0,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 0,
+I/flutter (11085): │               "1_pl": -2,
+I/flutter (11085): │               "dist": "3m7½f",
+I/flutter (11085): │               "win_%": 0,
+I/flutter (11085): │               "dist_f": "31.5f",
+I/flutter (11085): │               "dist_m": "6298",
+I/flutter (11085): │               "dist_y": "6887",
+I/flutter (11085): │               "runners": 2
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 0,
+I/flutter (11085): │               "2nd": 1,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 0,
+I/flutter (11085): │               "1_pl": -2,
+I/flutter (11085): │               "dist": "1m½f",
+I/flutter (11085): │               "win_%": 0,
+I/flutter (11085): │               "dist_f": "8.5f",
+I/flutter (11085): │               "dist_m": "1700.0",
+I/flutter (11085): │               "dist_y": "1870",
+I/flutter (11085): │               "runners": 2
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 1,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 4.33,
+I/flutter (11085): │               "1_pl": 4.5,
+I/flutter (11085): │               "dist": "1m5f",
+I/flutter (11085): │               "win_%": 0.5,
+I/flutter (11085): │               "dist_f": "13f",
+I/flutter (11085): │               "dist_m": "2600.0",
+I/flutter (11085): │               "dist_y": "2860",
+I/flutter (11085): │               "runners": 2
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 0,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 1,
+I/flutter (11085): │               "4th": 1,
+I/flutter (11085): │               "a/e": 0,
+I/flutter (11085): │               "1_pl": -2,
+I/flutter (11085): │               "dist": "3m5f",
+I/flutter (11085): │               "win_%": 0,
+I/flutter (11085): │               "dist_f": "29f",
+I/flutter (11085): │               "dist_m": "5795",
+I/flutter (11085): │               "dist_y": "6337",
+I/flutter (11085): │               "runners": 2
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 0,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 0,
+I/flutter (11085): │               "1_pl": -1,
+I/flutter (11085): │               "dist": "1m6f",
+I/flutter (11085): │               "win_%": 0,
+I/flutter (11085): │               "dist_f": "14f",
+I/flutter (11085): │               "dist_m": "2800.0",
+I/flutter (11085): │               "dist_y": "3080",
+I/flutter (11085): │               "runners": 1
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 0,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 1,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 0,
+I/flutter (11085): │               "1_pl": -1,
+I/flutter (11085): │               "dist": "3m6½f",
+I/flutter (11085): │               "win_%": 0,
+I/flutter (11085): │               "dist_f": "30.5f",
+I/flutter (11085): │               "dist_m": "6175",
+I/flutter (11085): │               "dist_y": "6753",
+I/flutter (11085): │               "runners": 1
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 0,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 0,
+I/flutter (11085): │               "1_pl": -1,
+I/flutter (11085): │               "dist": "4m2f",
+I/flutter (11085): │               "win_%": 0,
+I/flutter (11085): │               "dist_f": "34f",
+I/flutter (11085): │               "dist_m": "6847",
+I/flutter (11085): │               "dist_y": "7488",
+I/flutter (11085): │               "runners": 1
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 0,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 0,
+I/flutter (11085): │               "1_pl": -1,
+I/flutter (11085): │               "dist": "3m3½f",
+I/flutter (11085): │               "win_%": 0,
+I/flutter (11085): │               "dist_f": "27.5f",
+I/flutter (11085): │               "dist_m": "5568",
+I/flutter (11085): │               "dist_y": "6089",
+I/flutter (11085): │               "runners": 1
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 1,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 4,
+I/flutter (11085): │               "1_pl": 3,
+I/flutter (11085): │               "dist": "4m½f",
+I/flutter (11085): │               "win_%": 1,
+I/flutter (11085): │               "dist_f": "32.5f",
+I/flutter (11085): │               "dist_m": "6526",
+I/flutter (11085): │               "dist_y": "7137",
+I/flutter (11085): │               "runners": 1
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 0,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 0,
+I/flutter (11085): │               "1_pl": -1,
+I/flutter (11085): │               "dist": "4m1½f",
+I/flutter (11085): │               "win_%": 0,
+I/flutter (11085): │               "dist_f": "33.5f",
+I/flutter (11085): │               "dist_m": "6690",
+I/flutter (11085): │               "dist_y": "7316",
+I/flutter (11085): │               "runners": 1
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 0,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 0,
+I/flutter (11085): │               "1_pl": -1,
+I/flutter (11085): │               "dist": "4m2½f",
+I/flutter (11085): │               "win_%": 0,
+I/flutter (11085): │               "dist_f": "34.5f",
+I/flutter (11085): │               "dist_m": "6900.0",
+I/flutter (11085): │               "dist_y": "7590",
+I/flutter (11085): │               "runners": 1
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 0,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 0,
+I/flutter (11085): │               "1_pl": -1,
+I/flutter (11085): │               "dist": "6½f",
+I/flutter (11085): │               "win_%": 0,
+I/flutter (11085): │               "dist_f": "6.5f",
+I/flutter (11085): │               "dist_m": "1300.0",
+I/flutter (11085): │               "dist_y": "1430",
+I/flutter (11085): │               "runners": 1
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 0,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 0,
+I/flutter (11085): │               "1_pl": -1,
+I/flutter (11085): │               "dist": "4m",
+I/flutter (11085): │               "win_%": 0,
+I/flutter (11085): │               "dist_f": "32f",
+I/flutter (11085): │               "dist_m": "6397",
+I/flutter (11085): │               "dist_y": "6996",
+I/flutter (11085): │               "runners": 1
+I/flutter (11085): │             }
+I/flutter (11085): │           ],
+I/flutter (11085): │           "total_runners": 805
+I/flutter (11085): │         },
+I/flutter (11085): │         "classAnalysis": {
+I/flutter (11085): │           "id": "dsi_4079796",
+I/flutter (11085): │           "query": [
+I/flutter (11085): │             [
+I/flutter (11085): │               "damsire_id",
+I/flutter (11085): │               "dsi_4079796"
+I/flutter (11085): │             ]
+I/flutter (11085): │           ],
+I/flutter (11085): │           "classes": [
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 62,
+I/flutter (11085): │               "2nd": 66,
+I/flutter (11085): │               "3rd": 53,
+I/flutter (11085): │               "4th": 34,
+I/flutter (11085): │               "a/e": 0.86,
+I/flutter (11085): │               "1_pl": -198.17,
+I/flutter (11085): │               "class": "",
+I/flutter (11085): │               "win_%": 0.12,
+I/flutter (11085): │               "runners": 528
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 24,
+I/flutter (11085): │               "2nd": 18,
+I/flutter (11085): │               "3rd": 8,
+I/flutter (11085): │               "4th": 7,
+I/flutter (11085): │               "a/e": 1.3,
+I/flutter (11085): │               "1_pl": 49.74,
+I/flutter (11085): │               "class": "Class 4",
+I/flutter (11085): │               "win_%": 0.28,
+I/flutter (11085): │               "runners": 87
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 13,
+I/flutter (11085): │               "2nd": 6,
+I/flutter (11085): │               "3rd": 14,
+I/flutter (11085): │               "4th": 7,
+I/flutter (11085): │               "a/e": 1.05,
+I/flutter (11085): │               "1_pl": 16.92,
+I/flutter (11085): │               "class": "Class 3",
+I/flutter (11085): │               "win_%": 0.22,
+I/flutter (11085): │               "runners": 58
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 10,
+I/flutter (11085): │               "2nd": 11,
+I/flutter (11085): │               "3rd": 10,
+I/flutter (11085): │               "4th": 2,
+I/flutter (11085): │               "a/e": 1.02,
+I/flutter (11085): │               "1_pl": -3.91,
+I/flutter (11085): │               "class": "Class 5",
+I/flutter (11085): │               "win_%": 0.2,
+I/flutter (11085): │               "runners": 51
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 6,
+I/flutter (11085): │               "2nd": 8,
+I/flutter (11085): │               "3rd": 4,
+I/flutter (11085): │               "4th": 4,
+I/flutter (11085): │               "a/e": 0.85,
+I/flutter (11085): │               "1_pl": -3.31,
+I/flutter (11085): │               "class": "Class 2",
+I/flutter (11085): │               "win_%": 0.13,
+I/flutter (11085): │               "runners": 46
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 4,
+I/flutter (11085): │               "2nd": 2,
+I/flutter (11085): │               "3rd": 2,
+I/flutter (11085): │               "4th": 1,
+I/flutter (11085): │               "a/e": 1.19,
+I/flutter (11085): │               "1_pl": -0.5,
+I/flutter (11085): │               "class": "Class 1",
+I/flutter (11085): │               "win_%": 0.13,
+I/flutter (11085): │               "runners": 31
+I/flutter (11085): │             },
+I/flutter (11085): │             {
+I/flutter (11085): │               "1st": 0,
+I/flutter (11085): │               "2nd": 0,
+I/flutter (11085): │               "3rd": 0,
+I/flutter (11085): │               "4th": 0,
+I/flutter (11085): │               "a/e": 0,
+I/flutter (11085): │               "1_pl": -4,
+I/flutter (11085): │               "class": "Class 6",
+I/flutter (11085): │               "win_%": 0,
+I/flutter (11085): │               "runners": 4
+I/flutter (11085): │             }
+I/flutter (11085): │           ],
+I/flutter (11085): │           "damsire": "Voix Du Nord",
+I/flutter (11085): │           "total_runners": 805
+I/flutter (11085): │         },
+I/flutter (11085): │         "enrichedAt": "2026-09-07T08:03:05.956Z",
+I/flutter (11085): │         "createdAt": "2026-09-06T03:39:10.680Z",
+I/flutter (11085): │         "updatedAt": "2026-09-07T08:03:05.961Z"
+I/flutter (11085): │       }
+I/flutter (11085): │     }
+I/flutter (11085): │   }
+I/flutter (11085): └ ✅✅✅✅ RESPONSE ══════════════════════════════════════ ✅✅✅✅
+I/flutter (11085):
