@@ -502,7 +502,7 @@ class SubscriptionController extends GetxController {
 
         if (matchingProduct == null) {
           throw Exception(
-            'Google Play Store subscription details for "${plan.productId}" not loaded yet.',
+            'Subscription details for "${plan.productId}" not loaded yet.',
           );
         }
 

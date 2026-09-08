@@ -739,7 +739,11 @@ class _SubscriptionViewState extends State<SubscriptionView> {
         ),
         SizedBox(height: 12.h),
         Text(
-          'recurring_billing_desc'.tr,
+          GetPlatform.isIOS
+              ? 'recurring_billing_desc_ios'.tr
+              : (GetPlatform.isAndroid
+                  ? 'recurring_billing_desc_android'.tr
+                  : 'recurring_billing_desc'.tr),
           style: TextStyle(color: Colors.white38, fontSize: 10.sp, height: 1.3),
           textAlign: TextAlign.center,
         ),
@@ -783,7 +787,7 @@ class _SubscriptionViewState extends State<SubscriptionView> {
               () => Text(
                 controller.errorMessage.value.isNotEmpty
                     ? controller.errorMessage.value
-                    : 'Unable to load subscription products. Please ensure in-app products are active in the store console and your device supports Google Play / App Store billing.',
+                    : 'Unable to load subscription products. Please check your internet connection or try again later.',
                 style: TextStyle(
                   color: Colors.white60,
                   fontSize: 13.sp,

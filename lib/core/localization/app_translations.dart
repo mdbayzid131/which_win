@@ -252,7 +252,11 @@ class AppTranslations extends Translations {
       'carousel_feat_4': 'Risk-Calculated Percentages',
       'next_billing_date': 'Next Billing Date:',
       'recurring_billing_desc':
-          'Recurring billing. Cancel anytime in your App Store / Google Play account settings at least 24 hours before the renewal date.',
+          'Recurring billing. Cancel anytime in your account settings at least 24 hours before the renewal date.',
+      'recurring_billing_desc_ios':
+          'Recurring billing. Cancel anytime in your App Store account settings at least 24 hours before the renewal date.',
+      'recurring_billing_desc_android':
+          'Recurring billing. Cancel anytime in your Google Play account settings at least 24 hours before the renewal date.',
       'hp_score': 'HP Score',
       'kg': 'Kg',
       'distance': 'Distance',
@@ -515,7 +519,11 @@ class AppTranslations extends Translations {
       'carousel_feat_5': 'Kim Kimi Geçti Raporlama',
       'next_billing_date': 'Sonraki Fatura Tarihi:',
       'recurring_billing_desc':
-          'Yinelenen faturalandırma. Yenileme tarihinden en az 24 saat önce App Store / Google Play hesap ayarlarınızdan istediğiniz zaman iptal edebilirsiniz.',
+          'Yinelenen faturalandırma. Yenileme tarihinden en az 24 saat önce hesap ayarlarınızdan istediğiniz zaman iptal edebilirsiniz.',
+      'recurring_billing_desc_ios':
+          'Yinelenen faturalandırma. Yenileme tarihinden en az 24 saat önce App Store hesap ayarlarınızdan istediğiniz zaman iptal edebilirsiniz.',
+      'recurring_billing_desc_android':
+          'Yinelenen faturalandırma. Yenileme tarihinden en az 24 saat önce Google Play hesap ayarlarınızdan istediğiniz zaman iptal edebilirsiniz.',
       'hp_score': 'Hp Puan',
       'kg': 'Kg',
       'distance': 'Mesafe',
