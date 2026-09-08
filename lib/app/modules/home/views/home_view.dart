@@ -1601,8 +1601,12 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
 
   String _getFlagCode(String country) {
     final c = country.trim().toLowerCase();
-    if (c == 'united kingdom' || c == 'uk' || c == 'great britain' || c == 'gb')
+    if (c == 'united kingdom' ||
+        c == 'uk' ||
+        c == 'great britain' ||
+        c == 'gb') {
       return 'gb';
+    }
     if (c == 'france' || c == 'fr') return 'fr';
     if (c == 'turkey' || c == 'tr' || c == 'türkiye') return 'tr';
     if (c == 'united states' || c == 'usa' || c == 'us') return 'us';
@@ -1625,46 +1629,36 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
     final isLive = widget.meeting.isLive;
 
     return Container(
-      margin: EdgeInsets.only(bottom: 16.h),
+      margin: EdgeInsets.only(bottom: 8.h),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1E26),
-        borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(
-          color: _isExpanded ? Colors.white24 : Colors.white12,
-          width: 1.0,
-        ),
+        color: const Color(0xFF161920),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: Colors.white10, width: 0.8),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
+            color: Colors.black.withValues(alpha: 0.25),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
-          // Header Card (Tappable)
+          // Header Card (Tappable, sleek & comfortably sized)
           InkWell(
             onTap: _toggleExpanded,
             child: Padding(
-              padding: EdgeInsets.all(16.w),
+              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 13.h),
               child: Row(
                 children: [
-                  // Flag with premium styling
+                  // Flag Circle
                   Container(
-                    width: 50.w,
-                    height: 50.w,
+                    width: 32.w,
+                    height: 32.w,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white24, width: 2),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.5),
-                          blurRadius: 10,
-                          spreadRadius: 1,
-                        ),
-                      ],
+                      border: Border.all(color: Colors.white24, width: 1),
                     ),
                     child: ClipOval(
                       child: Image.network(
@@ -1675,115 +1669,118 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
                           child: Icon(
                             Icons.flag,
                             color: Colors.white24,
-                            size: 20.sp,
+                            size: 16.sp,
                           ),
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(width: 16.w),
-                  // Details
+                  SizedBox(width: 12.w),
+                  // Country & Location Text
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Row(
                       children: [
-                        Text(
-                          widget.meeting.country.isEmpty
-                              ? 'Unknown'
-                              : widget.meeting.country,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 17.sp,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.5,
+                        Flexible(
+                          child: Text(
+                            widget.meeting.country.isEmpty
+                                ? 'Unknown'
+                                : widget.meeting.country,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        SizedBox(height: 4.h),
-                        Text(
-                          widget.meeting.location,
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w500,
+                        if (widget.meeting.location.isNotEmpty) ...[
+                          Text(
+                            ' - ',
+                            style: TextStyle(
+                              color: Colors.white38,
+                              fontSize: 14.sp,
+                            ),
                           ),
-                        ),
+                          Flexible(
+                            child: Text(
+                              widget.meeting.location,
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.normal,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
-                  // Status/Info
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                  SizedBox(width: 8.w),
+                  // LIVE Indicator (if live)
+                  if (isLive) ...[
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 3.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(4.r),
+                        border: Border.all(
+                          color: Colors.red.withValues(alpha: 0.5),
+                          width: 0.8,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 6.w,
+                            height: 6.w,
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            'LIVE',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+                  ],
+                  // Race Count & Sleek Dropdown Arrow
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (isLive)
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 10.w,
-                            vertical: 4.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.red.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(6.r),
-                            border: Border.all(
-                              color: Colors.red.withValues(alpha: 0.5),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                width: 6.w,
-                                height: 6.w,
-                                decoration: const BoxDecoration(
-                                  color: Colors.red,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              SizedBox(width: 6.w),
-                              Text(
-                                'LIVE',
-                                style: TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 11.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      else
-                        SizedBox(height: 22.h),
-                      SizedBox(height: 12.h),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 10.w,
-                          vertical: 4.h,
+                      Text(
+                        '${widget.meeting.racesCount}',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
                         ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(6.r),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '${widget.meeting.racesCount} races',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(width: 6.w),
-                            AnimatedRotation(
-                              turns: _isExpanded ? 0.25 : 0,
-                              duration: const Duration(milliseconds: 200),
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                color: const Color(0xFF10B981),
-                                size: 10.sp,
-                              ),
-                            ),
-                          ],
+                      ),
+                      SizedBox(width: 4.w),
+                      AnimatedRotation(
+                        turns: _isExpanded ? 0.5 : 0,
+                        duration: const Duration(milliseconds: 200),
+                        child: Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          color: _isExpanded
+                              ? const Color(0xFF10B981)
+                              : Colors.white54,
+                          size: 22.sp,
                         ),
                       ),
                     ],
@@ -1793,7 +1790,7 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
             ),
           ),
 
-          // Expanded Races list
+          // Expanded Races list (Excel / Tabular Structured Cards)
           if (_isExpanded) ...[
             const Divider(color: Colors.white12, height: 1),
             if (_isLoading)
@@ -1817,9 +1814,9 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
               ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.all(12.w),
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
                 itemCount: _races.length,
-                separatorBuilder: (context, index) => SizedBox(height: 10.h),
+                separatorBuilder: (context, index) => SizedBox(height: 6.h),
                 itemBuilder: (context, idx) {
                   final race = _races[idx];
                   return _buildDropdownRaceItem(race, idx + 1);
@@ -1833,160 +1830,147 @@ class _RaceMeetingCardState extends State<RaceMeetingCard> {
 
   Widget _buildDropdownRaceItem(RaceModel raceModel, int raceNumber) {
     final trackType = raceModel.trackType ?? 'Turf';
+    final hasDistance =
+        raceModel.distance != null && raceModel.distance!.isNotEmpty;
     final entriesCount = raceModel.entriesCount ?? 0;
-    String labelText = 'ai_prediction'.tr;
-    String restMessage = '';
-    if (raceModel.predictionMessage != null &&
-        raceModel.predictionMessage!.isNotEmpty) {
-      final msg = raceModel.predictionMessage!;
-      if (msg.toLowerCase().startsWith('who beat whom:')) {
-        labelText = 'who_beat_whom'.tr;
-        restMessage = msg.substring(14).trim();
-      } else {
-        labelText = 'ai_prediction'.tr;
-        restMessage = msg;
-      }
-    }
+    final isRaceLive = raceModel.status?.toUpperCase() == 'LIVE';
 
-    return GestureDetector(
-      onTap: () {
-        if (!UserService.to.isPremium.value) {
-          showPremiumPrompt(context);
-          return;
-        }
-        if (raceModel.status == 'FINISHED') {
-          Get.toNamed(AppRoutes.RACE_ANALYSIS, arguments: raceModel);
-        } else {
-          Get.toNamed(AppRoutes.RACE_DETAILS, arguments: raceModel);
-        }
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF222732),
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: Colors.white12),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12.r),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.all(12.w),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // Race Number Badge (Solid Emerald Teal with crisp bold Black text)
-                    Container(
-                      width: 36.w,
-                      height: 36.w,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF10B981),
-                        borderRadius: BorderRadius.circular(8.r),
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF1B1F27),
+        borderRadius: BorderRadius.circular(8.r),
+        border: Border.all(color: Colors.white12, width: 0.8),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            if (!UserService.to.isPremium.value) {
+              showPremiumPrompt(context);
+              return;
+            }
+            if (raceModel.status == 'FINISHED') {
+              Get.toNamed(AppRoutes.RACE_ANALYSIS, arguments: raceModel);
+            } else {
+              Get.toNamed(AppRoutes.RACE_DETAILS, arguments: raceModel);
+            }
+          },
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Excel Left Column Cell: Time & Race No.
+                Container(
+                  width: 62.w,
+                  padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 8.h),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF222733),
+                    border: Border(
+                      right: BorderSide(
+                        color: Colors.white.withValues(alpha: 0.08),
+                        width: 1,
                       ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        '$raceNumber',
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        raceModel.time?.isNotEmpty == true
+                            ? raceModel.time!
+                            : '--:--',
                         style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16.sp,
+                          color: Colors.white,
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    SizedBox(width: 12.w),
-                    // Race Info
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  raceModel.name ?? 'Race $raceNumber',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              SizedBox(width: 8.w),
-                              Text(
-                                raceModel.time ?? '',
-                                style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 12.sp,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 4.h),
-                          Text(
-                            '$trackType · ${raceModel.distance ?? ""} · $entriesCount entries',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 11.sp,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Optional Prediction Preview
-              if (restMessage.isNotEmpty)
-                Container(
-                  width: double.infinity,
-                  color: const Color(0xFF181C24),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 12.w,
-                    vertical: 8.h,
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 6.w,
-                          vertical: 2.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(
-                            0xFF10B981,
-                          ).withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(4.r),
-                        ),
-                        child: Text(
-                          labelText,
-                          style: TextStyle(
-                            color: const Color(0xFF10B981),
-                            fontSize: 10.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 8.w),
-                      Expanded(
-                        child: Text(
-                          restMessage,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 11.sp,
-                            fontWeight: FontWeight.w500,
-                          ),
+                      SizedBox(height: 2.h),
+                      Text(
+                        'R$raceNumber',
+                        style: TextStyle(
+                          color: const Color(0xFF10B981),
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
                   ),
                 ),
-            ],
+
+                // Excel Middle Column Cell: Race Name & Details
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 8.h,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          raceModel.name ?? 'Race $raceNumber',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(height: 2.h),
+                        Text(
+                          '$trackType${hasDistance ? ' · ${raceModel.distance}' : ''} · $entriesCount entries',
+                          style: TextStyle(
+                            color: Colors.white54,
+                            fontSize: 11.sp,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Excel Right Column Cell: Status / Arrow
+                Padding(
+                  padding: EdgeInsets.only(right: 10.w),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (isRaceLive)
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 6.w,
+                            vertical: 2.h,
+                          ),
+                          margin: EdgeInsets.only(right: 6.w),
+                          decoration: BoxDecoration(
+                            color: Colors.red.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(4.r),
+                          ),
+                          child: Text(
+                            'LIVE',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 9.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        color: Colors.white24,
+                        size: 18.sp,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
