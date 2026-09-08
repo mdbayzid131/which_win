@@ -13,9 +13,11 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    unawaited(FirebaseNotificationService.setupInterceptors().catchError((e) {
-      debugPrint('Firebase interceptors setup failed: $e');
-    }));
+    unawaited(
+      FirebaseNotificationService.setupInterceptors().catchError((e) {
+        debugPrint('Firebase interceptors setup failed: $e');
+      }),
+    );
   } catch (e) {
     // Log error or handle missing config file in local test environment
     debugPrint('Firebase initialization failed: $e');
@@ -24,6 +26,6 @@ void main() async {
   // Load language from local storage
   final preferences = await SharedPreferences.getInstance();
   final langCode = preferences.getString('language_code') ?? 'en';
-  
+
   runApp(WhichWinApp(initialLocale: Locale(langCode)));
 }

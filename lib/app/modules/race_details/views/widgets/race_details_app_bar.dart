@@ -45,7 +45,7 @@ class RaceDetailsAppBar extends StatelessWidget {
             ),
           ),
 
-          // Day number badge (right side)
+          // Calendar Date badge (right side)
           if (dayStr.isNotEmpty) buildAppBarBadge(dayStr),
         ],
       ),
@@ -55,30 +55,46 @@ class RaceDetailsAppBar extends StatelessWidget {
 
 Widget buildAppBarBadge(String label, {bool isLive = false}) {
   return Container(
-    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
     decoration: BoxDecoration(
       color: isLive
           ? Colors.red.withValues(alpha: 0.15)
-          : const Color(0xFF121418),
-      borderRadius: BorderRadius.circular(4.r),
+          : const Color(0xFF1E222B),
+      borderRadius: BorderRadius.circular(8.r),
       border: Border.all(
-        color: isLive ? Colors.red.withValues(alpha: 0.7) : Colors.white38,
-        width: 1.5,
+        color: isLive
+            ? Colors.red.withValues(alpha: 0.7)
+            : const Color(0xFF10B981).withValues(alpha: 0.5),
+        width: 1.2,
       ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.25),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
     ),
     child: Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         if (isLive) ...[
           Container(
-            width: 5.w,
-            height: 5.w,
+            width: 6.w,
+            height: 6.w,
             decoration: const BoxDecoration(
               color: Colors.red,
               shape: BoxShape.circle,
             ),
           ),
-          SizedBox(width: 4.w),
+          SizedBox(width: 5.w),
+        ] else ...[
+          Icon(
+            Icons.calendar_month_rounded,
+            color: const Color(0xFF10B981),
+            size: 15.sp,
+          ),
+          SizedBox(width: 5.w),
         ],
         Text(
           label,
@@ -86,6 +102,7 @@ Widget buildAppBarBadge(String label, {bool isLive = false}) {
             color: isLive ? Colors.red : Colors.white,
             fontSize: 13.sp,
             fontWeight: FontWeight.bold,
+            letterSpacing: 0.3,
           ),
         ),
       ],
