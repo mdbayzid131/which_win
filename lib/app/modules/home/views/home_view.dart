@@ -28,19 +28,38 @@ class HomeView extends GetView<HomeController> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF121212),
         elevation: 0,
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu, color: Colors.white),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
-        ),
-        title: Text(
-          'BULLETIN',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20.sp,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.2,
+        automaticallyImplyLeading: false,
+        titleSpacing: 12.w,
+        title: Builder(
+          builder: (context) => InkWell(
+            borderRadius: BorderRadius.circular(8.r),
+            onTap: () {
+              final scaffold = Scaffold.of(context);
+              if (scaffold.isDrawerOpen) {
+                scaffold.closeDrawer();
+              } else {
+                scaffold.openDrawer();
+              }
+            },
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.menu, color: Colors.white, size: 24.sp),
+                  SizedBox(width: 12.w),
+                  Text(
+                    'BULLETIN',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
         actions: [
@@ -376,19 +395,43 @@ class HomeView extends GetView<HomeController> {
       backgroundColor: const Color(0xFF121212),
       child: Column(
         children: [
-          // Drawer Header with Background Image
-          Container(
-            padding: EdgeInsets.only(
-              top: MediaQuery.of(context).padding.top + 4.h,
-              bottom: 4.h,
-            ),
-            color: Colors.transparent,
-            child: Image.asset(
-              logoPath,
-              width: double.infinity,
-              height: 170.h,
-              fit: BoxFit.fitWidth,
-            ),
+          // Drawer Header with Background Image & Close Button
+          Stack(
+            children: [
+              Container(
+                padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).padding.top + 4.h,
+                  bottom: 4.h,
+                ),
+                color: Colors.transparent,
+                child: Image.asset(
+                  logoPath,
+                  width: double.infinity,
+                  height: 170.h,
+                  fit: BoxFit.fitWidth,
+                ),
+              ),
+              Positioned(
+                top: MediaQuery.of(context).padding.top + 6.h,
+                right: 8.w,
+                child: Material(
+                  color: Colors.black.withValues(alpha: 0.4),
+                  shape: const CircleBorder(),
+                  child: InkWell(
+                    customBorder: const CircleBorder(),
+                    onTap: () => Navigator.of(context).pop(),
+                    child: Padding(
+                      padding: EdgeInsets.all(8.r),
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.white,
+                        size: 20.sp,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
           const Divider(color: Colors.white12, height: 1),
           // Drawer Items
@@ -485,10 +528,12 @@ class HomeView extends GetView<HomeController> {
       child: GestureDetector(
         onTap: () async {
           // Redirect to Apple App Store on iOS or Google Play Store on Android
-          String url = 'https://play.google.com/store/apps/details?id=com.whichwin.football';
+          String url =
+              'https://play.google.com/store/apps/details?id=com.whichwin.football';
           try {
             if (GetPlatform.isIOS) {
-              url = 'https://apps.apple.com/app/which-win-football/id6475306634';
+              url =
+                  'https://apps.apple.com/app/which-win-football/id6475306634';
             }
           } catch (_) {}
           final uri = Uri.parse(url);
