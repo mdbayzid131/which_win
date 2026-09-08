@@ -57,6 +57,34 @@ class Helpers {
     return '$symbol$formatted';
   }
 
+  // ──────────────────── WEIGHT FORMATTING ────────────────────
+
+  /// Format weight supporting both kg and lbs (e.g. 130 lbs → "59 kg (130 lbs)" or "59 kg")
+  static String formatWeight(num? weight, {bool showBoth = false}) {
+    if (weight == null || weight <= 0) return 'N/A';
+    final double raw = weight.toDouble();
+    final double kg = raw > 90 ? (raw / 2.20462) : raw;
+    final int lbs = raw > 90 ? raw.round() : (raw * 2.20462).round();
+
+    if (showBoth) {
+      return '${kg.toStringAsFixed(0)} kg ($lbs lbs)';
+    }
+    return '${kg.toStringAsFixed(0)} kg';
+  }
+
+  /// Get weight in KG
+  static String formatWeightKg(num? weight) {
+    return formatWeight(weight, showBoth: false);
+  }
+
+  /// Get weight in LBS
+  static String formatWeightLbs(num? weight) {
+    if (weight == null || weight <= 0) return 'N/A';
+    final double raw = weight.toDouble();
+    final int lbs = raw > 90 ? raw.round() : (raw * 2.20462).round();
+    return '$lbs lbs';
+  }
+
   // ──────────────────── LOGGING ────────────────────
   
 

@@ -61,7 +61,7 @@ class AtlarContent extends GetView<RaceDetailsController> {
           padding: EdgeInsets.all(24.w),
           child: Text(
             'no_data_available'.tr,
-            style: TextStyle(color: Colors.white60, fontSize: 14.sp),
+            style: TextStyle(color: Colors.white70, fontSize: 14.sp),
           ),
         ),
       );
@@ -74,9 +74,17 @@ class AtlarContent extends GetView<RaceDetailsController> {
         final entry = entries[index];
         final horseName = entry.horse?.name ?? 'Horse ${index + 1}';
         final jockeyName = entry.jockey?.name ?? 'N/A';
-        final weight = entry.weight != null ? '${entry.weight} kg' : 'N/A';
-        final hp = entry.horsePower?.toInt() ?? entry.normalizedScore?.toInt() ?? 0;
-        final pos = entry.rank != null ? '${entry.rank}' : '${index + 1}';
+        final String weight = Helpers.formatWeight(entry.weight, showBoth: true);
+        final hp = (entry.horsePower != null && entry.horsePower! > 0)
+            ? entry.horsePower!.toInt()
+            : ((entry.normalizedScore != null && entry.normalizedScore! > 0)
+                ? entry.normalizedScore!.toInt()
+                : ((entry.rawScore != null && entry.rawScore! > 0)
+                    ? entry.rawScore!.toInt()
+                    : ((entry.pedigreePower != null && entry.pedigreePower! > 0)
+                        ? entry.pedigreePower!.toInt()
+                        : 0)));
+        final pos = entry.number ?? entry.rank ?? (index + 1);
 
         return Container(
           margin: EdgeInsets.only(bottom: 10.h),
@@ -97,7 +105,7 @@ class AtlarContent extends GetView<RaceDetailsController> {
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  pos,
+                  '$pos',
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14.sp,
@@ -149,7 +157,7 @@ class JokeylerContent extends GetView<RaceDetailsController> {
           padding: EdgeInsets.all(24.w),
           child: Text(
             'no_data_available'.tr,
-            style: TextStyle(color: Colors.white60, fontSize: 14.sp),
+            style: TextStyle(color: Colors.white70, fontSize: 14.sp),
           ),
         ),
       );
@@ -162,8 +170,8 @@ class JokeylerContent extends GetView<RaceDetailsController> {
         final entry = entries[index];
         final jockeyName = entry.jockey?.name ?? '${'jockey_label'.tr} ${index + 1}';
         final horseName = entry.horse?.name ?? 'N/A';
-        final weight = entry.weight != null ? '${entry.weight} kg' : 'N/A';
-        final pos = entry.rank != null ? '${entry.rank}' : '${index + 1}';
+        final String weight = Helpers.formatWeight(entry.weight, showBoth: true);
+        final pos = entry.number ?? entry.rank ?? (index + 1);
 
         return Container(
           margin: EdgeInsets.only(bottom: 10.h),
@@ -184,7 +192,7 @@ class JokeylerContent extends GetView<RaceDetailsController> {
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  pos,
+                  '$pos',
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14.sp,
@@ -242,12 +250,13 @@ class TurkeyStyleHorseCard extends GetView<RaceDetailsController> {
     final age = horse?.age != null ? '${horse!.age}y' : 'N/A';
     final color = horse?.color ?? 'd';
     final sex = horse?.sex ?? 'k';
-    final weightText = entry.weight != null
-        ? '${entry.weight!.toStringAsFixed(0)} kg'
-        : 'N/A';
 
+    // Format weight displaying both KG and LBS (e.g. "59 kg (130 lbs)")
+    final String weightText = Helpers.formatWeight(entry.weight, showBoth: true);
+
+    // Left badge shows horse / saddle cloth number
+    final saddleNumber = entry.number ?? (index + 1);
     final gateNumber = entry.draw ?? entry.number ?? (index + 1);
-    final saddleNumber = entry.number;
 
     final earnings = horse?.totalEarnings;
     final earningsText = (earnings != null && earnings > 0)
@@ -256,8 +265,17 @@ class TurkeyStyleHorseCard extends GetView<RaceDetailsController> {
 
     final stVal = gateNumber;
     final kgsVal = entry.lastRun ?? '-';
-    final hpVal =
-        entry.horsePower?.toInt() ?? entry.normalizedScore?.toInt() ?? 0;
+
+    // Fallback HP score resolution
+    final int hpVal = (entry.horsePower != null && entry.horsePower! > 0)
+        ? entry.horsePower!.toInt()
+        : ((entry.normalizedScore != null && entry.normalizedScore! > 0)
+            ? entry.normalizedScore!.toInt()
+            : ((entry.rawScore != null && entry.rawScore! > 0)
+                ? entry.rawScore!.toInt()
+                : ((entry.pedigreePower != null && entry.pedigreePower! > 0)
+                    ? entry.pedigreePower!.toInt()
+                    : 0)));
 
     final equipmentText = entry.headgear ?? '';
     final bool isApprentice = jockeyName.toLowerCase().startsWith('ap ');
@@ -294,50 +312,24 @@ class TurkeyStyleHorseCard extends GetView<RaceDetailsController> {
                 padding: EdgeInsets.all(12.w),
                 child: Row(
                   children: [
-                    Column(
-                      children: [
-                        Container(
-                          width: 38.w,
-                          height: 28.h,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.08),
-                            borderRadius: BorderRadius.circular(6.r),
-                            border: Border.all(color: Colors.white24),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            '$gateNumber',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                    // Horse / Saddle Number badge
+                    Container(
+                      width: 36.w,
+                      height: 36.w,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(8.r),
+                        border: Border.all(color: Colors.white24),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        '$saddleNumber',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.bold,
                         ),
-                        if (saddleNumber != null && saddleNumber != gateNumber) ...[
-                          SizedBox(height: 4.h),
-                          Container(
-                            width: 38.w,
-                            height: 20.h,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF10B981).withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(4.r),
-                              border: Border.all(
-                                color: const Color(0xFF10B981).withValues(alpha: 0.4),
-                              ),
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              'N:$saddleNumber',
-                              style: TextStyle(
-                                color: const Color(0xFF10B981),
-                                fontSize: 10.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ],
+                      ),
                     ),
                     SizedBox(width: 10.w),
                     buildJockeySilkIcon(index),
@@ -385,10 +377,10 @@ class TurkeyStyleHorseCard extends GetView<RaceDetailsController> {
                           ),
                           SizedBox(height: 3.h),
                           Text(
-                            '$age $color $sex · $weightText',
+                            '$age $color $sex · $weightText${earnings != null && earnings > 0 ? " · ${Helpers.formatCurrency(earnings)}" : ""}',
                             style: TextStyle(
-                              color: Colors.white60,
-                              fontSize: 11.sp,
+                              color: Colors.white70,
+                              fontSize: 12.sp,
                             ),
                           ),
                           SizedBox(height: 2.h),
@@ -397,8 +389,8 @@ class TurkeyStyleHorseCard extends GetView<RaceDetailsController> {
                               Text(
                                 displayJockeyName,
                                 style: TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 11.sp,
+                                  color: Colors.white,
+                                  fontSize: 12.sp,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -438,14 +430,16 @@ class TurkeyStyleHorseCard extends GetView<RaceDetailsController> {
                             vertical: 4.h,
                           ),
                           decoration: BoxDecoration(
-                            color: scoreColor.withValues(alpha: 0.15),
+                            color: const Color(0xFF10B981).withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(6.r),
-                            border: Border.all(color: scoreColor),
+                            border: Border.all(
+                              color: const Color(0xFF10B981).withValues(alpha: 0.5),
+                            ),
                           ),
                           child: Text(
                             '$hpVal HP',
                             style: TextStyle(
-                              color: scoreColor,
+                              color: const Color(0xFF10B981),
                               fontSize: 12.sp,
                               fontWeight: FontWeight.bold,
                             ),
@@ -455,10 +449,11 @@ class TurkeyStyleHorseCard extends GetView<RaceDetailsController> {
                         Row(
                           children: [
                             Text(
-                              'ST:$stVal KGS:$kgsVal',
+                              'ST:$stVal  KGS:$kgsVal',
                               style: TextStyle(
-                                color: Colors.white38,
-                                fontSize: 10.sp,
+                                color: Colors.white70,
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             SizedBox(width: 4.w),
@@ -466,7 +461,7 @@ class TurkeyStyleHorseCard extends GetView<RaceDetailsController> {
                               isExpanded
                                   ? Icons.keyboard_arrow_up
                                   : Icons.keyboard_arrow_down,
-                              color: Colors.white38,
+                              color: Colors.white70,
                               size: 16.sp,
                             ),
                           ],
@@ -480,10 +475,10 @@ class TurkeyStyleHorseCard extends GetView<RaceDetailsController> {
             if (isExpanded)
               Container(
                 padding: EdgeInsets.all(12.w),
-                decoration:  BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Color(0xFF161920),
                   borderRadius: BorderRadius.vertical(
-                    bottom: Radius.circular(12.r),
+                    bottom: Radius.circular(12),
                   ),
                 ),
                 child: Column(

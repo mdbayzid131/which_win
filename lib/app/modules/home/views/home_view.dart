@@ -1434,8 +1434,9 @@ class HomeView extends GetView<HomeController> {
 
   String _getFlagCode(String country) {
     final c = country.trim().toLowerCase();
-    if (c == 'united kingdom' || c == 'uk' || c == 'great britain' || c == 'gb')
+    if (c == 'united kingdom' || c == 'uk' || c == 'great britain' || c == 'gb') {
       return 'gb';
+    }
     if (c == 'france' || c == 'fr') return 'fr';
     if (c == 'turkey' || c == 'tr' || c == 'türkiye') return 'tr';
     if (c == 'united states' || c == 'usa' || c == 'us') return 'us';

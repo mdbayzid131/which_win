@@ -301,9 +301,7 @@ void showHorseDetails(
       final color = activeHorse?.color ?? entry?.horse?.color ?? '';
       final sex = activeHorse?.sex ?? entry?.horse?.sex ?? '';
       final jockey = entry?.jockeyName ?? 'N/A';
-      final weight = entry?.weight != null
-          ? '${entry!.weight!.toStringAsFixed(0)} kg'
-          : 'N/A';
+      final weight = Helpers.formatWeight(entry?.weight, showBoth: true);
       final hp = hpVal > 0
           ? hpVal
           : (entry?.horsePower?.toInt() ??
@@ -326,10 +324,12 @@ void showHorseDetails(
       final earningsText = totalEarnings > 0
           ? Helpers.formatCurrency(totalEarnings)
           : 'N/A';
-      final formStr = (entry?.form != null &&
-              entry!.form != 'N/A' &&
-              entry!.form!.isNotEmpty)
-          ? entry!.form!
+      final damSire = activeHorse?.damSireName;
+      final rawForm = entry?.form;
+      final formStr = (rawForm != null &&
+              rawForm != 'N/A' &&
+              rawForm.isNotEmpty)
+          ? rawForm
           : (results.isNotEmpty
               ? results.take(6).map((r) => '${r.position ?? "-"}').join('-')
               : '0-0-0-0');
@@ -523,12 +523,12 @@ void showHorseDetails(
                         _buildProfileInfoLine(
                           '${'sire'.tr}: ${activeHorse?.sireName ?? "N/A"} · ${'dam'.tr}: ${activeHorse?.damName ?? "N/A"}',
                         ),
-                        if (activeHorse?.damSireName != null &&
-                            activeHorse!.damSireName!.isNotEmpty &&
-                            activeHorse!.damSireName != 'N/A') ...[
+                        if (damSire != null &&
+                            damSire.isNotEmpty &&
+                            damSire != 'N/A') ...[
                           SizedBox(height: 4.h),
                           _buildProfileInfoLine(
-                            '${'dam_sire'.tr}: ${activeHorse!.damSireName}',
+                            '${'dam_sire'.tr}: $damSire',
                           ),
                         ],
                         SizedBox(height: 4.h),
@@ -693,7 +693,11 @@ Widget _buildLast6RacesTable(List<RaceResult> results) {
           final run = displayResults[index];
           final pos = run.position;
           final hp = run.rpr ?? run.or ?? '-';
-          final kg = run.weight != null ? run.weight!.toStringAsFixed(0) : '-';
+          final kg = run.weight != null
+              ? (run.weight! > 90
+                  ? (run.weight! / 2.20462).round().toString()
+                  : run.weight!.round().toString())
+              : '-';
           final distance = run.race?.distance ?? '-';
           final track = run.race?.trackType ?? run.race?.surface ?? '-';
           final time = run.time != null && run.time != 'N/A' ? run.time! : '-';
