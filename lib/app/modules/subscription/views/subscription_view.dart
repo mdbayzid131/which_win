@@ -367,7 +367,7 @@ class _SubscriptionViewState extends State<SubscriptionView> {
           Image.asset(
             imagePath,
             fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => Container(color: const Color(0xFF1E293B)),
+            errorBuilder: (context, error, stackTrace) => Container(color: const Color(0xFF1E293B)),
           ),
           // Dark Gradient Overlay
           Container(
@@ -664,29 +664,73 @@ class _SubscriptionViewState extends State<SubscriptionView> {
             ),
           );
         }),
-        SizedBox(
-          height: 56.h,
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: () => controller.subscribe(),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF2DD4BF),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.r),
+        Obx(() {
+          if (controller.isSubscribed.value) {
+            return Column(
+              children: [
+                SizedBox(
+                  height: 56.h,
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => controller.manageSubscription(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF2DD4BF),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.r),
+                      ),
+                      elevation: 8,
+                      shadowColor: const Color(0xFF2DD4BF).withValues(alpha: 0.4),
+                    ),
+                    child: Text(
+                      'manage_subscription'.tr,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 8.h),
+                TextButton(
+                  onPressed: () => controller.subscribe(),
+                  child: Text(
+                    'change_plan'.tr,
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 13.sp,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }
+
+          return SizedBox(
+            height: 56.h,
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => controller.subscribe(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF2DD4BF),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16.r),
+                ),
+                elevation: 8,
+                shadowColor: const Color(0xFF2DD4BF).withValues(alpha: 0.4),
               ),
-              elevation: 8,
-              shadowColor: const Color(0xFF2DD4BF).withValues(alpha: 0.4),
-            ),
-            child: Text(
-              'subscribe_now'.tr,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
+              child: Text(
+                'subscribe_now'.tr,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        }),
         SizedBox(height: 12.h),
         Center(
           child: TextButton(
@@ -774,7 +818,7 @@ class _SubscriptionViewState extends State<SubscriptionView> {
             ),
             SizedBox(height: 20.h),
             Text(
-              'Subscription Plans Unavailable',
+              'no_product_found'.tr,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18.sp,
@@ -787,7 +831,7 @@ class _SubscriptionViewState extends State<SubscriptionView> {
               () => Text(
                 controller.errorMessage.value.isNotEmpty
                     ? controller.errorMessage.value
-                    : 'Unable to load subscription products. Please check your internet connection or try again later.',
+                    : 'no_product_found_desc'.tr,
                 style: TextStyle(
                   color: Colors.white60,
                   fontSize: 13.sp,
@@ -796,7 +840,7 @@ class _SubscriptionViewState extends State<SubscriptionView> {
                 textAlign: TextAlign.center,
               ),
             ),
-            SizedBox(height: 28.h),
+            SizedBox(height: 24.h),
             SizedBox(
               width: 160.w,
               height: 46.h,
@@ -808,7 +852,7 @@ class _SubscriptionViewState extends State<SubscriptionView> {
                   color: Colors.black,
                 ),
                 label: Text(
-                  'Try Again',
+                  'try_again'.tr,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 14.sp,
@@ -820,6 +864,18 @@ class _SubscriptionViewState extends State<SubscriptionView> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.r),
                   ),
+                ),
+              ),
+            ),
+            SizedBox(height: 16.h),
+            TextButton(
+              onPressed: () => controller.restorePurchases(),
+              child: Text(
+                'restore_purchases'.tr,
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 13.sp,
+                  decoration: TextDecoration.underline,
                 ),
               ),
             ),

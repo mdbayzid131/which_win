@@ -16,11 +16,13 @@ class SubscriptionRepo {
     required String purchaseToken,
     required String productId,
     required String deviceId,
+    String? planId,
   }) async {
     return await apiClient.postData(ApiConstants.verifyGoogleSubscription, {
       'purchaseToken': purchaseToken,
       'productId': productId,
       'deviceId': deviceId,
+      if (planId != null && planId.isNotEmpty) 'planId': planId,
     });
   }
 
