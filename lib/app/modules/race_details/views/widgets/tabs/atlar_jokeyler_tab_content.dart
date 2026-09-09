@@ -121,7 +121,7 @@ class AtlarContent extends GetView<RaceDetailsController> {
                 decoration: BoxDecoration(
                   color: const Color(0xFF252A36),
                   borderRadius: BorderRadius.circular(6.r),
-                  border: Border.all(color: Colors.white.withOpacity(0.08)),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
                 ),
                 alignment: Alignment.center,
                 child: Text(
@@ -507,20 +507,16 @@ class TurkeyStyleHorseCard extends GetView<RaceDetailsController> {
                             vertical: 4.h,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(
-                              0xFF10B981,
-                            ).withValues(alpha: 0.15),
+                            color: Colors.white.withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(6.r),
                             border: Border.all(
-                              color: const Color(
-                                0xFF10B981,
-                              ).withValues(alpha: 0.5),
+                              color: Colors.white24,
                             ),
                           ),
                           child: Text(
                             '$hpVal HP',
                             style: TextStyle(
-                              color: const Color(0xFF10B981),
+                              color: Colors.white,
                               fontSize: 12.sp,
                               fontWeight: FontWeight.bold,
                             ),
