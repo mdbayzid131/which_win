@@ -3,8 +3,6 @@ import 'package:which_win/app/modules/home/bindings/home_binding.dart';
 import 'package:which_win/app/modules/home/views/home_view.dart';
 import 'package:which_win/app/modules/contact/bindings/contact_binding.dart';
 import 'package:which_win/app/modules/contact/views/contact_view.dart';
-import 'package:which_win/app/modules/rate_us/bindings/rate_us_binding.dart';
-import 'package:which_win/app/modules/rate_us/views/rate_us_view.dart';
 import 'package:which_win/app/modules/notifications/bindings/notifications_binding.dart';
 import 'package:which_win/app/modules/notifications/views/notifications_view.dart';
 import 'package:which_win/app/modules/subscription/bindings/subscription_binding.dart';
@@ -35,7 +33,6 @@ class AppRoutes {
   static const PRIVACY_POLICY = '/privacy-policy';
   static const TERMS_CONDITIONS = '/terms-conditions';
   static const CONTACT = '/contact';
-  static const RATE_US = '/rate-us';
   static const GIFT_A_FRIEND = '/gift-a-friend';
 
   static String get initial => SPLASH_SCREEN;
@@ -105,12 +102,6 @@ class AppPages {
       name: AppRoutes.CONTACT,
       page: () => const ContactView(),
       binding: ContactBinding(),
-      transition: transition,
-    ),
-    GetPage(
-      name: AppRoutes.RATE_US,
-      page: () => const RateUsView(),
-      binding: RateUsBinding(),
       transition: transition,
     ),
     GetPage(

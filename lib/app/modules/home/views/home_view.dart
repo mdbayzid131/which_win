@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:which_win/app/modules/home/controllers/home_controller.dart';
 import 'package:which_win/app/modules/calendar/controllers/calendar_controller.dart';
-import 'package:which_win/app/modules/rate_us/controllers/rate_us_controller.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:which_win/app/routes/app_pages.dart';
 import 'package:which_win/data/models/race_model.dart';
 import 'package:which_win/data/models/meeting_model.dart';
@@ -483,7 +483,7 @@ class HomeView extends GetView<HomeController> {
                 ),
                 _buildDrawerItem(Icons.thumb_up_alt_outlined, 'rate_us'.tr, () {
                   Get.back();
-                  _showRateUsDialog(context);
+                  _handleRateUs();
                 }),
                 _buildDrawerItem(
                   Icons.translate_outlined,
@@ -748,119 +748,39 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  void _showRateUsDialog(BuildContext context) {
-    final controller = Get.put(RateUsController());
-
-    Get.dialog(
-      Dialog(
-        backgroundColor: const Color(0xFF121212),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.r),
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: GestureDetector(
-                  onTap: () {
-                    Get.back();
-                    Get.delete<RateUsController>();
-                  },
-                  child: const Icon(Icons.close, color: Colors.white54),
-                ),
-              ),
-              Icon(Icons.star_rounded, size: 80.sp, color: Colors.amber),
-              SizedBox(height: 16.h),
-              Text(
-                'experience_question'.tr,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 8.h),
-              Text(
-                'feedback_improve_hint'.tr,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white38, fontSize: 14.sp),
-              ),
-              SizedBox(height: 24.h),
-              Obx(
-                () => Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(5, (index) {
-                    return IconButton(
-                      onPressed: () => controller.setRating(index + 1),
-                      icon: Icon(
-                        index < controller.rating.value
-                            ? Icons.star_rounded
-                            : Icons.star_outline_rounded,
-                        color: index < controller.rating.value
-                            ? Colors.amber
-                            : Colors.white24,
-                        size: 36.sp,
-                      ),
-                    );
-                  }),
-                ),
-              ),
-              SizedBox(height: 24.h),
-              Obx(() {
-                final isLoading = controller.isLoading.value;
-                return SizedBox(
-                  width: double.infinity,
-                  height: 48.h,
-                  child: ElevatedButton(
-                    onPressed: isLoading
-                        ? null
-                        : () async {
-                            await controller.submitRating();
-                            Get.delete<RateUsController>();
-                          },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2DD4BF),
-                      disabledBackgroundColor: const Color(
-                        0xFF2DD4BF,
-                      ).withValues(alpha: 0.5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                    ),
-                    child: isLoading
-                        ? SizedBox(
-                            width: 20.w,
-                            height: 20.w,
-                            child: const CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : Text(
-                            'submit_rating'.tr,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                  ),
-                );
-              }),
-            ],
-          ),
-        ),
-      ),
-      barrierDismissible: true,
-    ).then((_) {
-      if (Get.isRegistered<RateUsController>()) {
-        Get.delete<RateUsController>();
+  Future<void> _handleRateUs() async {
+    final inAppReview = InAppReview.instance;
+    try {
+      if (await inAppReview.isAvailable()) {
+        // Native official Google Play In-App Review / iOS SKStoreReviewController
+        await inAppReview.requestReview();
+      } else {
+        await _openStoreListing(inAppReview);
       }
-    });
+    } catch (e) {
+      debugPrint('In-app review error: $e');
+      await _openStoreListing(inAppReview);
+    }
+  }
+
+  Future<void> _openStoreListing(InAppReview inAppReview) async {
+    try {
+      if (GetPlatform.isAndroid) {
+        final marketUri =
+            Uri.parse('market://details?id=com.whichwin.horseracing');
+        final webUri = Uri.parse(
+            'https://play.google.com/store/apps/details?id=com.whichwin.horseracing');
+        if (await canLaunchUrl(marketUri)) {
+          await launchUrl(marketUri, mode: LaunchMode.externalApplication);
+        } else if (await canLaunchUrl(webUri)) {
+          await launchUrl(webUri, mode: LaunchMode.externalApplication);
+        }
+      } else if (GetPlatform.isIOS) {
+        await inAppReview.openStoreListing();
+      }
+    } catch (e) {
+      debugPrint('Failed to open store listing: $e');
+    }
   }
 
   Widget _buildLiveRaceCard(RaceModel race) {

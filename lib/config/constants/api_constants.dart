@@ -1,4 +1,3 @@
-
 class ApiConstants {
   // Base URLs - Always end with a trailing slash
   // static const String baseUrl = 'http://10.10.26.200:5001/api/v1/';
@@ -33,7 +32,6 @@ class ApiConstants {
 
   // Other Endpoints
   static const String contact = 'contact';
-  static const String rating = 'rating';
   static const String legal = 'legal/'; // append {type}
   static const String language = 'language';
 

@@ -21,17 +21,6 @@ class CommonRepo {
     });
   }
 
-  /// ===================== RATE US =====================
-  Future<dio.Response> rateUs({
-    required int rating,
-    String? comment,
-  }) async {
-    return await apiClient.postData(ApiConstants.rating, {
-      "rating": rating,
-      "comment": comment,
-    });
-  }
-
   /// ===================== GET LEGAL CONTENT =====================
   Future<dio.Response> getLegalContent(String type) async {
     // type can be 'terms' or 'privacy'
