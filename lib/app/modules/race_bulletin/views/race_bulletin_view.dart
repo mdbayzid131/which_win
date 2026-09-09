@@ -25,56 +25,66 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
           ),
           onPressed: () => Get.back(),
         ),
-        title: Row(
-          children: [
-            Obx(() {
-              final country = controller.race.value?.country ?? '';
-              if (country.isEmpty) return const SizedBox.shrink();
-              final flagCode = _getFlagCode(country);
-              return Container(
-                width: 32.w,
-                height: 32.w,
-                margin: EdgeInsets.only(right: 8.w),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white38, width: 1.5),
-                ),
-                child: ClipOval(
-                  child: Image.network(
-                    'https://flagcdn.com/w160/$flagCode.png',
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        const Icon(Icons.flag, color: Colors.white38, size: 14),
+        title: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => Get.back(),
+          child: Row(
+            children: [
+              Obx(() {
+                final country = controller.race.value?.country ?? '';
+                if (country.isEmpty) return const SizedBox.shrink();
+                final flagCode = _getFlagCode(country);
+                return Container(
+                  width: 32.w,
+                  height: 32.w,
+                  margin: EdgeInsets.only(right: 8.w),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white38, width: 1.5),
                   ),
-                ),
-              );
-            }),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    controller.race.value?.location ?? 'races'.tr,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.bold,
+                  child: ClipOval(
+                    child: Image.network(
+                      'https://flagcdn.com/w160/$flagCode.png',
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.flag,
+                        color: Colors.white38,
+                        size: 14,
+                      ),
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                  Obx(
-                    () => Text(
-                      '${controller.raceList.length} ${'races'.tr} · ${controller.race.value?.date?.split('T').first ?? ''}',
-                      style: TextStyle(color: Colors.white70, fontSize: 12.sp),
+                );
+              }),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      controller.race.value?.location ?? 'races'.tr,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                ],
+                    Obx(
+                      () => Text(
+                        '${controller.raceList.length} ${'races'.tr} · ${controller.race.value?.date?.split('T').first ?? ''}',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12.sp,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       body: SafeArea(
@@ -444,7 +454,10 @@ class RaceBulletinView extends GetView<RaceBulletinController> {
 
   String _getFlagCode(String country) {
     final c = country.trim().toLowerCase();
-    if (c == 'united kingdom' || c == 'uk' || c == 'great britain' || c == 'gb') {
+    if (c == 'united kingdom' ||
+        c == 'uk' ||
+        c == 'great britain' ||
+        c == 'gb') {
       return 'gb';
     }
     if (c == 'france' || c == 'fr') return 'fr';

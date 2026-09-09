@@ -189,15 +189,19 @@ class _SubscriptionViewState extends State<SubscriptionView> {
 
   Widget _buildBackButton() {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: () => Get.back(),
-      child: Container(
-        padding: EdgeInsets.all(8.w),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.white24, width: 1.2),
-          shape: BoxShape.circle,
-          color: Colors.black.withValues(alpha: 0.2),
+      child: Padding(
+        padding: EdgeInsets.all(6.r),
+        child: Container(
+          padding: EdgeInsets.all(10.w),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.white24, width: 1.2),
+            shape: BoxShape.circle,
+            color: Colors.black.withValues(alpha: 0.2),
+          ),
+          child: Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 18.sp),
         ),
-        child: Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 18.sp),
       ),
     );
   }

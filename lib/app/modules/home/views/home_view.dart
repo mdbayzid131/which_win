@@ -31,38 +31,44 @@ class HomeView extends GetView<HomeController> {
         backgroundColor: const Color(0xFF121212),
         elevation: 0,
         automaticallyImplyLeading: false,
-        titleSpacing: 12.w,
+        titleSpacing: 0,
         title: Builder(
-          builder: (context) => InkWell(
-            borderRadius: BorderRadius.circular(8.r),
-            onTap: () {
+          builder: (context) {
+            void toggleDrawer() {
               final scaffold = Scaffold.of(context);
               if (scaffold.isDrawerOpen) {
                 scaffold.closeDrawer();
               } else {
                 scaffold.openDrawer();
               }
-            },
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.menu, color: Colors.white, size: 24.sp),
-                  SizedBox(width: 12.w),
-                  Text(
-                    'BULLETIN',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
+            }
+
+            return GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: toggleDrawer,
+              child: Container(
+                height: kToolbarHeight,
+                padding: EdgeInsets.only(left: 16.w, right: 20.w),
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.menu, color: Colors.white, size: 26.sp),
+                    SizedBox(width: 10.w),
+                    Text(
+                      'BULLETIN',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
         actions: [
           _buildFootballAppButton(),
@@ -424,11 +430,11 @@ class HomeView extends GetView<HomeController> {
                     customBorder: const CircleBorder(),
                     onTap: () => Navigator.of(context).pop(),
                     child: Padding(
-                      padding: EdgeInsets.all(8.r),
+                      padding: EdgeInsets.all(12.r),
                       child: Icon(
                         Icons.close,
                         color: Colors.white,
-                        size: 20.sp,
+                        size: 22.sp,
                       ),
                     ),
                   ),

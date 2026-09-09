@@ -20,28 +20,36 @@ class RaceDetailsAppBar extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Back arrow
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Icon(
-              Icons.arrow_back_ios_new,
-              color: Colors.white,
-              size: 20.sp,
-            ),
-          ),
-          SizedBox(width: 16.w),
-
-          // Location name
+          // Back arrow & Location name combined touch area for effortless back navigation
           Expanded(
-            child: Text(
-              locationName,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 22.sp,
-                fontWeight: FontWeight.bold,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => Get.back(),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 4.w),
+                    child: Icon(
+                      Icons.arrow_back_ios_new,
+                      color: Colors.white,
+                      size: 20.sp,
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Text(
+                      locationName,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
             ),
           ),
 
